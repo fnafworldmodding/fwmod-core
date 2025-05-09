@@ -3,6 +3,13 @@
 #define CHUNKS_H
 
 enum class ChunksIDs {
+    Preview = 0x1122,
+    MiniHeader = 0x2222,
+    AppHeader = 0x2223,
+    AppName = 0x2224,
+    Author = 0x2225,
+    MenuBar = 0x2226,
+    ExtensionsPath = 0x2227,
     ObjectProperties = 0x2256,
     Frame = 0x3333,
     FrameHeader = 0x3334,
@@ -38,18 +45,18 @@ enum class ChunksIDs {
 };
 
 class Chunk {
-public:
-    unsigned int size;
-    short flag;
-    short id() const { return id_; }
+public: unsigned int size;
+      short flag;
+      short id() const {
+          return id_;
+      }
 
-	// TODO: implement read and write
-    // TODO: change type to int8
-    virtual short ReadFromBuffer(std::ifstream& file);
-    virtual short WriteToBuffer(std::ofstream& file);
+      // TODO: implement read and write  
+      // TODO: change type to int8  
+      virtual short ReadFromBuffer(std::ifstream& file, long long flags);
+      virtual short WriteToBuffer (std::ofstream& file, long long flags);
 
-private:
-    short id_;
+private: short id_;
 };
 
 #endif CHUNKS_H
