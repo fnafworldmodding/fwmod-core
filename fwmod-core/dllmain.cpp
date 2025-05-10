@@ -7,6 +7,12 @@
 #include <vector>
 #include <unordered_map>
 #include <mutex>
+#include <thread>
+#include <direct.h> // For _getcwd on Windows
+
+#include "GreenFreddyTools\CCNParser\CCNPackage.h"
+
+
 using namespace std;
 // ccn reader and writer should be implmented today, look at notes to know what todo
 
@@ -14,7 +20,7 @@ static unordered_map < string, FARPROC > functionCache;
 HMODULE realDLL = nullptr;
 mutex dllMutex;
 
-static void ShowLastError(const char* context) {
+static void ShowLastError(const char* context, const char* extraContext) {
     DWORD errorCode = GetLastError();
     LPSTR messageBuffer = nullptr;
 
@@ -30,6 +36,7 @@ static void ShowLastError(const char* context) {
 
     ostringstream errorMsg;
     errorMsg << context;
+    errorMsg << extraContext;
     errorMsg << " failed with error ";
     errorMsg << errorCode;
     if (messageBuffer) {
@@ -45,7 +52,7 @@ static void LoadOriginalDLL(const char* dllName) {
     lock_guard < mutex > lock(dllMutex);
     realDLL = LoadLibraryA(dllName);
     if (!realDLL) {
-        ShowLastError("LoadLibraryA()");
+        ShowLastError("LoadLibraryA ", dllName);
         ExitProcess(1);
     }
 }
@@ -92,8 +99,32 @@ static FARPROC __stdcall DelayLoadHandler(const char* functionName) {
     return originalFunction;
 }
 
-static BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
+
+void CheckAndReadCCNFile() {
+    const char* filePath = "FWR 1.1 Build.dat";
+    if (GetFileAttributesA(filePath) == INVALID_FILE_ATTRIBUTES) {
+        char currentDir[MAX_PATH];
+        if (_getcwd(currentDir, MAX_PATH)) { // Get the current working directory  
+            ostringstream errorMsg;
+            errorMsg << "File does not exist: " << filePath << "\n";
+            errorMsg << "Searched in: " << currentDir;
+            MessageBoxA(nullptr, errorMsg.str().c_str(), "Error", MB_OK | MB_ICONERROR);
+        }
+        else {
+            MessageBoxA(nullptr, "Failed to retrieve the current working directory.", "Error", MB_OK | MB_ICONERROR);
+        }
+        ExitProcess(1);
+    }
+
+    CCNPackage ccnPackage;
+    BinaryReader BR(filePath);
+    ccnPackage.ReadCCN(BR);
+}
+
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
     if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
+        MessageBoxA(nullptr, "Hi, you can debug now!", "Message", MB_OK | MB_ICONINFORMATION);
+        CheckAndReadCCNFile(); ///std::thread(CheckAndReadCCNFile).detach();
         LoadOriginalDLL("og_mmf2d3d11.dll");
     }
     else if (ul_reason_for_call == DLL_PROCESS_DETACH) {
@@ -103,7 +134,7 @@ static BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID l
         }
     }
     else if (ul_reason_for_call == DLL_THREAD_ATTACH || ul_reason_for_call == DLL_THREAD_DETACH) {
-        // ...
+        // ...  
     }
     return TRUE;
 }

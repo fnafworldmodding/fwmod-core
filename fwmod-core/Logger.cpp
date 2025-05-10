@@ -19,19 +19,33 @@ void Logger::RemoveHandler(std::function<void(const std::string&)> handler) {
        handlers.end());  
 }
 
-
+/*
 std::function<void(const std::string&)> Logger::CreateFileHandler(const std::string& path) {
     return [path]() {
         std::mutex fileLock;
         return [path, &fileLock](const std::string& message) {
-            std::lock_guard<std::mutex> lock(fileLock);
             std::ofstream file(path, std::ios::app);
+            std::lock_guard<std::mutex> lock(fileLock);
             if (file.is_open()) {
                 file << message << std::endl;
             }
             };
         }();
 }
+*/
+
+std::function<void(const std::string&)> Logger::CreateFileHandler(const std::string& path) {
+    auto fileLock = std::make_shared<std::mutex>(); // Use shared_ptr for the mutex
+    auto file = std::make_shared<std::ofstream>(path, std::ios::app); // Use shared_ptr to manage file lifetime
+    return [path, fileLock, file](const std::string& message) {
+        std::lock_guard<std::mutex> lock(*fileLock); // Lock the shared mutex
+        if (file->is_open()) {
+            *file << message << std::endl;
+        }
+        };
+}
+
+
 
 std::function<void(const std::string&)> Logger::CreateConsoleHandler() {
     return [](const std::string& message) {

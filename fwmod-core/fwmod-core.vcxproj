@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -76,8 +76,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;FWMODCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -110,8 +111,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;FWMODCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -127,7 +129,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;FWMODCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
@@ -142,16 +144,42 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
+    <ClInclude Include="GreenFreddyTools\BinaryTools\Binary.h" />
+    <ClInclude Include="GreenFreddyTools\BinaryTools\BinaryReader.h" />
+    <ClInclude Include="GreenFreddyTools\BinaryTools\BinaryWriter.h" />
+    <ClInclude Include="GreenFreddyTools\BinaryTools\MemoryBuffer.h" />
+    <ClInclude Include="GreenFreddyTools\BinaryTools\Span.h" />
+    <ClInclude Include="GreenFreddyTools\CCNParser\CCNPackage.h" />
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\Chunks.h" />
+    <ClInclude Include="Logger.h" />
+    <ClInclude Include="PackFile.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="GreenFreddyTools\BinaryTools\Binary.cpp" />
+    <ClCompile Include="GreenFreddyTools\BinaryTools\BinaryReader.cpp" />
+    <ClCompile Include="GreenFreddyTools\BinaryTools\BinaryTools.cpp" />
+    <ClCompile Include="GreenFreddyTools\BinaryTools\BinaryWriter.cpp" />
+    <ClCompile Include="GreenFreddyTools\CCNParser\CCNPackage.cpp" />
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\Chunks.cpp" />
+    <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="PackFile.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GreenFreddyTools\BinaryTools\BinaryTools.vcxproj" />
+    <None Include="GreenFreddyTools\BinaryTools\BinaryTools.vcxproj.filters" />
+    <None Include="GreenFreddyTools\BinaryTools\TestBin1.bin" />
+    <None Include="GreenFreddyTools\BinaryTools\TestBin3.bin" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="GreenFreddyTools\BinaryTools\License.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -13,12 +13,60 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\CCNParser">
+      <UniqueIdentifier>{99f711c8-ea81-43c6-88ba-c59e0452577f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\CCNParser\Chunks">
+      <UniqueIdentifier>{ece5371d-7a33-4d7f-973f-46a1c9c8d0f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\CCNParser">
+      <UniqueIdentifier>{bb6e54db-1be8-430c-8aee-18178cbd0dca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\CCNParser\Chunks">
+      <UniqueIdentifier>{78d0d9cd-0bc7-4fd5-868c-693447207a66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{a4fb9827-afdd-49ee-a390-d91e21f6e7fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utils">
+      <UniqueIdentifier>{e870cf5e-aaaa-481b-b96e-214311efcf2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\BinaryTools">
+      <UniqueIdentifier>{643d2597-74ad-498f-a4ba-09bd9c70ab55}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenFreddyTools\CCNParser\CCNPackage.h">
+      <Filter>Header Files\CCNParser</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\Chunks.h">
+      <Filter>Header Files\CCNParser\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenFreddyTools\BinaryTools\BinaryWriter.h">
+      <Filter>Source Files\BinaryTools</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenFreddyTools\BinaryTools\MemoryBuffer.h">
+      <Filter>Source Files\BinaryTools</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenFreddyTools\BinaryTools\Span.h">
+      <Filter>Source Files\BinaryTools</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenFreddyTools\BinaryTools\Binary.h">
+      <Filter>Source Files\BinaryTools</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenFreddyTools\BinaryTools\BinaryReader.h">
+      <Filter>Source Files\BinaryTools</Filter>
+    </ClInclude>
+    <ClInclude Include="PackFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -29,5 +77,48 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\Chunks.cpp">
+      <Filter>Source Files\CCNParser\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenFreddyTools\BinaryTools\BinaryWriter.cpp">
+      <Filter>Source Files\BinaryTools</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenFreddyTools\BinaryTools\Binary.cpp">
+      <Filter>Source Files\BinaryTools</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenFreddyTools\BinaryTools\BinaryReader.cpp">
+      <Filter>Source Files\BinaryTools</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenFreddyTools\BinaryTools\BinaryTools.cpp">
+      <Filter>Source Files\BinaryTools</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenFreddyTools\CCNParser\CCNPackage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PackFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GreenFreddyTools\BinaryTools\BinaryTools.vcxproj">
+      <Filter>Source Files\BinaryTools</Filter>
+    </None>
+    <None Include="GreenFreddyTools\BinaryTools\BinaryTools.vcxproj.filters">
+      <Filter>Source Files\BinaryTools</Filter>
+    </None>
+    <None Include="GreenFreddyTools\BinaryTools\TestBin1.bin">
+      <Filter>Source Files\BinaryTools</Filter>
+    </None>
+    <None Include="GreenFreddyTools\BinaryTools\TestBin3.bin">
+      <Filter>Source Files\BinaryTools</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="GreenFreddyTools\BinaryTools\License.txt">
+      <Filter>Source Files\BinaryTools</Filter>
+    </Text>
   </ItemGroup>
 </Project>
