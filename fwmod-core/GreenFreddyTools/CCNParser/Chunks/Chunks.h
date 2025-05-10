@@ -60,6 +60,8 @@ public:
     // Pointer to hold chunk data
     std::vector<char>* data;
 
+    Chunk();
+
     // TODO: implement read and write
     // TODO: change type to int8
     //virtual short Read (BinaryReader& buffer, long long flags);
@@ -68,7 +70,7 @@ public:
     // vector based buffers
     //virtual short Read (std::vector<char>& buffer, long long flags);
     //virtual short Write(std::vector<char>& buffer, long long flags);
-
+    
     static Chunk InitChunk(BinaryReader& buffer);
 private:
 };

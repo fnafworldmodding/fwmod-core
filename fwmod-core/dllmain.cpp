@@ -28,7 +28,7 @@ static void ShowLastError(const char* context, const char* extraContext) {
         FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
         nullptr,
         errorCode,
-        0, // Default language    
+        0, // Default language
         (LPSTR)&messageBuffer,
         0,
         nullptr
