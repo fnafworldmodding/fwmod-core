@@ -15,10 +15,12 @@ class BinaryReader
 public:
     //Reads binary data from file at path
     BinaryReader(std::string_view inputPath);
+    //BinaryReader(const char* inputPath) : BinaryReader(std::string_view(inputPath)) {}
     //Reads binary data from fixed size memory buffer
     BinaryReader(char* buffer, uint32_t sizeInBytes);
     //Reads binary data from fixed size memory buffer
     BinaryReader(std::span<uint8_t> buffer);
+
     ~BinaryReader();
 
     [[nodiscard]] uint8_t ReadUint8();
@@ -41,6 +43,7 @@ public:
     [[nodiscard]] char PeekChar();
     [[nodiscard]] uint32_t PeekUint32();
     [[nodiscard]] wchar_t PeekCharWide();
+    [[nodiscard]] bool HasMemory(int size);
 
     [[nodiscard]] float ReadFloat();
     [[nodiscard]] double ReadDouble();

@@ -12,6 +12,7 @@ class BinaryWriter
 public:
     //Writes binary data from file at path. If truncate == true any existing file contents will be cleared
     BinaryWriter(std::string_view inputPath, bool truncate = true);
+    //BinaryWriter(const char* inputPath) : BinaryWriter(std::string_view(inputPath)) {}
     //Writes binary data from fixed size memory buffer
     BinaryWriter(char* buffer, uint32_t sizeInBytes);
     ~BinaryWriter();

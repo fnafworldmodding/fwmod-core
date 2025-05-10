@@ -213,6 +213,11 @@ void BinaryReader::ReadToMemory(void* destination, size_t size)
     stream_->read(static_cast<char*>(destination), size);
 }
 
+bool BinaryReader::HasMemory(int size)
+{
+	return Position() + size <= Length();
+}
+
 void BinaryReader::SeekBeg(size_t absoluteOffset)
 {
     stream_->seekg(absoluteOffset, std::ifstream::beg);
