@@ -25,14 +25,14 @@
     <Filter Include="Header Files\CCNParser\Chunks">
       <UniqueIdentifier>{78d0d9cd-0bc7-4fd5-868c-693447207a66}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Utils">
-      <UniqueIdentifier>{a4fb9827-afdd-49ee-a390-d91e21f6e7fd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Utils">
       <UniqueIdentifier>{e870cf5e-aaaa-481b-b96e-214311efcf2c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\BinaryTools">
       <UniqueIdentifier>{643d2597-74ad-498f-a4ba-09bd9c70ab55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\CCNParser\Utils">
+      <UniqueIdentifier>{a4fb9827-afdd-49ee-a390-d91e21f6e7fd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -69,6 +69,9 @@
     <ClInclude Include="PackFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EventManager.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -78,7 +81,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Logger.cpp">
-      <Filter>Source Files\Utils</Filter>
+      <Filter>Source Files\CCNParser\Utils</Filter>
     </ClCompile>
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\Chunks.cpp">
       <Filter>Source Files\CCNParser\Chunks</Filter>
