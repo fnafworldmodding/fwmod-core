@@ -1,28 +1,21 @@
 #include "BinaryReader.h"
 #include "MemoryBuffer.h"
 
-BinaryReader::BinaryReader(std::string_view inputPath)
-{
-    stream_ = new std::ifstream(std::string(inputPath), std::ifstream::in | std::ifstream::binary);
-}
+BinaryReader::BinaryReader(std::string_view inputPath)  
+{  
+   stream_ = std::make_unique<std::ifstream>(std::string(inputPath), std::ifstream::in | std::ifstream::binary);  
+}  
 
-BinaryReader::BinaryReader(char* buffer, uint32_t sizeInBytes)
-{
-    buffer_ = new basic_memstreambuf(buffer, sizeInBytes);
-    stream_ = new std::istream(buffer_, false);
-}
+BinaryReader::BinaryReader(char* buffer, uint32_t sizeInBytes)  
+{  
+   buffer_ = std::make_unique<basic_memstreambuf>(buffer, sizeInBytes);  
+   stream_ = std::make_unique<std::istream>(buffer_.get(), false);  
+}  
 
-BinaryReader::BinaryReader(std::span<uint8_t> buffer)
-{
-    buffer_ = new basic_memstreambuf((char*)buffer.data(), buffer.size_bytes());
-    stream_ = new std::istream(buffer_, false);
-}
-
-BinaryReader::~BinaryReader()
-{
-    delete stream_;
-    if (buffer_)
-        delete buffer_;
+BinaryReader::BinaryReader(std::span<uint8_t> buffer)  
+{  
+   buffer_ = std::make_unique<basic_memstreambuf>(reinterpret_cast<char*>(buffer.data()), buffer.size_bytes());  
+   stream_ = std::make_unique<std::istream>(buffer_.get(), false);  
 }
 
 uint8_t BinaryReader::ReadUint8()

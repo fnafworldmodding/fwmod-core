@@ -21,7 +21,6 @@ public:
     //Reads binary data from fixed size memory buffer
     BinaryReader(std::span<uint8_t> buffer);
 
-    ~BinaryReader();
 
     [[nodiscard]] uint8_t ReadUint8();
     [[nodiscard]] uint16_t ReadUint16();
@@ -60,7 +59,7 @@ public:
     size_t Length();
 
 private:
-    std::istream* stream_ = nullptr;
-    basic_memstreambuf* buffer_ = nullptr;
+    std::unique_ptr<std::istream> stream_ = nullptr;  
+    std::unique_ptr<basic_memstreambuf> buffer_ = nullptr;
 };
 

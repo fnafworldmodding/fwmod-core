@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include <span>
+// TODO: use std::unique_ptr for buffer and stream
 
 struct MemoryBuffer;
 
