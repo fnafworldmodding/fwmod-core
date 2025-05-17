@@ -58,7 +58,7 @@ public:
     unsigned int size;
 
     // Pointer to hold chunk data
-    std::vector<char>* data;
+    std::vector<char> data;
 
     Chunk();
 

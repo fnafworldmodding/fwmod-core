@@ -4,20 +4,17 @@ Chunk::Chunk() {
 	id = 0;
 	flag = 0;
 	size = 0;
-	data = nullptr;
+	data = std::vector<char>();
 }
 
 Chunk Chunk::InitChunk(BinaryReader& buffer) {
-    short id = buffer.ReadInt16();
-    unsigned int size = buffer.ReadUint32();
-
     Chunk chunk;
 
-    chunk.id = id;
-    chunk.size = size;
-    chunk.data = new std::vector<char>(size);
-    buffer.ReadToMemory(chunk.data->data(), size);
+    chunk.id = buffer.ReadInt16();
+    chunk.flag = buffer.ReadInt16();
+    chunk.size = buffer.ReadUint32();
+    chunk.data.resize(chunk.size);
+    buffer.ReadToMemory(chunk.data.data(), chunk.size);
 
     return chunk;
 }
-
