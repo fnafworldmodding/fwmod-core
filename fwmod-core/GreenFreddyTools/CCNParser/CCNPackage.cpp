@@ -8,12 +8,12 @@ static Logger CCNPackageLogger;
 CCNPackage::CCNPackage() : runtimeVersion(0), runtimeSubversion(0), productVersion(0), productBuild(0) {
 	this->header = std::string();
 	this->unpackheader = std::string();
-	CCNPackageLogger.AddHandler(Logger::CreateFileHandler("CCNPackageReader.log"));
-    CCNPackageLogger.Debug("CCNPackage Initialized");
+	CCNPackageLogger.AddHandler(Logger::CreateCoreFileHandle("FWMCoreLogs.log"));
+	CCNPackageLogger.Debug("[CCNPackage] Initialized");
 }
 
 CCNPackage::~CCNPackage() {
-	CCNPackageLogger.Debug("CCNPackage destructor called");
+	CCNPackageLogger.Debug("[CCNPackage] destructor called");
 }
 
 void CCNPackage::ReadCCN(BinaryReader& buffer) {
