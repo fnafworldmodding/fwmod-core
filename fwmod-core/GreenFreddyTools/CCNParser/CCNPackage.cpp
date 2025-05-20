@@ -1,5 +1,4 @@
 #include "CCNPackage.h"
-#include "Chunks/Chunks.h"
 #include "../../Logger.h"
 
 static Logger CCNPackageLogger;
