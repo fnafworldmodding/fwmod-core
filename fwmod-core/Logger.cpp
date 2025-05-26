@@ -1,7 +1,5 @@
-#include "pch.h"
+#include <iostream>
 #include "Logger.h"
-#include <sstream>
-#include <iomanip>
 
 // Constructor
 Logger::Logger() : datetimeFormat("%Y-%m-%d %H:%M:%S") {}
