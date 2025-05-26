@@ -4,6 +4,7 @@
 
 #include "../BinaryTools/BinaryReader.h"
 
+class Chunk;
 
 std::vector<uint8_t> Decompressor::Decompress(BinaryReader& buffer, int& decompressed) {
     int decomp_size = buffer.ReadInt32();
@@ -14,18 +15,58 @@ std::vector<uint8_t> Decompressor::Decompress(BinaryReader& buffer, int& decompr
     return DecompressBlock(compressedData, decomp_size);
 }
 
-bool Decompressor::IsZlib(const std::vector<uint8_t>& check) {
-    if (check.size() < 2) return false;
-    if (check[0] != 0x78) return false;
-    return check[1] == 0x01 || check[1] == 0x5E || check[1] == 0x9C || check[1] == 0xDA;
+
+int Decompressor::DecompressChunk(Chunk& chunk, BinaryReader& buffer, int& decompressed) {
+    int decomp_size = buffer.ReadInt32();
+    int comp_size = buffer.ReadInt32();
+    std::vector<uint8_t> compressedData(comp_size);
+    buffer.ReadToMemory(compressedData.data(), comp_size);
+    decompressed = decomp_size;
+    return DecompressBlock(chunk, compressedData, decomp_size);
+}
+
+int Decompressor::DecompressBlock(Chunk& chunk, std::vector<uint8_t>& compressedData, int size) {
+    if (chunk.data.empty() || size == 0) {
+        return Z_STREAM_ERROR;
+    }
+
+    // Resize the vector to hold the decompressed data
+    chunk.data.resize(size);
+    uLongf destLen = static_cast<uLong>(size);
+
+    int result;
+    if (IsZlib(compressedData)) {
+		result = uncompress(
+            reinterpret_cast<Bytef*>(chunk.data.data()),
+			&destLen,
+			compressedData.data(),
+			static_cast<uLong>(compressedData.size())
+		);
+    }
+    else {
+        z_stream strm = {};
+        strm.next_in = const_cast<Bytef*>(compressedData.data());
+        strm.avail_in = static_cast<uInt>(compressedData.size());
+        strm.next_out = reinterpret_cast<Bytef*>(chunk.data.data());
+        strm.avail_out = static_cast<uInt>(chunk.data.size());
+
+
+
+        result = inflateInit2(&strm, -MAX_WBITS); // raw deflate
+        if (result == Z_OK) {
+            result = inflate(&strm, Z_FINISH);
+            inflateEnd(&strm);
+            destLen = strm.total_out;
+        }
+    }
+
+    return result;
 }
 
 std::vector<uint8_t> Decompressor::DecompressBlock(const std::vector<uint8_t>& data, int size) {
-    if (data.empty()) return {};
-
-    // Estimate output size, or use a fixed buffer and grow if needed
     std::vector<uint8_t> decompressedData(size);
     uLongf destLen = static_cast<uLong>(size);
+    if (data.empty()) return decompressedData;
 
     int result;
     if (IsZlib(data)) {
@@ -53,8 +94,15 @@ std::vector<uint8_t> Decompressor::DecompressBlock(const std::vector<uint8_t>& d
         throw std::runtime_error(getErrorMessage(result));
     }
 
-    decompressedData.resize(destLen);
+    decompressedData.resize(size);
     return decompressedData;
+}
+
+
+bool Decompressor::IsZlib(const std::vector<uint8_t>& check) {
+    if (check.size() < 2) return false;
+    if (check[0] != 0x78) return false;
+    return check[1] == 0x01 || check[1] == 0x5E || check[1] == 0x9C || check[1] == 0xDA;
 }
 
 std::string Decompressor::getErrorMessage(int errorCode) {
