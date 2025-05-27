@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include <span>
+#include <memory>
 // TODO: use std::unique_ptr for buffer and stream
 
 struct MemoryBuffer;
@@ -16,7 +17,7 @@ public:
     //BinaryWriter(const char* inputPath) : BinaryWriter(std::string_view(inputPath)) {}
     //Writes binary data from fixed size memory buffer
     BinaryWriter(char* buffer, uint32_t sizeInBytes);
-    ~BinaryWriter();
+    ~BinaryWriter() = default;
 
     void Flush();
 
@@ -68,7 +69,7 @@ public:
     size_t Length();
 
 private:
-    std::ostream* stream_ = nullptr;
-    MemoryBuffer* buffer_ = nullptr;
+    std::unique_ptr<std::ostream> stream_ = nullptr;
+    std::unique_ptr<MemoryBuffer> buffer_ = nullptr;
 };
 

@@ -1,26 +1,34 @@
 #include "pch.h"
 
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <Windows.h>
-#include <vector>
-#include <unordered_map>
-#include <mutex>
-#include <thread>
-#include <direct.h> // For _getcwd on Windows
 
-#include "GreenFreddyTools\CCNParser\CCNPackage.h"
+#include "common.h"
+#include "preload.h"
 
+// exported needed functions
+#pragma comment(linker, "/export:timeBeginPeriod=WINMM.timeBeginPeriod")  
+#pragma comment(linker, "/export:joyGetDevCapsW=WINMM.joyGetDevCapsW")  
+#pragma comment(linker, "/export:joyGetPosEx=WINMM.joyGetPosEx")  
+#pragma comment(linker, "/export:timeEndPeriod=WINMM.timeEndPeriod")
+
+// TODO: move functionality to another file to lower the mess and size of this file
 
 using namespace std;
 // ccn reader and writer should be implmented today, look at notes to know what todo
 
-static unordered_map < string, FARPROC > functionCache;
+static std::unordered_map<std::string, FARPROC> functionCache;
 HMODULE realDLL = nullptr;
 mutex dllMutex;
 
-static void ShowLastError(const char* context, const char* extraContext) {
+inline static void SetThreadPriority(std::thread& thread, DWORD priority) {
+    HANDLE handle = OpenThread(THREAD_SET_INFORMATION, FALSE, GetThreadId(thread.native_handle()));
+    if (handle != NULL) {
+        SetThreadPriority(handle, priority);
+        CloseHandle(handle);
+    }
+}
+
+
+static void ShowLastError(const std::string& context) {
     DWORD errorCode = GetLastError();
     LPSTR messageBuffer = nullptr;
 
@@ -34,31 +42,30 @@ static void ShowLastError(const char* context, const char* extraContext) {
         nullptr
     );
 
-    ostringstream errorMsg;
-    errorMsg << context;
-    errorMsg << extraContext;
-    errorMsg << " failed with error ";
-    errorMsg << errorCode;
+    std::string errorMsg = "";
+    errorMsg += context;
+    errorMsg += " failed with error ";
+    errorMsg += std::to_string(errorCode);
     if (messageBuffer) {
-        errorMsg << ": ";
-        errorMsg << messageBuffer;
+        errorMsg += ": ";
+        errorMsg += messageBuffer;
         LocalFree(messageBuffer);
     }
 
-    MessageBoxA(nullptr, errorMsg.str().c_str(), "Error", MB_OK | MB_ICONERROR);
+    MessageBoxA(nullptr, errorMsg.c_str(), "Error", MB_OK | MB_ICONERROR);
 }
 
-static void LoadOriginalDLL(const char* dllName) {
-    lock_guard < mutex > lock(dllMutex);
+inline static void LoadOriginalDLL(const char* dllName) {
+    lock_guard<mutex> lock(dllMutex);
     realDLL = LoadLibraryA(dllName);
     if (!realDLL) {
-        ShowLastError("LoadLibraryA ", dllName);
+        ShowLastError("LoadLibraryA " + std::string(dllName));
         ExitProcess(1);
     }
 }
 
 static FARPROC ResolveExport(const char* functionName) {
-    lock_guard < mutex > lock(dllMutex);
+    lock_guard<mutex> lock(dllMutex);
     if (!realDLL) return nullptr;
 
     auto dosHeader = (PIMAGE_DOS_HEADER)realDLL;
@@ -70,7 +77,7 @@ static FARPROC ResolveExport(const char* functionName) {
     auto ordinals = (WORD*)((BYTE*)realDLL + exportDirectory->AddressOfNameOrdinals);
 
     for (DWORD i = 0; i < exportDirectory->NumberOfNames; ++i) {
-        string currentFunctionName = (char*)((BYTE*)realDLL + names[i]);
+        std::string currentFunctionName = (char*)((BYTE*)realDLL + names[i]);
         if (currentFunctionName == functionName) {
             DWORD functionRVA = functions[ordinals[i]];
             return (FARPROC)((BYTE*)realDLL + functionRVA);
@@ -82,7 +89,7 @@ static FARPROC ResolveExport(const char* functionName) {
 
 extern "C"
 static FARPROC __stdcall DelayLoadHandler(const char* functionName) {
-    lock_guard < mutex > lock(dllMutex);
+    lock_guard<mutex> lock(dllMutex);
 
     auto cacheIt = functionCache.find(functionName);
     if (cacheIt != functionCache.end()) {
@@ -91,7 +98,7 @@ static FARPROC __stdcall DelayLoadHandler(const char* functionName) {
 
     FARPROC originalFunction = ResolveExport(functionName);
     if (!originalFunction) {
-        MessageBoxA(nullptr, ("Function not found: " + string(functionName)).c_str(), "Error", MB_OK | MB_ICONERROR);
+        MessageBoxA(nullptr, ("Function not found: " + std::string(functionName)).c_str(), "Error", MB_OK | MB_ICONERROR);
         ExitProcess(1);
     }
 
@@ -100,32 +107,26 @@ static FARPROC __stdcall DelayLoadHandler(const char* functionName) {
 }
 
 
-void CheckAndReadCCNFile() {
-    const char* filePath = "FWR 1.1 Build.dat";
-    if (GetFileAttributesA(filePath) == INVALID_FILE_ATTRIBUTES) {
-        char currentDir[MAX_PATH];
-        if (_getcwd(currentDir, MAX_PATH)) { // Get the current working directory  
-            ostringstream errorMsg;
-            errorMsg << "File does not exist: " << filePath << "\n";
-            errorMsg << "Searched in: " << currentDir;
-            MessageBoxA(nullptr, errorMsg.str().c_str(), "Error", MB_OK | MB_ICONERROR);
-        }
-        else {
-            MessageBoxA(nullptr, "Failed to retrieve the current working directory.", "Error", MB_OK | MB_ICONERROR);
-        }
-        ExitProcess(1);
-    }
-
-    CCNPackage ccnPackage;
-    BinaryReader BR(filePath);
-    ccnPackage.ReadCCN(BR);
-}
-
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
     if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
+        // TODO: instead of blocking the whole program, create a thread and pause all other threads 
+        // than do changes to .dat than resume
+        LoadOriginalDLL("WINMM.dll");
+#ifdef _DEBUG
         MessageBoxA(nullptr, "Hi, you can debug now!", "Message", MB_OK | MB_ICONINFORMATION);
-        CheckAndReadCCNFile(); ///std::thread(CheckAndReadCCNFile).detach();
-        LoadOriginalDLL("og_mmf2d3d11.dll");
+#endif
+        /*
+        // it's not fast enough
+        std::thread thread(StartPreloadProcess);
+        SetThreadDescription(thread.native_handle(), L"FWMod Preloader");
+        SetThreadPriority(thread, 4);
+        thread.detach();
+        // TODO: make a max wait time
+        while (!PreloadStateReady) {
+            Sleep(10); // wait till it suspend the main thread
+        }
+        */
+        StartPreloadProcess(); // the best way is hooking than this
     }
     else if (ul_reason_for_call == DLL_PROCESS_DETACH) {
         if (realDLL) {
@@ -134,7 +135,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
         }
     }
     else if (ul_reason_for_call == DLL_THREAD_ATTACH || ul_reason_for_call == DLL_THREAD_DETACH) {
-        // ...  
+        // ...
     }
     return TRUE;
 }

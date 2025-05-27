@@ -29,6 +29,7 @@ public:
    Logger();  
    void AddHandler(std::function<void(const std::string&)> handler);  
    void RemoveHandler(std::function<void(const std::string&)> handler);  
+   // better to use some kind of an class/struct than a factory function, to allow clean up as file handlers never close
    static std::function<void(const std::string&)> CreateFileHandler(const std::string& path);  
    static std::function<void(const std::string&)> CreateConsoleHandler();  
    static std::function<void(const std::string&)> CreateCoreFileHandle(const std::string& filePath = "")  

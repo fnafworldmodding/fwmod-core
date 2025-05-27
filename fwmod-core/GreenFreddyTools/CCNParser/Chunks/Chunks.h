@@ -1,13 +1,11 @@
 #pragma once  
 #ifndef CHUNKS_H  
 #define CHUNKS_H  
-#include <fstream>
 #include <vector>
 
 
 #include "../../BinaryTools/BinaryReader.h"
 #include "../../BinaryTools/BinaryWriter.h"
-
 
 enum class ChunksIDs {  
    Preview = 0x1122,  
@@ -49,9 +47,14 @@ enum class ChunksIDs {
    FontBank = 0x6667,  
    SoundBank = 0x6668,  
    Last = 0x7F7F  
-};  
+};
 
-class Chunk {  
+enum class InitFlags {
+	DECOMPRESS = 0,
+	IGNOREUNKNOWN = 1 << 0,
+};
+
+class Chunk {
 public:  
     short id;
     short flag;
@@ -61,7 +64,9 @@ public:
     std::vector<char> data;
 
     Chunk();
-
+    Chunk(short id, short flag, int size);
+    bool IsCompressed() const { return flag == 1; }; // compressed flag
+    virtual bool Init() { return true; };
     // TODO: implement read and write
     // TODO: change type to int8
     //virtual short Read (BinaryReader& buffer, long long flags);
@@ -70,8 +75,11 @@ public:
     // vector based buffers
     //virtual short Read (std::vector<char>& buffer, long long flags);
     //virtual short Write(std::vector<char>& buffer, long long flags);
-    
-    static Chunk InitChunk(BinaryReader& buffer);
+
+	static Chunk InitChunk(BinaryReader& buffer, int flags = 3); // InitFlags (DECOMPRESS | IGNOREUNKNOWN)
+
+    virtual void Read(BinaryReader& buffer, bool decompress = true);
+	virtual void Write(BinaryWriter& buffer, bool compress = false); // INFO: don't care about compressing at the moment
 private:
 };
 

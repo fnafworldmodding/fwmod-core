@@ -5,14 +5,12 @@
 
 BinaryWriter::BinaryWriter(std::string_view inputPath, bool truncate)
 {
-    //Can't simply exclude the truncate flag when !truncate. More details here: https://stackoverflow.com/a/57070159
     int flags = 0;
     if (truncate)
-        flags = std::ofstream::out | std::ofstream::binary | std::ofstream::trunc; //Clears existing contents of the file
+        flags = std::ofstream::out | std::ofstream::binary | std::ofstream::trunc;
     else
         flags = std::ofstream::in | std::ofstream::out | std::ofstream::binary;
 
-    //If not truncating and the file doesn't exist, then opening will fail. So we create the file first if it doesn't exist
     if (!truncate && !std::filesystem::exists(inputPath))
     {
         std::fstream f;
@@ -20,20 +18,14 @@ BinaryWriter::BinaryWriter(std::string_view inputPath, bool truncate)
         f.close();
     }
 
-    stream_ = new std::ofstream(std::string(inputPath), flags);
+    stream_ = std::make_unique<std::ofstream>(std::string(inputPath), flags);
 }
 
+// Constructor for memory operations
 BinaryWriter::BinaryWriter(char* buffer, uint32_t sizeInBytes)
 {
-    buffer_ = new MemoryBuffer(buffer, sizeInBytes);
-    stream_ = new std::ostream(buffer_);
-}
-
-BinaryWriter::~BinaryWriter()
-{
-    delete stream_;
-    if (buffer_)
-        delete[] buffer_;
+    buffer_ = std::make_unique<MemoryBuffer>(buffer, sizeInBytes);
+    stream_ = std::make_unique<std::ostream>(buffer_.get());
 }
 
 void BinaryWriter::Flush()

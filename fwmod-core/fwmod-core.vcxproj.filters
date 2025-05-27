@@ -66,11 +66,35 @@
     <ClInclude Include="GreenFreddyTools\BinaryTools\BinaryReader.h">
       <Filter>Source Files\BinaryTools</Filter>
     </ClInclude>
-    <ClInclude Include="PackFile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="EventManager.h">
       <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenFreddyTools\Utils\Decompressor.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenFreddyTools\Utils\BitDict.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectHeaders.h">
+      <Filter>Header Files\CCNParser\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectNames.h">
+      <Filter>Header Files\CCNParser\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectProperties.h">
+      <Filter>Header Files\CCNParser\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ImageBank.h">
+      <Filter>Header Files\CCNParser\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\AppHeader.h">
+      <Filter>Header Files\CCNParser\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="preload.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -101,7 +125,25 @@
     <ClCompile Include="GreenFreddyTools\CCNParser\CCNPackage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PackFile.cpp">
+    <ClCompile Include="GreenFreddyTools\Utils\Decompressor.cpp">
+      <Filter>Source Files\CCNParser\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ObjectHeaders.cpp">
+      <Filter>Source Files\CCNParser\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ObjectNames.cpp">
+      <Filter>Source Files\CCNParser\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ObjectProperties.cpp">
+      <Filter>Source Files\CCNParser\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ImageBank.cpp">
+      <Filter>Source Files\CCNParser\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\AppHeader.cpp">
+      <Filter>Source Files\CCNParser\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="preload.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

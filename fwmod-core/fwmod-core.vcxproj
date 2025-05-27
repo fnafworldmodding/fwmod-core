@@ -70,6 +70,22 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ExternalIncludePath>$(MSBuildProjectDirectory)\dependencies\zlib;$(ExternalIncludePath)</ExternalIncludePath>
+    <IncludePath>$(MSBuildProjectDirectory)\dependencies\zlib;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ExternalIncludePath>
+    </ExternalIncludePath>
+    <IncludePath>$(MSBuildProjectDirectory)\dependencies\zlib\build;$(MSBuildProjectDirectory)\dependencies\zlib;$(IncludePath)</IncludePath>
+    <ReferencePath>$(MSBuildProjectDirectory)\dependencies\zlib;$(ReferencePath)</ReferencePath>
+    <AllProjectIncludesArePublic>true</AllProjectIncludesArePublic>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(MSBuildProjectDirectory)\dependencies\zlib\build;$(MSBuildProjectDirectory)\dependencies\zlib;$(IncludePath)</IncludePath>
+    <ReferencePath>$(MSBuildProjectDirectory)\dependencies\zlib;$(ReferencePath)</ReferencePath>
+    <AllProjectIncludesArePublic>true</AllProjectIncludesArePublic>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -79,11 +95,15 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(MSBuildProjectDirectory)\dependencies;$(MSBuildProjectDirectory)\dependencies\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>$(MSBuildProjectDirectory)\dependencies\zlib\build\Release\zlibstatic.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -96,6 +116,8 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(MSBuildProjectDirectory)\dependencies;$(MSBuildProjectDirectory)\dependencies\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -103,6 +125,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>$(MSBuildProjectDirectory)\dependencies\zlib\build\Release\zlibstatic.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -120,6 +143,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <ModuleDefinitionFile>fwmod-core.def</ModuleDefinitionFile>
+      <AdditionalDependencies>$(MSBuildProjectDirectory)\dependencies\zlib\lib\zlibstatic.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -144,6 +168,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="common.h" />
     <ClInclude Include="EventManager.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GreenFreddyTools\BinaryTools\Binary.h" />
@@ -152,10 +177,17 @@
     <ClInclude Include="GreenFreddyTools\BinaryTools\MemoryBuffer.h" />
     <ClInclude Include="GreenFreddyTools\BinaryTools\Span.h" />
     <ClInclude Include="GreenFreddyTools\CCNParser\CCNPackage.h" />
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\AppHeader.h" />
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\Chunks.h" />
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ImageBank.h" />
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectHeaders.h" />
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectNames.h" />
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectProperties.h" />
+    <ClInclude Include="GreenFreddyTools\Utils\BitDict.h" />
+    <ClInclude Include="GreenFreddyTools\Utils\Decompressor.h" />
     <ClInclude Include="Logger.h" />
-    <ClInclude Include="PackFile.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="preload.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -164,15 +196,21 @@
     <ClCompile Include="GreenFreddyTools\BinaryTools\BinaryTools.cpp" />
     <ClCompile Include="GreenFreddyTools\BinaryTools\BinaryWriter.cpp" />
     <ClCompile Include="GreenFreddyTools\CCNParser\CCNPackage.cpp" />
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\AppHeader.cpp" />
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\Chunks.cpp" />
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ImageBank.cpp" />
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ObjectHeaders.cpp" />
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ObjectNames.cpp" />
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ObjectProperties.cpp" />
+    <ClCompile Include="GreenFreddyTools\Utils\Decompressor.cpp" />
     <ClCompile Include="Logger.cpp" />
-    <ClCompile Include="PackFile.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="preload.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GreenFreddyTools\BinaryTools\BinaryTools.vcxproj" />
