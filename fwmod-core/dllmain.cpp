@@ -109,7 +109,7 @@ static FARPROC __stdcall DelayLoadHandler(const char* functionName) {
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
     if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
-        // TODO: instead of blocking the whole program, create a thread and pause all other threads 
+        // TODO: instead of blocking the whole program, create a thread and pause all other threads?
         // than do changes to .dat than resume
         LoadOriginalDLL("WINMM.dll");
 #ifdef _DEBUG
@@ -119,12 +119,8 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
         // it's not fast enough
         std::thread thread(StartPreloadProcess);
         SetThreadDescription(thread.native_handle(), L"FWMod Preloader");
-        SetThreadPriority(thread, 4);
+        SetThreadPriority(thread, 9999);
         thread.detach();
-        // TODO: make a max wait time
-        while (!PreloadStateReady) {
-            Sleep(10); // wait till it suspend the main thread
-        }
         */
         StartPreloadProcess(); // the best way is hooking than this
     }

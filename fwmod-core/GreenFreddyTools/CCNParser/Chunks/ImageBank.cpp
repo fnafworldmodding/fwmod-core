@@ -1,6 +1,7 @@
 #include "ImageBank.h"
 #include "../../Utils/Decompressor.h"
-//#include <lz4.h>
+#include <lz4.h>
+#include <algorithm>
 
 
 bool ImageBank::Init() {
@@ -10,12 +11,12 @@ bool ImageBank::Init() {
 
     this->images.reserve(size);
     // TODO: use a for loop instead of a while loop
-    while (buffer.HasMemory(sizeof(Image) - sizeof(std::vector<char>))) {         
+    while (buffer.HasMemory(sizeof(Image) - sizeof(std::vector<char>))) {
         Image img;
         buffer.ReadToMemory(&img, sizeof(Image) - sizeof(std::vector<char>));
 
         // Read the image data
-        img.data.resize(img.dataSize);
+        img.data.resize(std::max(0, img.dataSize - 4));
         buffer.ReadToMemory(img.data.data(), img.dataSize);
 
         this->images[img.Handle] = img;
