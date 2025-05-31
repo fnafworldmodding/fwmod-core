@@ -65,6 +65,8 @@ public:
 
     Chunk();
     Chunk(short id, short flag, int size);
+    Chunk(short flag, int size);
+    virtual ~Chunk() = default;
     bool IsCompressed() const { return flag == 1; }; // compressed flag
     virtual bool Init() { return true; };
     // TODO: implement read and write
@@ -76,10 +78,10 @@ public:
     //virtual short Read (std::vector<char>& buffer, long long flags);
     //virtual short Write(std::vector<char>& buffer, long long flags);
 
-	static Chunk InitChunk(BinaryReader& buffer, int flags = 3); // InitFlags (DECOMPRESS | IGNOREUNKNOWN)
-
+	static Chunk* InitChunk(BinaryReader& buffer, int flags = 3); // InitFlags (DECOMPRESS | IGNOREUNKNOWN)
     virtual void Read(BinaryReader& buffer, bool decompress = true);
-	virtual void Write(BinaryWriter& buffer, bool compress = false); // INFO: don't care about compressing at the moment
+	virtual void WriteHeader(BinaryWriter& buffer);
+    virtual void Write(BinaryWriter& buffer, bool compress = false); // INFO: don't care about compressing at the moment
 private:
 };
 
