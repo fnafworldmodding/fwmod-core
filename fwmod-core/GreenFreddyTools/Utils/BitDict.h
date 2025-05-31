@@ -25,6 +25,16 @@ public:
         }
     }
 
+    explicit BitDict(const std::vector<std::string>& keys, T value)
+        : keys_(keys), value_(0) {
+        for (size_t i = 0; i < keys.size(); ++i) {
+            if (!keys[i].empty()) {
+                keyToIndex_[keys[i]] = i;
+            }
+        }
+        this->value_ = value;
+    }
+
     // Constructor taking array and size
     template<size_t N>
     explicit BitDict(const std::array<std::string, N>& array)
