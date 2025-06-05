@@ -1,8 +1,8 @@
 #include "pch.h"
 
 
-#include "common.h"
-#include "preload.h"
+#include "Globals.h"
+#include "Hooks.h"
 
 // exported needed functions
 #pragma comment(linker, "/export:timeBeginPeriod=WINMM.timeBeginPeriod")  
@@ -112,23 +112,15 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
         // TODO: instead of blocking the whole program, create a thread and pause all other threads?
         // than do changes to .dat than resume
         LoadOriginalDLL("WINMM.dll");
-#ifdef _DEBUG
-        MessageBoxA(nullptr, "Hi, you can debug now!", "Message", MB_OK | MB_ICONINFORMATION);
-#endif
-        /*
-        // it's not fast enough
-        std::thread thread(StartPreloadProcess);
-        SetThreadDescription(thread.native_handle(), L"FWMod Preloader");
-        SetThreadPriority(thread, 9999);
-        thread.detach();
-        */
-        StartPreloadProcess(); // the best way is hooking than this
+        InitializeHooks();
     }
     else if (ul_reason_for_call == DLL_PROCESS_DETACH) {
         if (realDLL) {
             FreeLibrary(realDLL);
             realDLL = nullptr;
         }
+        // no need to uninitialize hooks because it meant to be called once anyways 
+        // and this dll stay for the life time of the executable
     }
     else if (ul_reason_for_call == DLL_THREAD_ATTACH || ul_reason_for_call == DLL_THREAD_DETACH) {
         // ...
