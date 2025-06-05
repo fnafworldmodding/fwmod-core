@@ -25,6 +25,17 @@ int Decompressor::DecompressChunk(Chunk& chunk, BinaryReader& buffer, int& decom
     return DecompressBlock(chunk, compressedData, decomp_size);
 }
 
+int Decompressor::DecompressChunk(Chunk& chunk, int& decompressed) {
+    BinaryReader buffer(chunk.data.data(), chunk.data.size());
+    int decomp_size = buffer.ReadInt32();
+    int comp_size = buffer.ReadInt32();
+    std::vector<uint8_t> compressedData(comp_size);
+    buffer.ReadToMemory(compressedData.data(), comp_size);
+    decompressed = decomp_size;
+    return DecompressBlock(chunk, compressedData, decomp_size);
+}
+
+
 int Decompressor::DecompressBlock(Chunk& chunk, std::vector<uint8_t>& compressedData, int size) {
     if (chunk.data.empty() || size == 0) {
         return Z_STREAM_ERROR;
@@ -97,6 +108,8 @@ std::vector<uint8_t> Decompressor::DecompressBlock(const std::vector<uint8_t>& d
     decompressedData.resize(size);
     return decompressedData;
 }
+
+
 
 
 bool Decompressor::IsZlib(const std::vector<uint8_t>& check) {

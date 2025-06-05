@@ -12,7 +12,8 @@
 class Decompressor {
 public:
     static std::vector<uint8_t> Decompress(BinaryReader& buffer, int& decompressed);
-	static int                  DecompressChunk(Chunk& chunk, BinaryReader& buffer, int& decompressed);
+    static int                  DecompressChunk(Chunk& chunk, int& decompressed);
+    static int                  DecompressChunk(Chunk& chunk, BinaryReader& buffer, int& decompressed);
     static std::vector<uint8_t> DecompressBlock(const std::vector<uint8_t>& data, int size);
     static int                  DecompressBlock(Chunk& chunk, std::vector<uint8_t>& compressedData, int size);
     static std::string          getErrorMessage(int errorCode);
