@@ -7,7 +7,5 @@
 extern std::atomic<bool> PreloadStateReady;
 
 void StartPreloadProcess();
-//extern bool PreloadStateReady = false;
-//static void SuspendAllThreadsExceptThis();
 
 #endif // PRELOAD_H

@@ -1,18 +1,17 @@
 #include "preload.h"
+#include "loader.h"
 
 #include "common.h"
-#include <format>
+#include "Globals.h"
 
-#include "GreenFreddyTools\CCNParser\CCNPackage.h"
-#include "GreenFreddyTools\CCNParser\Chunks\Chunks.h"
-#include "EventManager.h"
-#include "Logger.h"
+#include "CCNParser\CCNPackage.h"
+#include "CCNParser\Chunks\Chunks.h"
+#include "Utils\Decompressor.h"
+
 
 #define DAT_PREFIX std::string("og-")
 std::atomic<bool> PreloadStateReady = false;
 
-static Logger CoreLogger;
-static EventManager<Chunk, BinaryReader&, __int64&> PluginsEventManager;
 
 inline static std::string addPrefix(const std::string& path, const std::string& prefix) {
     size_t lastSlash = path.find_last_of("\\/");
@@ -51,10 +50,11 @@ inline static std::string getDatFilePath() {
 }
 
 void StartPreloadProcess() {
-    SuspendAllThreadsExceptThis();
+    //SuspendAllThreadsExceptThis(); TODO: finalize removal
     PreloadStateReady = true;
     CoreLogger.AddHandler(Logger::CreateCoreFileHandle("FWMCoreLogs.log"));
-    PluginsEventManager.AddListener("Chunk", [](Chunk chunk, BinaryReader& reader, __int64& flags) -> void {
+    PluginsEventManager.AddListener("Chunk", [](Chunk* pchunk, BinaryReader& reader, __int64& flags) -> void {
+		Chunk chunk = *pchunk;
         if (chunk.id == static_short(ChunksIDs::AppHeader)) {
             CoreLogger.Debug("[MYAWESOME] Chunk AppHeader Found!");
         }
@@ -62,9 +62,21 @@ void StartPreloadProcess() {
             CoreLogger.Debug("[MYAWESOME] Chunk ObjectProperties Found!");
             // TODO: read the ObjectProperties chunk
         }
-        else if (chunk.id == 0x2253) {
-            return; // Implement
+        else if (chunk.id == 0x6666) {
+            CoreLogger.Debug("[MYAWESOME] Chunk ImageBank Found!");
+            // Cast the chunk to the correct type (ImageBank*) to access its members
+            ImageBank* imageBankChunk = static_cast<ImageBank*>(pchunk);
+            loadImagesFromFolderToMap(imageBankChunk->images);
+            return;
         }
+        else if (chunk.id == static_short(ChunksIDs::ImageOffsets)) {
+            CoreLogger.Debug("[MYAWESOME] Chunk ImageOffsets Found!");
+			BinaryWriter BW("ImageOffsets.dat");
+            int out = -1;
+            Decompressor::DecompressChunk(chunk, out);
+			BW.WriteFromMemory(chunk.data.data(), chunk.data.size());
+            return;
+		}
     });
 
     std::string datPath = addPrefix(getDatFilePath(), DAT_PREFIX);
@@ -88,31 +100,33 @@ void StartPreloadProcess() {
     CCNPackage ccnPackage;
     BinaryReader BR(filePath);
     ccnPackage.ReadCCN(BR);
-    std::vector<Chunk> chunks;
-    Chunk chunk;
+    std::vector<Chunk*> chunks;
+    Chunk* chunk;
     __int64 flags = 0;
     while (true) {
         chunk = Chunk::InitChunk(BR);
-        CoreLogger.Info("[Chunk] Read Chunk! - Size: " + std::to_string(chunk.size)
-            + ", ID: 0x" + std::format("{:x}", chunk.id)
-            + ", Flag: " + std::to_string(chunk.flag));
+        CoreLogger.Info("[Chunk] Read Chunk! - Size: " + std::to_string(chunk->size)
+            + ", ID: 0x" + std::format("{:x}", chunk->id)
+            + ", Flag: " + std::to_string(chunk->flag));
+        if (!chunk->Init()) {
+            CoreLogger.Error("[Chunk] Failed to initialize chunk with ID: 0x" + std::format("{:x}", chunk->id));
+        }
         PluginsEventManager.Dispatch("Chunk", chunk, BR, flags);
         chunks.push_back(chunk);
-        if (chunk.id == static_cast<short>(ChunksIDs::Last)) {
+        if (chunk->id == static_cast<short>(ChunksIDs::Last)) {
             CoreLogger.Info("[Chunk] Reached LAST Chunk");
             break;
         }
     }
-    // TODO: write chunks
     CoreLogger.Info("[Core] Finished reading .dat file: " + datPath);
     std::string datWritePath = getDatFilePath();
 	CoreLogger.Info("[Core] Writing .dat file: " + datWritePath);
 
     BinaryWriter BW(datWritePath);
 	ccnPackage.WriteCCN(BW);
-	for (Chunk& c : chunks) {
-		c.Write(BW);
+	for (Chunk* c : chunks) {
+		c->Write(BW);
 	}
     CoreLogger.Info("[Core] Finished writing to: " + datWritePath);
-    UnsuspendAllThreads();
+    //UnsuspendAllThreads(); TODO: finalize removal
 }
