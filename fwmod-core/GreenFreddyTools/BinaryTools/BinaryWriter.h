@@ -67,6 +67,9 @@ public:
 
     size_t Position() const;
     size_t Length();
+    bool bad() { return this->stream_->bad(); };
+    bool fail() { return this->stream_->fail(); };
+	void clear() { return this->stream_->clear(); };
 
 private:
     std::unique_ptr<std::ostream> stream_ = nullptr;

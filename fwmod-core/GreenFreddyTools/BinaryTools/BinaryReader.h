@@ -54,6 +54,10 @@ public:
     void SeekReverse(size_t relativeOffset); //Move backwards from the current stream position
     void Skip(size_t bytesToSkip);
     size_t Align(size_t alignmentValue = 2048);
+    bool bad() { return this->stream_->bad(); };
+    bool fail() { return this->stream_->fail(); };
+    void clear() { return this->stream_->clear(); };
+
 
     size_t Position() const;
     size_t Length();
