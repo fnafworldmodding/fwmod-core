@@ -120,7 +120,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
             realDLL = nullptr;
         }
         // no need to uninitialize hooks because it meant to be called once anyways 
-        // and this dll stay for the life time of the executable
+        // and bc this dll stay for the life time of the executable
     }
     else if (ul_reason_for_call == DLL_THREAD_ATTACH || ul_reason_for_call == DLL_THREAD_DETACH) {
         // ...

@@ -16,6 +16,12 @@ private:
 
 public:
     // Constructor taking vector of strings
+    BitDict() : value_(0) {}
+
+    BitDict(T value) {
+        this->value_ = value;
+    }
+
     explicit BitDict(const std::vector<std::string>& keys)
         : keys_(keys), value_(0) {
         for (size_t i = 0; i < keys.size(); ++i) {
@@ -113,5 +119,16 @@ public:
     bool HasKey(const std::string& key) const {
         return keyToIndex_.find(key) != keyToIndex_.end();
     }
+
+    void SetKeys(const std::vector<std::string>& keys) {
+        keys_ = keys;
+        keyToIndex_.clear();
+        for (size_t i = 0; i < keys.size(); ++i) {
+            if (!keys[i].empty()) {
+                keyToIndex_[keys[i]] = i;
+            }
+        }
+    }
+
 };
 #endif // !BITDICT_H

@@ -1,4 +1,4 @@
 #include "Globals.h"
 
 Logger CoreLogger;
-EventManager<Chunk*, BinaryReader&, __int64&> PluginsEventManager;
+EventManager<std::vector<Chunk*>&, BinaryReader&, __int64&> PluginsEventManager;

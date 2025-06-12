@@ -7,6 +7,8 @@
 #include "../../BinaryTools/BinaryReader.h"
 #include "../../BinaryTools/BinaryWriter.h"
 
+#define CHUNK_HEADER_SIZE 8 // 2 shorts + 4 bytes for size
+
 enum class ChunksIDs {  
    Preview = 0x1122,  
    MiniHeader = 0x2222,  

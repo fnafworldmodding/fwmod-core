@@ -1,6 +1,7 @@
 #include "Chunks.h"
 #include "AppHeader.h"
 #include "ImageBank.h"
+#include "ImageOffsets.h"
 #include "../../Utils/Decompressor.h"
 #include "../../Utils/BitDict.h"
 
@@ -31,7 +32,7 @@ void Chunk::Read(BinaryReader& buffer, bool decompress) {
 	this->data.resize(this->size);
 	if (decompress == true && this->flag == 1) { // compressed flag
 		int size = static_cast<int>(this->size);
-		Decompressor::DecompressChunk(*this, buffer, size); // TODO: varify if there is any errors that been raised
+		int status = Decompressor::DecompressChunk(*this, buffer, size); // TODO: varify if there is any errors that been raised
 		this->flag = 0;
 		this->size = size;
 	}
@@ -52,9 +53,9 @@ void Chunk::Write(BinaryWriter& buffer, bool _) {
 	this->WriteHeader(buffer);
 	buffer.WriteFromMemory(this->data.data(), this->size);
 }
+
 Chunk* Chunk::InitChunk(BinaryReader& buffer, int flags) {
-	BitDict chflag(std::vector<std::string>{"Decompress", "DontDecompressUnknownChunks"});
-	chflag.SetValue(flags);
+	BitDict chflag(std::vector<std::string>{"Decompress", "DontDecompressUnknownChunks"}, flags);
     short id = buffer.ReadInt16();
 	short flag = buffer.ReadInt16();
 	int size = buffer.ReadUint32();
@@ -66,6 +67,9 @@ Chunk* Chunk::InitChunk(BinaryReader& buffer, int flags) {
 		break;
 	case static_cast<short>(ChunksIDs::ImageBank):
 		chunk = new ImageBank(flag, size);
+		break;
+	case static_cast<short>(ChunksIDs::ImageOffsets):
+		chunk = new ImageOffsets(flag, size);
 		break;
 	default:
 		chunk = new Chunk(id, flag, size);

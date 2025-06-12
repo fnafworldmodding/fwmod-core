@@ -75,9 +75,6 @@
     <ClInclude Include="GreenFreddyTools\Utils\BitDict.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="common.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectHeaders.h">
       <Filter>Header Files\CCNParser\Chunks</Filter>
     </ClInclude>
@@ -93,8 +90,29 @@
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\AppHeader.h">
       <Filter>Header Files\CCNParser\Chunks</Filter>
     </ClInclude>
-    <ClInclude Include="preload.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="Loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\Image.h">
+      <Filter>Header Files\CCNParser\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Globals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Preload.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ImageManager.h">
+      <Filter>Header Files\CCNParser\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ImageOffsets.h">
+      <Filter>Header Files\CCNParser\Chunks</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -143,8 +161,23 @@
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\AppHeader.cpp">
       <Filter>Source Files\CCNParser\Chunks</Filter>
     </ClCompile>
-    <ClCompile Include="preload.cpp">
+    <ClCompile Include="Preload.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Loader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Globals.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ImageManager.cpp">
+      <Filter>Source Files\CCNParser\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ImageOffsets.cpp">
+      <Filter>Source Files\CCNParser\Chunks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

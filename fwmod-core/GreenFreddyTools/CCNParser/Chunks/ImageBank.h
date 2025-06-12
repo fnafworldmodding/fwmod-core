@@ -1,38 +1,56 @@
 #ifndef IMAGEBANKCHUNK_H
 #define IMAGEBANKCHUNK_H
+#pragma once
 #include "Chunks.h"
+#include "ImageOffsets.h"
 #include <unordered_map>
 
 struct Image {
-    uint32_t Handle;
-    int32_t Checksum; // can be -1 ig is some ignore value
-    int32_t References;
-	int32_t unknown; // Unknown field. always 1 for some reason
-	int32_t dataSize; // Size of the image data
-    int16_t Width;
-    int16_t Height;
-    uint8_t GraphicMode;
-    uint8_t Flags;
-    uint16_t padding;  // Skip 2 bytes
-    int16_t HotspotX;
-    int16_t HotspotY;
-    int16_t ActionPointX;
-    int16_t ActionPointY;
-    uint32_t TransparentColor; // TODO: create a structure, RGBA color
-    int32_t decompSizePlus;
-	std::vector<char> data;
+    uint32_t Handle = 0;  
+    int32_t Checksum = -1; // can be -1 ig is some ignore value
+    int32_t References = 0;  
+    int32_t unknown = 1; // Unknown field. always 1 for some reason
+    int32_t dataSize = 0; // Size of the image data
+    int16_t Width = 0;  
+    int16_t Height = 0;  
+    uint8_t GraphicMode = 0;  
+    uint8_t Flags = 0;  
+    uint16_t padding = 0; // Skip 2 bytes
+    int16_t HotspotX = 0;  
+    int16_t HotspotY = 0;  
+    int16_t ActionPointX = 0;  
+    int16_t ActionPointY = 0;  
+    uint32_t TransparentColor = 0; // TODO: create a structure, RGBA color
+    int32_t decompSizePlus = 0;
+    std::vector<char> data;
 };
 
+#define IMAGESIZE sizeof(Image) - sizeof(std::vector<char>)
 
-class ImageBank : Chunk {
+typedef std::vector<char> ImageData;
+typedef std::unordered_map<uint32_t, Image> ImageMap;
+
+class ImageBank : public Chunk {
 public:
-	std::unordered_map<uint32_t, Image> images;
+	ImageMap images;
 
 	ImageBank() : Chunk() {
 		id = static_cast<short>(ChunksIDs::ImageBank);
-		images = std::unordered_map<uint32_t, Image>();
+		images = ImageMap();
+	}
+    ImageBank(short id, short flag, int size) : Chunk(id, flag, size) {
+        this->id = static_cast<short>(ChunksIDs::ImageBank);
+        images = ImageMap();
+	}
+
+    ImageBank(short flag, int size) : Chunk(flag, size) {
+        id = static_cast<short>(ChunksIDs::ImageBank);
+        images = ImageMap();
 	}
 
 	virtual bool Init() override;
+    virtual void Write(BinaryWriter& buffer, bool compress = false) override;
+    virtual void Write(BinaryWriter& buffer, bool compress, OffsetsVector& offsets);
 };
+
 #endif // !IMAGEBANKCHUNK_H

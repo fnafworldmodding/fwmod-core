@@ -28,6 +28,6 @@
 
 // globals variables
 extern Logger CoreLogger;
-extern EventManager<Chunk*, BinaryReader&, __int64&> PluginsEventManager;
+extern EventManager<std::vector<Chunk*>&, BinaryReader&, __int64&> PluginsEventManager;
 
 #endif // !FWGLOBALS_H

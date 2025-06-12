@@ -71,20 +71,24 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ExternalIncludePath>$(MSBuildProjectDirectory)\dependencies\zlib;$(ExternalIncludePath)</ExternalIncludePath>
-    <IncludePath>$(MSBuildProjectDirectory)\dependencies\zlib;$(IncludePath)</IncludePath>
+    <ExternalIncludePath>$(ExternalIncludePath)</ExternalIncludePath>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ExternalIncludePath>
-    </ExternalIncludePath>
-    <IncludePath>$(MSBuildProjectDirectory)\dependencies\zlib\build;$(MSBuildProjectDirectory)\dependencies\zlib;$(IncludePath)</IncludePath>
-    <ReferencePath>$(MSBuildProjectDirectory)\dependencies\zlib;$(ReferencePath)</ReferencePath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
     <AllProjectIncludesArePublic>true</AllProjectIncludesArePublic>
+    <ExternalIncludePath>$(MSBuildProjectDirectory)\GreenFreddyTools;$(MSBuildProjectDirectory)\dependencies\zlib\build;$(MSBuildProjectDirectory)\dependencies\lz4\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>$(MSBuildProjectDirectory)\dependencies\lz4\static\liblz4_static.lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(MSBuildProjectDirectory)\dependencies\zlib\build;$(MSBuildProjectDirectory)\dependencies\zlib;$(IncludePath)</IncludePath>
-    <ReferencePath>$(MSBuildProjectDirectory)\dependencies\zlib;$(ReferencePath)</ReferencePath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
     <AllProjectIncludesArePublic>true</AllProjectIncludesArePublic>
+    <ExternalIncludePath>$(MSBuildProjectDirectory)\GreenFreddyTools;$(MSBuildProjectDirectory)\dependencies\zlib\build;$(MSBuildProjectDirectory)\dependencies\lz4\include;$(ExternalIncludePath)</ExternalIncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ExternalIncludePath>$(MSBuildProjectDirectory)\dependencies\zlib;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -95,13 +99,14 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(MSBuildProjectDirectory)\dependencies;$(MSBuildProjectDirectory)\dependencies\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MSBuildProjectDirectory)\dependencies\lz4\lib;$(MSBuildProjectDirectory)\dependencies\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>$(MSBuildProjectDirectory)\dependencies\zlib\build\Release\zlibstatic.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Gdiplus.lib;$(MSBuildProjectDirectory)\dependencies\zlib\build\Release\zlibstatic.lib;$(MSBuildProjectDirectory)\dependencies\lz4\build\visual\Visual Studio 17 2022_\Debug\lz4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
     </Link>
@@ -116,7 +121,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(MSBuildProjectDirectory)\dependencies;$(MSBuildProjectDirectory)\dependencies\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MSBuildProjectDirectory)\dependencies\zlib;$(MSBuildProjectDirectory)\dependencies\lz4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -125,7 +130,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>$(MSBuildProjectDirectory)\dependencies\zlib\build\Release\zlibstatic.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(MSBuildProjectDirectory)\dependencies\zlib\build\Release\zlibstatic.lib;$(MSBuildProjectDirectory)\dependencies\lz4\static\liblz4_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -137,13 +142,14 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(MSBuildProjectDirectory)\dependencies\lz4\include;$(MSBuildProjectDirectory)\dependencies\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <ModuleDefinitionFile>fwmod-core.def</ModuleDefinitionFile>
-      <AdditionalDependencies>$(MSBuildProjectDirectory)\dependencies\zlib\lib\zlibstatic.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(MSBuildProjectDirectory)\dependencies\zlib\build\Release\zlibstatic.lib;$(MSBuildProjectDirectory)\dependencies\lz4\static\liblz4_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -165,6 +171,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>$(MSBuildProjectDirectory)\dependencies\zlib\build\Release\zlibstatic.lib;$(MSBuildProjectDirectory)\dependencies\lz4\static\liblz4_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -179,18 +186,25 @@
     <ClInclude Include="GreenFreddyTools\CCNParser\CCNPackage.h" />
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\AppHeader.h" />
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\Chunks.h" />
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\Image.h" />
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ImageBank.h" />
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ImageManager.h" />
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ImageOffsets.h" />
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectHeaders.h" />
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectNames.h" />
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectProperties.h" />
     <ClInclude Include="GreenFreddyTools\Utils\BitDict.h" />
     <ClInclude Include="GreenFreddyTools\Utils\Decompressor.h" />
+    <ClInclude Include="Globals.h" />
+    <ClInclude Include="Hooks.h" />
+    <ClInclude Include="Loader.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="preload.h" />
+    <ClInclude Include="Preload.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Globals.cpp" />
     <ClCompile Include="GreenFreddyTools\BinaryTools\Binary.cpp" />
     <ClCompile Include="GreenFreddyTools\BinaryTools\BinaryReader.cpp" />
     <ClCompile Include="GreenFreddyTools\BinaryTools\BinaryTools.cpp" />
@@ -199,10 +213,13 @@
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\AppHeader.cpp" />
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\Chunks.cpp" />
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ImageBank.cpp" />
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ImageManager.cpp" />
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ImageOffsets.cpp" />
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ObjectHeaders.cpp" />
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ObjectNames.cpp" />
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ObjectProperties.cpp" />
     <ClCompile Include="GreenFreddyTools\Utils\Decompressor.cpp" />
+    <ClCompile Include="Loader.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -210,7 +227,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="preload.cpp" />
+    <ClCompile Include="Preload.cpp" />
+    <ClCompile Include="Hooks.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GreenFreddyTools\BinaryTools\BinaryTools.vcxproj" />
