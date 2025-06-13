@@ -4,6 +4,7 @@
 #include "Chunks.h"
 #include "ImageOffsets.h"
 #include <unordered_map>
+#include "Utils/BitDict.h"
 
 struct Image {
     uint32_t Handle = 0;  
@@ -14,7 +15,16 @@ struct Image {
     int16_t Width = 0;  
     int16_t Height = 0;  
     uint8_t GraphicMode = 0;  
-    uint8_t Flags = 0;  
+    BitDict<uint8_t> Flags = BitDict<uint8_t>(std::vector<std::string>{
+        "RLE",
+        "RLEW",
+        "RLET",
+        "LZX",
+        "Alpha",
+        "ACE",
+        "Mac",
+        "RGBA"
+    }, 0);
     uint16_t padding = 0; // Skip 2 bytes
     int16_t HotspotX = 0;  
     int16_t HotspotY = 0;  
@@ -23,6 +33,9 @@ struct Image {
     uint32_t TransparentColor = 0; // TODO: create a structure, RGBA color
     int32_t decompSizePlus = 0;
     std::vector<char> data;
+    static void WriteImage(BinaryWriter& writer, const Image& image, bool compress);
+    static Image ReadImage(BinaryReader& reader, bool decompress = false);
+    static Image& DecompressImage(Image& img);
 };
 
 #define IMAGESIZE sizeof(Image) - sizeof(std::vector<char>)

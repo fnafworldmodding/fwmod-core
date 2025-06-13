@@ -128,7 +128,7 @@ static Image createImage(uint32_t handle, const std::string& path, bool compress
         }
 
         bitmap.UnlockBits(&bmpData);
-		img.Flags = 144; // it's both RGBA and Alpha
+        img.Flags.SetValue(144); // it's both RGBA and Alpha
 
         if (compress) {
             // Calculate compressed size
@@ -147,12 +147,16 @@ static Image createImage(uint32_t handle, const std::string& path, bool compress
                 img.data = std::move(compressedData);
                 img.data.resize(compressedSize);
                 img.decompSizePlus = img.Width * img.Height * 4; // because it's a bitmap
-                img.Flags = 152;
+                img.Flags.SetFlag("LZX", true);
+            }
+            else {
+                // Compression failed, raise runtime error
+				throw std::runtime_error("Image compression failed for image: " + std::to_string(handle));
             }
         }
     }
 
-    img.dataSize = static_cast<int32_t>(img.data.size());
+    img.dataSize = static_cast<int32_t>(img.data.size()) + (compress ? 4 : 0);
     img.GraphicMode = 8; // ctf 2.5+
     return img;
 }
