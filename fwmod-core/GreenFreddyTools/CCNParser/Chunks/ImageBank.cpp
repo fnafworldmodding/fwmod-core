@@ -110,28 +110,31 @@ void ImageBank::Write(BinaryWriter& buffer, bool _) {
 #endif
 }
 
-void ImageBank::Write(BinaryWriter& buffer, bool _, OffsetsVector& offsets) {
-    // TODO: implement compression?
-    // Write the size of the image bank
-    this->size = 0;
-    this->WriteHeader(buffer); // id short, flag short, size int
-    size_t ChunkPosition = std::move(buffer.Position());
     /*
     sizeof(int32_t); // Size of count integer
     for (const auto& [_, img] : this->images) {
-		offsets.push_back(this->size + OFFSET_ADDTION);
+        offsets.push_back(this->size + OFFSET_ADDTION);
         this->size += IMAGESIZE; // Struct size without vector
         this->size += img.dataSize - 4;
     }
     */
+
+
+void ImageBank::Write(BinaryWriter& buffer, bool _, OffsetsVector& offsets) {
+    // TODO: implement compression?
+    this->size = 0;
+    this->WriteHeader(buffer); // id short, flag short, size int
+    size_t ChunkPosition = std::move(buffer.Position());
+
+
     int imagesCount = static_cast<int>(this->images.size());
     buffer.WriteInt32(imagesCount);
-    // Write each image in any order
     for (uint32_t handle : originalImageHandlesOrder) {
         auto it = this->images.find(handle);
         if (it != this->images.end()) {
-			int offset = (buffer.Position() - ChunkPosition) + OFFSET_ADDTION;
-            offsets[handle-1] = offset; // Store offset for each image
+            size_t pos = buffer.Position();
+			int offset = (pos - ChunkPosition) + OFFSET_ADDTION;
+            offsets[handle-1] = offset;
             WriteImage(buffer, it->second);
         }
     }
@@ -196,7 +199,7 @@ Image Image::ReadImage(BinaryReader& buffer, bool decompress) {
 }
 
 
-void Image::WriteImage(BinaryWriter& buffer, const Image& img, bool decompress) {
+void Image::WriteImage(BinaryWriter& buffer, const Image& img, bool compress) {
     buffer.WriteUint32(img.Handle);
     buffer.WriteInt32(img.Checksum);
     buffer.WriteInt32(img.References);
@@ -226,208 +229,3 @@ void Image::WriteImage(BinaryWriter& buffer, const Image& img, bool decompress) 
     buffer.WriteFromMemory(img.data.data(), ldataSize);
 }
 
-
-#include <cstdint>
-
-// Assumed helper functions and types
-/*
-int GetPadding(const Image & img) {
-    // Assume 4-byte alignment for scanlines
-    int rowSize = img.Width * 3;
-    int pad = (4 - (rowSize % 4)) % 4;
-    return pad;
-}
-
-struct NebulaCore {
-    static constexpr bool Plus = true;
-    static constexpr float Fusion = 2.5f;
-    static constexpr bool Android = false;
-    static constexpr bool iOS = false;
-    static constexpr int Build = 300;
-};
-*/
-
-static int GetPadding(Image img)
-{
-    int colorModeSize = 3;
-    int modSize = 2;
-
-    switch (img.GraphicMode)
-    {
-    case 3:
-        colorModeSize = 1;
-        modSize = 4;
-        break;
-    case 6:
-    case 7:
-        colorModeSize = 2;
-        break;
-    case 0:
-    case 8:
-        colorModeSize = 4;
-        break;
-    }
-
-    return img.Width * colorModeSize % modSize;
-}
-
-int GetAlphaPadding(const Image& img) {
-    return (4 - (img.Width % 4)) % 4;
-}
-
-struct TransparentColorStruct {
-    uint8_t R, G, B, A = 0;
-};
-
-
-// Assumes Image struct has: Width, Height, data (std::vector<char>), Flags (BitDict), TransparentColor (uint32_t or struct), etc.
-// Assumes TransparentColorStruct { uint8_t R, G, B, A; } and GetPadding, GetAlphaPadding are available.
-// TODO: fix the single off pixel problem
-std::vector<uint8_t> RGBAToRGBMasked(const Image& img) {
-    // b output buffer: over-allocate, will resize at end
-    std::vector<uint8_t> colorArray(img.Width * img.Height * 8);
-    int stride = img.Width * 4;
-    int pad = GetPadding(img);
-    int position = 0;
-
-    // Extract transparent color
-    TransparentColorStruct transparentColor;
-    transparentColor.R = (img.TransparentColor >> 16) & 0xFF;
-    transparentColor.G = (img.TransparentColor >> 8) & 0xFF;
-    transparentColor.B = (img.TransparentColor) & 0xFF;
-    transparentColor.A = (img.TransparentColor >> 24) & 0xFF;
-
-    bool hasAlpha = img.Flags.GetFlag("Alpha");
-    bool hasRGBA = img.Flags.GetFlag("RGBA");
-
-    // Main RGB loop
-    for (int y = 0; y < img.Height; ++y) {
-        for (int x = 0; x < img.Width; ++x) {
-            int pos = (y * stride) + (x * 4);
-            if (pos + 3 >= static_cast<int>(img.data.size()) || position + 2 >= static_cast<int>(colorArray.size()))
-                break;
-
-            colorArray[position + 0] = static_cast<uint8_t>(img.data[pos + 0]);
-            colorArray[position + 1] = static_cast<uint8_t>(img.data[pos + 1]);
-            colorArray[position + 2] = static_cast<uint8_t>(img.data[pos + 2]);
-            colorArray[position + 3] = static_cast<uint8_t>(img.data[pos + 3]);
-
-            if (!hasAlpha && hasRGBA && static_cast<uint8_t>(img.data[pos + 3]) != 255) {
-                colorArray[position + 2] = transparentColor.R;
-                colorArray[position + 1] = transparentColor.G;
-                colorArray[position + 0] = transparentColor.B;
-            }
-
-            position += 3;
-        }
-        position += pad * 3;
-    }
-
-    // Alpha channel mask
-    if (hasAlpha) {
-        int aPad = GetAlphaPadding(img);
-        for (int y = 0; y < img.Height; ++y) {
-            for (int x = 0; x < img.Width; ++x) {
-                int pos = (y * stride) + (x * 4);
-                if (position >= static_cast<int>(colorArray.size()) || pos + 3 >= static_cast<int>(img.data.size()))
-                    break;
-                colorArray[position] = static_cast<uint8_t>(img.data[pos + 3]);
-                position += 1;
-            }
-            position += aPad;
-        }
-    }
-
-    colorArray.resize(position);
-    return colorArray;
-}
-
-
-// Converts a 2.5+ format image to RGBA byte array
-std::vector<uint8_t> TwoFivePlusToRGBA(const Image& img) {
-    // Logging (optional, can be removed or replaced with your logger)
-    // std::cout << "TwoFivePlusToRGBA, Image Data Size: " << img.data.size()
-    //           << ", Size: " << img.Width << "x" << img.Height
-    //           << ", Alpha: " << img.Flags.GetFlag("Alpha")
-    //           << ", Transparent Color: " << img.TransparentColor
-    //           << ", img.Flags[\"RGBA\"]: " << img.Flags.GetFlag("RGBA") << std::endl;
-
-    std::vector<uint8_t> colorArray(img.Width * img.Height * 4, 0);
-    int stride = img.Width * 4;
-    int pad = GetPadding(img);
-    int position = 0;
-
-    // Extract transparent color
-    TransparentColorStruct transparentColor;
-    transparentColor.R = (img.TransparentColor >> 16) & 0xFF;
-    transparentColor.G = (img.TransparentColor >> 8) & 0xFF;
-    transparentColor.B = (img.TransparentColor) & 0xFF;
-    transparentColor.A = (img.TransparentColor >> 24) & 0xFF;
-
-    bool hasAlpha = img.Flags.GetFlag("Alpha");
-    bool hasRGBA = img.Flags.GetFlag("RGBA");
-
-    // NebulaCore::Fusion and NebulaCore::Seeded are not defined in this context.
-    // For now, always use the "else" branch. If you have these, replace accordingly.
-    constexpr float NebulaCore_Fusion = 2.5f;
-    constexpr bool NebulaCore_Seeded = false;
-    constexpr bool PremultipliedAlpha = true; // Set to true if needed
-
-    for (int y = 0; y < img.Height; ++y) {
-        for (int x = 0; x < img.Width; ++x) {
-            int newPos = (y * stride) + (x * 4);
-            if (position + 2 >= static_cast<int>(img.data.size()))
-                break;
-
-            if (NebulaCore_Fusion == 3.0f && !NebulaCore_Seeded) {
-                colorArray[newPos + 0] = static_cast<uint8_t>(img.data[position + 2]);
-                colorArray[newPos + 1] = static_cast<uint8_t>(img.data[position + 1]);
-                colorArray[newPos + 2] = static_cast<uint8_t>(img.data[position + 0]);
-            } else {
-                colorArray[newPos + 0] = static_cast<uint8_t>(img.data[position + 0]);
-                colorArray[newPos + 1] = static_cast<uint8_t>(img.data[position + 1]);
-                colorArray[newPos + 2] = static_cast<uint8_t>(img.data[position + 2]);
-            }
-            colorArray[newPos + 3] = 255;
-
-            if (hasAlpha || hasRGBA) {
-                if (PremultipliedAlpha) {
-                    float a = static_cast<uint8_t>(img.data[position + 3]) / 255.0f;
-                    if (a > 0.0f) {
-                        colorArray[newPos + 0] = static_cast<uint8_t>(colorArray[newPos + 0] / a);
-                        colorArray[newPos + 1] = static_cast<uint8_t>(colorArray[newPos + 1] / a);
-                        colorArray[newPos + 2] = static_cast<uint8_t>(colorArray[newPos + 2] / a);
-                    }
-                }
-                colorArray[newPos + 3] = static_cast<uint8_t>(img.data[position + 3]);
-            } else {
-                if (colorArray[newPos + 2] == transparentColor.R &&
-                    colorArray[newPos + 1] == transparentColor.G &&
-                    colorArray[newPos + 0] == transparentColor.B) {
-                    colorArray[newPos + 3] = 0;
-                }
-            }
-            position += 4;
-        }
-        position += pad * 4;
-    }
-
-    if (position == static_cast<int>(img.data.size()))
-        return colorArray;
-
-    if (hasAlpha && !hasRGBA) {
-        int aPad = GetAlphaPadding(img);
-        int aStride = img.Width * 4;
-        for (int y = 0; y < img.Height; ++y) {
-            for (int x = 0; x < img.Width; ++x) {
-                if (position >= static_cast<int>(img.data.size()))
-                    break;
-                colorArray[(y * aStride) + (x * 4) + 3] = static_cast<uint8_t>(img.data[position]);
-                position += 1;
-            }
-            position += aPad;
-        }
-    }
-
-    return colorArray;
-}
