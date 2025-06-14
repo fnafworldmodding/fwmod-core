@@ -32,47 +32,6 @@ bool ImageBank::Init() {
 }
 
 static void WriteImage(BinaryWriter& writer, const Image& img) {
-    /*
-    // Handle field
-    writer.WriteInt32(img.Handle);
-    // Checksum field
-    writer.WriteInt32(img.Checksum);
-    // References field
-    writer.WriteInt32(img.References);
-    // unknown field (always 1)
-    writer.WriteInt32(img.unknown);
-    // dataSize field
-    writer.WriteInt32(img.dataSize);
-    // Width and Height
-    writer.WriteInt16(img.Width);
-    writer.WriteInt16(img.Height);
-    // GraphicMode and Flags
-    writer.WriteUint8(img.GraphicMode);
-    writer.WriteUint8(img.Flags);
-    // padding field
-    writer.WriteUint16(img.padding);
-    // Hotspot coordinates
-    writer.WriteInt16(img.HotspotX);
-    writer.WriteInt16(img.HotspotY);
-    // Action point coordinates
-    writer.WriteInt16(img.ActionPointX);
-    writer.WriteInt16(img.ActionPointY);
-    // Transparent color
-    writer.WriteUint32(img.TransparentColor);
-    // decompSizePlus
-    writer.WriteInt32(img.decompSizePlus);
-    // Write the actual image data
-    BitDict dict(std::vector<std::string>{ // FIXME: this is wrong, LZX is false when it's true, probably bit indexing issues
-        "RLE",
-        "RLEW",
-        "RLET",
-        "LZX",
-        "Alpha",
-        "ACE",
-        "Mac",
-        "RGBA"
-    });
-    */
 	Image::WriteImage(writer, img, false); // Write without decompression
 }
 
@@ -124,7 +83,7 @@ void ImageBank::Write(BinaryWriter& buffer, bool _, OffsetsVector& offsets) {
     // TODO: implement compression?
     this->size = 0;
     this->WriteHeader(buffer); // id short, flag short, size int
-    size_t ChunkPosition = std::move(buffer.Position());
+    size_t ChunkPosition = buffer.Position();
 
 
     int imagesCount = static_cast<int>(this->images.size());
