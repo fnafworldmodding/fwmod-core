@@ -19,7 +19,8 @@ HANDLE WINAPI CreateFileWHook(
     HANDLE                hTemplateFile
 );
 
-void InstallHook(void* func2hook, void* payloadFunction);
+bool InstallInlineHook(void* func2hook, void* payloadFunction);
+bool InstallRawHook(void* func2hook, std::vector<uint8_t> payload, int NOPsCount);
 void InitializeHooks();
 
 #endif // !FWHOOKS_H

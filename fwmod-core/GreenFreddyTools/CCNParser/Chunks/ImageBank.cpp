@@ -10,14 +10,11 @@
 static std::vector<uint32_t> originalImageHandlesOrder;
 #endif
 
-// use Image:WriteImage and Image::ReadImage static functions instead of ImageBank::WriteImage
+// TODO: use Image:WriteImage and Image::ReadImage static functions instead of ImageBank::WriteImage
 
 bool ImageBank::Init() {
     // TODO: check if this->data is compressed and handle accordingly, do we even need to decompress data?
     BinaryReader buffer(this->data.data(), this->data.size());
-    //BinaryWriter writer("og-ImageBank.dat");
-    //this->WriteHeader(writer);
-    //writer.WriteFromMemory(this->data.data(), this->data.size());
     int count = buffer.ReadInt32();
 
     this->images.reserve(count);
