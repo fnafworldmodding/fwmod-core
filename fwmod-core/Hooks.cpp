@@ -3,7 +3,7 @@
 #include "Preload.h"
 
 constexpr auto TARGET_OPENDAT_OFFSET = 0xB9EC;
-constexpr auto TARGET_LOADEXT_OFFSET = 0x4bf7f;
+constexpr auto TARGET_LOADEXT_OFFSET = 0x4BF12;
 
 extern "C" static
 HANDLE WINAPI CreateFileWHook(
@@ -15,9 +15,6 @@ HANDLE WINAPI CreateFileWHook(
     DWORD                 dwFlagsAndAttributes,
     HANDLE                hTemplateFile
 ) {
-#ifdef _DEBUG
-    MessageBoxA(nullptr, "Hi, you can debug now!", "Message", MB_OK | MB_ICONINFORMATION);
-#endif
     Gdiplus::GdiplusStartupInput gdiplusStartupInput;
     ULONG_PTR gdiplusToken;
     Gdiplus::Status gdiplusStatus = Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
@@ -93,6 +90,7 @@ bool InstallInlineHook(void* func2hook, void* payloadFunction)
 
 
 bool InstallRawHook(void* func2hook, std::vector<uint8_t> payload, int NOPsCount) {
+    // TODO: make use of NOPsCount, it is supposed to be something of overwrite x nops than write payload
     if (!func2hook || payload.empty())
     {
         CoreLogger.Error("InstallHook: Invalid parameters.");
@@ -133,6 +131,7 @@ bool InstallRawHook(void* func2hook, std::vector<uint8_t> payload, int NOPsCount
     return 1;
 }
 
+extern "C" static
 HMODULE WINAPI LoadLibraryExWHook(LPCWSTR lpLibFileName, HANDLE hFile, DWORD dwFlags)
 {
     // TODO: implement
@@ -140,15 +139,34 @@ HMODULE WINAPI LoadLibraryExWHook(LPCWSTR lpLibFileName, HANDLE hFile, DWORD dwF
 }
 
 
+bool InstallEdiHook(void* func2hook, void* payloadFunction) {
+    const uint8_t* offsetBytes = reinterpret_cast<const uint8_t*>(&payloadFunction);
+    std::vector<uint8_t> vInstruction = {
+        0xBF,                      // Opcode for MOV EDI, imm32
+        offsetBytes[0],            // 32-bit address
+        offsetBytes[1],
+        offsetBytes[2],
+        offsetBytes[3],
+        0x90
+    };
+    return InstallRawHook(func2hook, vInstruction);
+}
+
+
+
 void InitializeHooks() {
     PBYTE pModuleBase = (PBYTE)GetModuleHandle(NULL); // Get base address of the main executable
     PVOID pTargetOpenDatCallAddress = pModuleBase + TARGET_OPENDAT_OFFSET;
     PVOID pTargetLoadExtCallAddress = pModuleBase + TARGET_LOADEXT_OFFSET;
-    // 0x9a offset to the other `mov edi,dword ptr ds:[<LoadLibraryExW>]`
+    PVOID pTargetLoadExtCallAddres2 = pModuleBase + TARGET_LOADEXT_OFFSET + 0x9a; // 0x9a offset to the other `mov edi,dword ptr ds:[<LoadLibraryExW>]`
 
 
     if (!InstallInlineHook(pTargetOpenDatCallAddress, (PVOID)CreateFileWHook)) {
         CoreLogger.Error("failed installing hook CreateFileWHook");
+        return;
+    }
+    if (!InstallEdiHook(pTargetLoadExtCallAddress, (PVOID)LoadLibraryExWHook) || !InstallEdiHook(pTargetLoadExtCallAddres2, (PVOID)LoadLibraryExWHook)) {
+        CoreLogger.Error("failed installing hook LoadLibraryExWHook");
         return;
     }
 }

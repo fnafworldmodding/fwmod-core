@@ -20,7 +20,8 @@ HANDLE WINAPI CreateFileWHook(
 );
 
 bool InstallInlineHook(void* func2hook, void* payloadFunction);
-bool InstallRawHook(void* func2hook, std::vector<uint8_t> payload, int NOPsCount);
+bool InstallRawHook(void* func2hook, std::vector<uint8_t> payload, int NOPsCount = 0);
+bool InstallEdiHook(void* func2hook, void* payloadFunction);
 void InitializeHooks();
 
 #endif // !FWHOOKS_H
