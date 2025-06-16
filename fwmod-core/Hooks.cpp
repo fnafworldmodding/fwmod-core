@@ -21,7 +21,12 @@ HANDLE WINAPI CreateFileWHook(
     if (gdiplusStatus != Gdiplus::Ok) {
         throw std::runtime_error("Failed to initialize GDI+");
     }
-    StartPreloadProcess();
+    try {
+        StartPreloadProcess();
+    }
+    catch (const std::exception& e) {
+        CoreLogger.Error(e.what());
+    }
     Gdiplus::GdiplusShutdown(gdiplusToken);
     // forwards all the received parameters to the actual CreateFileW function
     return ::CreateFileW(

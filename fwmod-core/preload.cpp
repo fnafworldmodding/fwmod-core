@@ -10,15 +10,19 @@
 #include "CCNParser\Chunks\ImageManager.h" // for PluginsEventManager.AddListener("Chunks", ...)
 
 
-#define DAT_PREFIX std::string("og-")
+#define DAT_SUFFIX std::string("og-")
 std::atomic<bool> PreloadStateReady = false;
 
-
-inline static std::string addPrefix(const std::string& path, const std::string& prefix) {
+inline static std::string addSuffix(const std::string& path, const std::string& suffix) {
     size_t lastSlash = path.find_last_of("\\/");
-    std::string filename = path.substr(lastSlash + 1);
-    return path.substr(0, lastSlash + 1) + prefix + filename;
+    size_t lastDot = path.find_last_of('.', path.length());
+
+    std::string name = (lastDot == std::string::npos) ? path.substr(lastSlash + 1) : path.substr(lastSlash + 1, lastDot - lastSlash - 1);
+    std::string ext = (lastDot == std::string::npos) ? "" : path.substr(lastDot);
+
+    return path.substr(0, lastSlash + 1) + name + "-" + suffix + ext;
 }
+
 
 
 inline static  std::string getCurrentProcessName() {
@@ -96,13 +100,11 @@ void StartPreloadProcess() {
         ImageManager* imageManager = new ImageManager();
         imageManager->imageBank = imagebank;
         imageManager->imageOffsets = imageoffsets;
-        // Insert the ImageManager chunk at the position where ImageBank was removed'
-        BinaryWriter BW("imageManagerTest.dat");
-		imageManager->Write(BW);
+        // Insert the ImageManager chunk at the position where ImageBank was removed
         chunks.insert(chunks.begin() + imagebankpos, imageManager);
     });
      
-    std::string datPath = addPrefix(getDatFilePath(), DAT_PREFIX);
+    std::string datPath = addSuffix(getDatFilePath(), DAT_SUFFIX);
     const char* filePath = datPath.c_str();
     if (GetFileAttributesA(filePath) == INVALID_FILE_ATTRIBUTES) {
         char currentDir[MAX_PATH];

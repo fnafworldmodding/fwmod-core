@@ -40,11 +40,7 @@ void loadImagesFromFolderToMap(ImageMap& imageBank) {
                 img.ActionPointY = imageBank[id].ActionPointY;
                 img.References = imageBank[id].References;
 				img.TransparentColor = imageBank[id].TransparentColor;
-                // Turn off the ALPHA flag
-                //img.Flags.SetFlag("ALPHA", false);
                 // Store in map with filename as key
-                BinaryWriter writer("img loaded-" + std::to_string(img.Handle) + ".bitmap");
-                writer.WriteFromMemory(img.data.data(), img.dataSize);
                 imageBank[id] = img;
             }
 
