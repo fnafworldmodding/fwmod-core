@@ -10,7 +10,7 @@
 #include "CCNParser\Chunks\ImageManager.h" // for PluginsEventManager.AddListener("Chunks", ...)
 
 
-#define DAT_SUFFIX std::string("og-")
+#define DAT_SUFFIX std::string("og")
 std::atomic<bool> PreloadStateReady = false;
 
 inline static std::string addSuffix(const std::string& path, const std::string& suffix) {

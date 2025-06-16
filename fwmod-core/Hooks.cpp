@@ -4,6 +4,8 @@
 
 constexpr auto TARGET_OPENDAT_OFFSET = 0xB9EC;
 constexpr auto TARGET_LOADEXT_OFFSET = 0x4BF12;
+#pragma warning(push)
+#pragma warning(disable : 4297)
 
 extern "C" static
 HANDLE WINAPI CreateFileWHook(
@@ -39,6 +41,7 @@ HANDLE WINAPI CreateFileWHook(
         hTemplateFile
     );
 }
+#pragma warning(pop)
 
 bool InstallInlineHook(void* func2hook, void* payloadFunction)
 {
@@ -140,7 +143,7 @@ extern "C" static
 HMODULE WINAPI LoadLibraryExWHook(LPCWSTR lpLibFileName, HANDLE hFile, DWORD dwFlags)
 {
     // TODO: implement
-    return 0;
+    return LoadLibraryExW(lpLibFileName, hFile, dwFlags);
 }
 
 

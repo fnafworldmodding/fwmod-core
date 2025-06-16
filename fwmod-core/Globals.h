@@ -3,6 +3,9 @@
 #define FWGLOBALS_H
 #pragma once
 
+#define IMAGEOGORDER
+#define XLUAEXT
+
 #include "CCNParser\CCNPackage.h"
 #include "CCNParser\Chunks\Chunks.h"
 #include "EventManager.h"

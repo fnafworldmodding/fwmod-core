@@ -2,10 +2,11 @@
 #include "ImageOffsets.h"
 #include "../../Utils/Decompressor.h"
 #include "../../Utils/BitDict.h"
+#include "../Globals.h"
 #include <lz4.h>
 #include <algorithm>
 
-#ifdef _DEBUG
+#ifdef IMAGEOGORDER
 #include <vector>
 static std::vector<uint32_t> originalImageHandlesOrder;
 #endif
@@ -21,7 +22,7 @@ bool ImageBank::Init() {
     for (int i = 0; i < count; ++i) {
         Image img = Image::ReadImage(buffer);
         this->images[img.Handle] = img;
-#ifdef _DEBUG
+#ifdef IMAGEOGORDER
         originalImageHandlesOrder.push_back(img.Handle);
 #endif
     }
@@ -36,9 +37,6 @@ void ImageBank::Write(BinaryWriter& buffer, bool _) {
     // TODO: either update or remove
     // TODO: implement compression?
     // Write the size of the image bank
-#ifdef _DEBUG
-    BinaryWriter writer("ImageBank.dat");
-#endif
     int imagesCount = static_cast<int>(this->images.size());
     this->size = sizeof(int32_t); // Size of count integer
     for (const auto& [_, img] : this->images) {
@@ -47,15 +45,12 @@ void ImageBank::Write(BinaryWriter& buffer, bool _) {
     }
     this->WriteHeader(buffer);
     buffer.WriteInt32(imagesCount);
-#ifdef _DEBUG
-    this->WriteHeader(writer);
-    writer.WriteInt32(imagesCount);
+#ifdef IMAGEOGORDER
     // Write images in the order of originalImageHandlesOrder
     for (uint32_t handle : originalImageHandlesOrder) {
         auto it = this->images.find(handle);
         if (it != this->images.end()) {
             WriteImage(buffer, it->second);
-            WriteImage(writer, it->second);
         }
     }
 #else
