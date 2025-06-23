@@ -78,10 +78,21 @@ void BinaryWriter::WriteChar(char value)
     stream_->write(reinterpret_cast<const char*>(&value), 1);
 }
 
+void BinaryWriter::WriteWChar(wchar_t value)
+{
+    stream_->write(reinterpret_cast<const char*>(&value), 1);
+}
+
 void BinaryWriter::WriteNullTerminatedString(const std::string& value)
 {
     stream_->write(value.data(), value.size());
     WriteChar('\0');
+}
+
+void BinaryWriter::WriteNullTerminatedStringWide(const std::wstring& value)
+{
+    stream_->write(reinterpret_cast<const char*>(value.data()), static_cast<std::streamsize>(value.size()) * sizeof(std::wstring::value_type));
+    WriteWChar('\0');
 }
 
 void BinaryWriter::WriteFixedLengthString(const std::string& value)

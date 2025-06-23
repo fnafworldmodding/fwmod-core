@@ -32,8 +32,11 @@ public:
     void WriteInt64(int64_t value);
 
     void WriteChar(char value);
+    void WriteWChar(wchar_t value);
     //Write string to output with null terminator
     void WriteNullTerminatedString(const std::string& value);
+    //Write unicode string to output with null terminator
+    void WriteNullTerminatedStringWide(const std::wstring& value);
     //Write string to output without null terminator
     void WriteFixedLengthString(const std::string& value);
 
