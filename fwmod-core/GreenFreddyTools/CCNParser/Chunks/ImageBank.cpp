@@ -90,7 +90,7 @@ void ImageBank::Write(BinaryWriter& buffer, bool _, OffsetsVector& offsets) {
         }
     }
 
-    size_t finalSize = (buffer.Position() - ChunkPosition) + sizeof(int32_t);
+    size_t finalSize = (buffer.Position() - ChunkPosition);
     size_t sizePosition = ChunkPosition - sizeof(int32_t);
     buffer.SeekBeg(sizePosition);
     buffer.WriteInt32(static_cast<int32_t>(finalSize));
