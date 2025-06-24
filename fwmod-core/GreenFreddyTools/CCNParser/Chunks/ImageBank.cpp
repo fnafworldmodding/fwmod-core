@@ -94,10 +94,10 @@ void ImageBank::Write(BinaryWriter& buffer, bool _, OffsetsVector& offsets) {
     size_t sizePosition = ChunkPosition - sizeof(int32_t);
     buffer.SeekBeg(sizePosition);
     buffer.WriteInt32(static_cast<int32_t>(finalSize));
-    buffer.SeekCur(finalSize);  // Return to end of file
+    buffer.SeekCur(finalSize);
 }
 
-Image& Image::DecompressImage(Image& img) {
+void Image::DecompressImage(Image& img) {
     int compressedSize = img.dataSize - 4; // exclude the decompSizePlus field
 	int decompressSize = img.decompSizePlus; // THE size of the uncompressed data
 

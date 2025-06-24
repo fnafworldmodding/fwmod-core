@@ -35,7 +35,7 @@ struct Image {
     std::vector<char> data;
     static void WriteImage(BinaryWriter& writer, const Image& image, bool compress);
     static Image ReadImage(BinaryReader& reader, bool decompress = false);
-    static Image& DecompressImage(Image& img);
+    static void DecompressImage(Image& img);
 };
 
 #define IMAGESIZE sizeof(Image) - sizeof(std::vector<char>)
