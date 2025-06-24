@@ -3,6 +3,8 @@
 #include <fstream>
 #include <span>
 #include <memory>
+#include <functional>
+
 // TODO: use std::unique_ptr for buffer and stream
 
 struct MemoryBuffer;
@@ -58,7 +60,7 @@ public:
     {
         WriteFromMemory(data.data(), data.size_bytes());
     }
-    
+    void WriteDataWithDynamicSize(const std::function<void(BinaryWriter&, size_t)>& writeFunction);
     void SeekBeg(size_t absoluteOffset);
     void SeekCur(size_t relativeOffset);
     void Skip(size_t bytesToSkip);

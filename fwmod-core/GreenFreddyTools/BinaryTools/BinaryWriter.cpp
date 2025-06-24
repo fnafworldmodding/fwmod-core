@@ -2,6 +2,7 @@
 #include "MemoryBuffer.h"
 #include <filesystem>
 #include <fstream>
+#include <functional>
 
 BinaryWriter::BinaryWriter(std::string_view inputPath, bool truncate)
 {
@@ -114,6 +115,21 @@ void BinaryWriter::WriteFromMemory(const void* data, size_t size)
 {
     stream_->write(reinterpret_cast<const char*>(data), size);
 }
+
+// NOTE: it execpts that the size has already been written at the initial position
+void BinaryWriter::WriteDataWithDynamicSize(const std::function<void(BinaryWriter&, size_t)>& writeFunction) {
+    size_t initialPosition = this->Position();
+
+    writeFunction(*this, initialPosition);
+
+    size_t finalSize = (this->Position() - initialPosition);
+    size_t sizePosition = initialPosition - sizeof(int32_t); // Get the size position for the size field
+
+    this->SeekBeg(sizePosition);
+    this->WriteInt32(static_cast<int32_t>(finalSize));
+	this->SeekCur(finalSize); // Go back to the end of the written data
+}
+
 
 void BinaryWriter::SeekBeg(size_t absoluteOffset)
 {
