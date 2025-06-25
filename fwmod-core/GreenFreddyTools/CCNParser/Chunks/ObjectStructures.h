@@ -71,7 +71,10 @@ struct ObjectBackdrop {
 
 // CTF 2.5+ object common structure
 struct ObjectCommon {
+    //int Size = 0;
     ushort AnimationOffset = 0;
+    ushort MovementsOffset = 0;
+    ushort padding; // Unknown offset?
     ushort ExtensionOffset = 0;
     ushort ValueOffset = 0;
     int ObjectFlags = 0;
@@ -84,6 +87,7 @@ struct ObjectCommon {
     char Identifier[4]; // maybe use int instead?
     int BackColor = 0; // RGBA Color
 };
+
 /*
 // Unused
 template <typename StringType>
