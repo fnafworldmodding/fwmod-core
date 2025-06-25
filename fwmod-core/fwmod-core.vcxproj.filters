@@ -114,6 +114,9 @@
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ImageOffsets.h">
       <Filter>Header Files\CCNParser\Chunks</Filter>
     </ClInclude>
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectStructures.h">
+      <Filter>Header Files\CCNParser\Chunks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

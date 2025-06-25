@@ -94,7 +94,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;FWMODCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;FWMODCORE_EXPORTS;_WINDOWS;_USRDLL;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -117,7 +117,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;FWMODCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;FWMODCORE_EXPORTS;_WINDOWS;_USRDLL;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -193,6 +193,7 @@
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectHeaders.h" />
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectNames.h" />
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectProperties.h" />
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectStructures.h" />
     <ClInclude Include="GreenFreddyTools\Utils\BitDict.h" />
     <ClInclude Include="GreenFreddyTools\Utils\Decompressor.h" />
     <ClInclude Include="Globals.h" />

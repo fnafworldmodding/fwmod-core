@@ -142,7 +142,7 @@ bool InstallRawHook(void* func2hook, std::vector<uint8_t> payload, int NOPsCount
 extern "C" static
 HMODULE WINAPI LoadLibraryExWHook(LPCWSTR lpLibFileName, HANDLE hFile, DWORD dwFlags)
 {
-    // TODO: implement
+	// TODO: implement xlua preinitialization here
     return LoadLibraryExW(lpLibFileName, hFile, dwFlags);
 }
 

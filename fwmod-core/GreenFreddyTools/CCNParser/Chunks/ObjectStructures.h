@@ -1,3 +1,5 @@
+#ifndef OBJECTSTUCTURES_H_
+#define OBJECTSTUCTURES_H_
 #include "windows.h"
 #include <cstdint>
 #include <string>
@@ -35,12 +37,19 @@ struct ObjectShape {
     int borderColor = 0; // RGBA Color
     short ShapeType = 0;
     short FillType = 0;
-    short LineFlags = 0;
-    short Color1 = 0; // RGBA Color
-    short Color2 = 0; // RGBA Color
-    short VerticalGradient = 0;
+    union {
+        short LineFlags; // Only used if ShapeType == 1
+        struct {
+            int Color1;  // RGBA Color // Only used if FillType == 1 or FillType == 2
+            int Color2;  // RGBA Color // Only used if FillType == 2
+            short VerticalGradient; // Only used if FillType == 2
+        };
+    };
     short Image = 0;
+    ObjectShape Read(BinaryReader& reader);
+    void        Write(BinaryWriter& writer);
 };
+
 
 struct ObjectQuickBackdrop {
     int size = 0;
@@ -75,7 +84,8 @@ struct ObjectCommon {
     char Identifier[4]; // maybe use int instead?
     int BackColor = 0; // RGBA Color
 };
-
+/*
+// Unused
 template <typename StringType>
 std::vector<StringType> ReadObjectNames(BinaryReader& reader, size_t size) {
     // TODO: use size to prevent infinite loop or buffer overflow?
@@ -92,3 +102,6 @@ std::vector<StringType> ReadObjectNames(BinaryReader& reader, size_t size) {
     }
     return names;
 }
+*/
+
+#endif // !OBJECTSTUCTURES_H_

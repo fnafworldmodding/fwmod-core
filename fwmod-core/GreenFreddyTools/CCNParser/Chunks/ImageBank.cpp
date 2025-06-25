@@ -37,6 +37,7 @@ void ImageBank::Write(BinaryWriter& buffer, bool _) {
     // TODO: either update or remove
     // TODO: implement compression?
     // Write the size of the image bank
+	throw std::runtime_error("ImageBank::Write needs to be reimplemented. Use ImageBank::Write with OffsetsVector instead.");
     int imagesCount = static_cast<int>(this->images.size());
     this->size = sizeof(int32_t); // Size of count integer
     for (const auto& [_, img] : this->images) {
@@ -75,26 +76,20 @@ void ImageBank::Write(BinaryWriter& buffer, bool _, OffsetsVector& offsets) {
     // TODO: implement compression?
     this->size = 0;
     this->WriteHeader(buffer); // id short, flag short, size int
-    size_t ChunkPosition = buffer.Position();
+    buffer.WriteDataWithDynamicSize([&](BinaryWriter& buffer, size_t ChunkPosition) {
+        int imagesCount = static_cast<int>(this->images.size());
+        buffer.WriteInt32(imagesCount);
 
-
-    int imagesCount = static_cast<int>(this->images.size());
-    buffer.WriteInt32(imagesCount);
-    for (uint32_t handle : originalImageHandlesOrder) {
-        auto it = this->images.find(handle);
-        if (it != this->images.end()) {
-            size_t pos = buffer.Position();
-			int offset = (pos - ChunkPosition) + OFFSET_ADDTION;
-            offsets[handle-1] = offset;
-            WriteImage(buffer, it->second);
+        for (uint32_t handle : originalImageHandlesOrder) {
+            auto it = this->images.find(handle);
+            if (it != this->images.end()) {
+                int offset = (buffer.Position() - ChunkPosition) + OFFSET_ADDTION;
+                offsets[handle - 1] = offset;
+                WriteImage(buffer, it->second);
+            }
         }
-    }
 
-    size_t finalSize = (buffer.Position() - ChunkPosition);
-    size_t sizePosition = ChunkPosition - sizeof(int32_t);
-    buffer.SeekBeg(sizePosition);
-    buffer.WriteInt32(static_cast<int32_t>(finalSize));
-    buffer.SeekCur(finalSize);
+    });
 }
 
 void Image::DecompressImage(Image& img) {

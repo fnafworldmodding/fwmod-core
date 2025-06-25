@@ -32,8 +32,8 @@ void loadImagesFromFolderToMap(ImageMap& imageBank) {
                 int id = static_cast<uint32_t>(std::stoi(filename));
                 Image img2 = imageBank[id];
 
-                // Create Image object using provided createImage function
                 Image img = createImage(id, entry.path().string(), true);
+				// TODO: read mate file for hotspot and action point values/other
                 img.HotspotX = imageBank[id].HotspotX;
                 img.HotspotY = imageBank[id].HotspotY;
                 img.ActionPointX = imageBank[id].ActionPointX;
@@ -46,14 +46,7 @@ void loadImagesFromFolderToMap(ImageMap& imageBank) {
 
         }
     }
-    catch (const std::exception& e) {
-        // Log error and continue
-        // TODO: Replace with proper logging mechanism
-        //std::cerr << "Error loading images: " << e.what() << '\n';
-        //std::cout << "Filesystem error: " << e.what() << std::endl;
+    catch (const std::exception&) {
         throw;
     }
-
-    // Shutdown GDI+
-    //Gdiplus::GdiplusShutdown(gdiplusToken); // FIXME: commenting this out will get me assassinated just remember to NOT push to github till you solve it
 }

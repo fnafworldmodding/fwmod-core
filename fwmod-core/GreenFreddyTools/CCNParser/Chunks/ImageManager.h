@@ -7,7 +7,7 @@
 class ImageBank;
 class ImageOffsets;
 
-#define IMAGEMANAGER_CHUNK_ID 0x9999
+#define IMAGEMANAGER_CHUNK_ID static_cast<short>(0x9999)
 
 class ImageManager : public Chunk {
 public:
