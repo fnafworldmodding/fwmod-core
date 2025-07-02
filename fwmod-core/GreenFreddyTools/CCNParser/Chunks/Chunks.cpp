@@ -2,6 +2,8 @@
 #include "AppHeader.h"
 #include "ImageBank.h"
 #include "ImageOffsets.h"
+#include "ObjectHeaders.h"
+#include "ObjectProperties.h"
 #include "../../Utils/Decompressor.h"
 #include "../../Utils/BitDict.h"
 
@@ -70,6 +72,13 @@ Chunk* Chunk::InitChunk(BinaryReader& buffer, int flags) {
 		break;
 	case static_cast<short>(ChunksIDs::ImageOffsets):
 		chunk = new ImageOffsets(flag, size);
+		break;
+	// object chunks
+	case static_cast<short>(ChunksIDs::ObjectHeaders):
+		chunk = new ObjectHeaders(flag, size);
+		break;
+	case static_cast<short>(ChunksIDs::ObjectProperties):
+		chunk = new ObjectProperties(flag, size);
 		break;
 	default:
 		chunk = new Chunk(id, flag, size);

@@ -5,7 +5,7 @@
 #include "../Globals.h"
 #include <lz4.h>
 #include <algorithm>
-
+// TODO: remove whatever this is
 #ifdef IMAGEOGORDER
 #include <vector>
 static std::vector<uint32_t> originalImageHandlesOrder;
@@ -26,6 +26,7 @@ bool ImageBank::Init() {
         originalImageHandlesOrder.push_back(img.Handle);
 #endif
     }
+    this->FreeData();
     return true;
 }
 
