@@ -1,6 +1,8 @@
 #include "Chunks.h"
 #include "ObjectStructures.h"
 
+extern std::vector<ObjectHeader>* globalObjectHeaders;
+
 class ObjectHeaders : public Chunk {
 	public:
 	std::vector<ObjectHeader> headers;

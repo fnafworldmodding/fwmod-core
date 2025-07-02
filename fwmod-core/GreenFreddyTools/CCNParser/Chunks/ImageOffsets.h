@@ -2,7 +2,7 @@
 #define IMAGEOFFSET_H
 #pragma once
 #include "Chunks.h"
-
+// for some reason clickteam adds 260 to every offset
 #define OFFSET_ADDTION 260
 
 typedef std::vector<uint32_t> OffsetsVector;

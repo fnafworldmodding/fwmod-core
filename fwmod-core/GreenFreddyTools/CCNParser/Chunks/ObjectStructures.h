@@ -45,9 +45,42 @@ struct ObjectShape {
             short VerticalGradient; // Only used if FillType == 2
         };
     };
-    short Image = 0;
-    ObjectShape Read(BinaryReader& reader);
-    void        Write(BinaryWriter& writer);
+    ushort Image = 0;
+    void Read(BinaryReader& reader) {
+		BorderSize = reader.ReadInt16();
+        borderColor = reader.ReadInt32();
+        ShapeType = reader.ReadInt16();
+        FillType = reader.ReadInt16();
+        if (ShapeType == 1) {
+            LineFlags = reader.ReadInt16();
+        } else if (FillType == 1) {
+            Color1 = reader.ReadInt32();
+        } else if (FillType == 2) {
+            Color1 = reader.ReadInt32();
+            Color2 = reader.ReadInt32();
+            VerticalGradient = reader.ReadInt16() != 0;
+        }
+		Image = reader.ReadInt16();
+    };
+    void Write(BinaryWriter& writer) {
+        writer.WriteInt16(BorderSize);
+        writer.WriteInt32(borderColor);
+        writer.WriteInt16(ShapeType);
+        writer.WriteInt16(FillType);
+        if (ShapeType == 1) {
+            writer.WriteInt16(LineFlags);
+        } else if (FillType == 1) {
+            writer.WriteInt32(Color1);
+        } else if (FillType == 2) {
+            writer.WriteInt32(Color1);
+            writer.WriteInt32(Color2);
+            writer.WriteInt16(VerticalGradient);
+		}
+    };
+    void Read(char* data, size_t size) {
+		BinaryReader reader(data, size);
+		Read(reader);
+    }
 };
 
 
@@ -71,10 +104,10 @@ struct ObjectBackdrop {
 
 // CTF 2.5+ object common structure
 struct ObjectCommon {
-    //int Size = 0;
+    int unknown = 0; // idk
     ushort AnimationOffset = 0;
     ushort MovementsOffset = 0;
-    ushort padding; // Unknown offset?
+    ushort padding[2]; // possible offsets? paddings? possibly version value?
     ushort ExtensionOffset = 0;
     ushort ValueOffset = 0;
     int ObjectFlags = 0;
@@ -84,11 +117,11 @@ struct ObjectCommon {
     ushort AlterableStringsOffset = 0;
     ushort NewObjectFlags = 0;
     ushort PreferenceFlags = 0;
-    char Identifier[4]; // maybe use int instead?
+    char Identifier[4] = { 0,0,0,0 }; // maybe use int instead?
     int BackColor = 0; // RGBA Color
 };
 
-/*
+
 // Unused
 template <typename StringType>
 std::vector<StringType> ReadObjectNames(BinaryReader& reader, size_t size) {
@@ -106,6 +139,6 @@ std::vector<StringType> ReadObjectNames(BinaryReader& reader, size_t size) {
     }
     return names;
 }
-*/
+
 
 #endif // !OBJECTSTUCTURES_H_

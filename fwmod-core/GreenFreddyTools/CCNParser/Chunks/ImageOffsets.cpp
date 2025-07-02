@@ -10,7 +10,7 @@ bool ImageOffsets::Init() {
 	memcpy(this->offsets.data(), this->data.data(), this->size);
 	/*
 	for (int index = 0; index++; index) {
-		offsets[index] = reader.ReadInt32(); // for some reason clickteam adds 260 to every offset
+		offsets[index] = reader.ReadInt32();
 	}
 	*/
 	return true;
