@@ -1,9 +1,40 @@
 #include "Globals.h"
 #include "Hooks.h"
 #include "Preload.h"
+//
+#include <dbghelp.h>
+#include <exception>
+
+#pragma comment (lib,"dbghelp.lib")
 
 constexpr auto TARGET_OPENDAT_OFFSET = 0xB9EC;
 constexpr auto TARGET_LOADEXT_OFFSET = 0x4BF12;
+
+// TODO: should move to a header
+static inline std::string CaptureStackTrace() {
+    void* stack[100];
+    unsigned short frames;
+    SYMBOL_INFO* symbol;
+    HANDLE process = GetCurrentProcess();
+    std::ostringstream oss;
+
+    frames = CaptureStackBackTrace(0, 100, stack, nullptr);
+    symbol = (SYMBOL_INFO*)calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(char), 1);
+    if (symbol == NULL) {
+        return "Couldn't get trackback";
+    }
+    symbol->MaxNameLen = 255;
+    symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+
+    for (unsigned short i = 0; i < frames; i++) {
+        SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);
+        oss << "Frame " << i << ": " << symbol->Name << " - " << std::hex << symbol->Address << "\n";
+    }
+
+    free(symbol);
+    return oss.str();
+}
+
 #pragma warning(push)
 #pragma warning(disable : 4297)
 
@@ -17,6 +48,7 @@ HANDLE WINAPI CreateFileWHook(
     DWORD                 dwFlagsAndAttributes,
     HANDLE                hTemplateFile
 ) {
+    SymInitialize(GetCurrentProcess(), nullptr, TRUE);
     Gdiplus::GdiplusStartupInput gdiplusStartupInput;
     ULONG_PTR gdiplusToken;
     Gdiplus::Status gdiplusStatus = Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
@@ -27,7 +59,15 @@ HANDLE WINAPI CreateFileWHook(
         StartPreloadProcess();
     }
     catch (const std::exception& e) {
-        CoreLogger.Error(e.what());
+        std::ostringstream errorMessage;
+        errorMessage << "Error: " << e.what() << "\n";
+        errorMessage << CaptureStackTrace();
+
+        CoreLogger.Error(errorMessage.str());
+        // Display the error message in a message box
+        MessageBoxA(nullptr, errorMessage.str().c_str(), "Error", MB_OK | MB_ICONERROR);
+        ExitProcess(1);
+
     }
     Gdiplus::GdiplusShutdown(gdiplusToken);
     // forwards all the received parameters to the actual CreateFileW function
