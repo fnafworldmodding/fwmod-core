@@ -82,7 +82,10 @@ public:
     // vector based buffers
     //virtual short Read (std::vector<char>& buffer, long long flags);
     //virtual short Write(std::vector<char>& buffer, long long flags);
-
+    void FreeData() {
+        this->data.resize(0);
+        this->data.shrink_to_fit();
+    };
 	static Chunk* InitChunk(BinaryReader& buffer, int flags = 3); // InitFlags (DECOMPRESS | IGNOREUNKNOWN)
     virtual void Read(BinaryReader& buffer, bool decompress = true);
 	virtual void WriteHeader(BinaryWriter& buffer);
