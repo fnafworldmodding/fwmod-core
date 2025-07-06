@@ -5,7 +5,7 @@
 
 #define IMAGEOGORDER
 #define XLUAEXT
-
+#include "common.h"
 #include "CCNParser\CCNPackage.h"
 #include "CCNParser\Chunks\Chunks.h"
 #include "EventManager.h"
@@ -28,6 +28,7 @@
 #include <fstream>
 #include <ctime>
 #include <functional>
+
 
 // globals variables
 extern Logger CoreLogger;
