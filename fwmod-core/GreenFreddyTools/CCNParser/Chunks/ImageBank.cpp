@@ -14,12 +14,12 @@ static std::vector<uint32_t> originalImageHandlesOrder;
 // TODO: use Image:WriteImage and Image::ReadImage static functions instead of ImageBank::WriteImage
 
 bool ImageBank::Init() {
-    // TODO: check if this->data is compressed and handle accordingly, do we even need to decompress data?
     BinaryReader buffer(this->data.data(), this->data.size());
     int count = buffer.ReadInt32();
 
-    this->images.reserve(count);
+    this->images.reserve(count); 
     for (int i = 0; i < count; ++i) {
+        // TODO: probably a better thing would be directly reading the data to the struct than having a static method (avoid copying/moving)
         Image img = Image::ReadImage(buffer);
         this->images[img.Handle] = img;
 #ifdef IMAGEOGORDER
@@ -81,6 +81,13 @@ void ImageBank::Write(BinaryWriter& buffer, bool _, OffsetsVector& offsets) {
         int imagesCount = static_cast<int>(this->images.size());
         buffer.WriteInt32(imagesCount);
 
+#ifndef IMAGEOGORDER
+        for (const auto& [handle, img] : this->images) {
+            int offset = (buffer.Position() - ChunkPosition) + OFFSET_ADDTION;
+            offsets[handle - 1] = offset;
+            WriteImage(buffer, img);
+        }
+#else
         for (uint32_t handle : originalImageHandlesOrder) {
             auto it = this->images.find(handle);
             if (it != this->images.end()) {
@@ -89,7 +96,7 @@ void ImageBank::Write(BinaryWriter& buffer, bool _, OffsetsVector& offsets) {
                 WriteImage(buffer, it->second);
             }
         }
-
+#endif
     });
 }
 
@@ -111,9 +118,11 @@ void Image::DecompressImage(Image& img) {
     }
     uncompressedData.resize(decompressedSize);
     img.data = std::move(uncompressedData);
-    img.Flags.SetFlag("LZX", false); // Clear the LZX flag after decompression
+    img.Flags.SetFlag(ImageFlags::LZX, false); // Clear the LZX flag after decompression
 }
 
+// TODO: create an ReadImageEx that takes a handle and read the rest of the fields, to save memory and avoid copying/moving data
+// and unstatic them they can be a method instead of a static method
 Image Image::ReadImage(BinaryReader& buffer, bool decompress) {
     Image img;
     img.Handle = buffer.ReadUint32();
@@ -131,7 +140,7 @@ Image Image::ReadImage(BinaryReader& buffer, bool decompress) {
     img.ActionPointX = buffer.ReadInt16();
     img.ActionPointY = buffer.ReadInt16();
     img.TransparentColor = buffer.ReadUint32();
-	bool islzCompressed = img.Flags.GetFlag("LZX");
+	bool islzCompressed = img.Flags.GetFlag(ImageFlags::LZX);
 
     int ldataSize = img.dataSize - (islzCompressed ? 4 : 0);
     img.data.resize(ldataSize);
@@ -163,7 +172,7 @@ void Image::WriteImage(BinaryWriter& buffer, const Image& img, bool compress) {
     buffer.WriteInt16(img.ActionPointY);
     buffer.WriteUint32(img.TransparentColor);
 
-    bool islzCompressed = img.Flags.GetFlag("LZX");
+    bool islzCompressed = img.Flags.GetFlag(ImageFlags::LZX);
     int ldataSize = img.dataSize - (islzCompressed ? 4 : 0);
 	// TODO: compress the image data if compress is true
 

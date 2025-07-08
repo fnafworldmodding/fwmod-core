@@ -94,7 +94,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;FWMODCORE_EXPORTS;_WINDOWS;_USRDLL;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;FWMODEXPORTS;_DEBUG;FWMODCORE_EXPORTS;_WINDOWS;_USRDLL;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -106,7 +106,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>Gdiplus.lib;$(MSBuildProjectDirectory)\dependencies\zlib\build\Release\zlibstatic.lib;$(MSBuildProjectDirectory)\dependencies\lz4\build\visual\Visual Studio 17 2022_\Debug\lz4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbghelp.lib;Gdiplus.lib;$(MSBuildProjectDirectory)\dependencies\zlib\build\Release\zlibstatic.lib;$(MSBuildProjectDirectory)\dependencies\lz4\build\visual\Visual Studio 17 2022_\Debug\lz4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
     </Link>
@@ -117,7 +117,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;FWMODCORE_EXPORTS;_WINDOWS;_USRDLL;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;FWMODEXPORTS;NDEBUG;FWMODCORE_EXPORTS;_WINDOWS;_USRDLL;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -130,7 +130,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>Gdiplus.lib;$(MSBuildProjectDirectory)\dependencies\zlib\build\Release\zlibstatic.lib;$(MSBuildProjectDirectory)\dependencies\lz4\build\visual\Visual Studio 17 2022_\Debug\lz4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbghelp.lib;Gdiplus.lib;$(MSBuildProjectDirectory)\dependencies\zlib\build\Release\zlibstatic.lib;$(MSBuildProjectDirectory)\dependencies\lz4\build\visual\Visual Studio 17 2022_\Debug\lz4.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -178,6 +178,7 @@
     <ClInclude Include="common.h" />
     <ClInclude Include="EventManager.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="fwmod.h" />
     <ClInclude Include="GreenFreddyTools\BinaryTools\Binary.h" />
     <ClInclude Include="GreenFreddyTools\BinaryTools\BinaryReader.h" />
     <ClInclude Include="GreenFreddyTools\BinaryTools\BinaryWriter.h" />
@@ -204,7 +205,9 @@
     <ClInclude Include="Preload.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="cpp.hint" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="fwmod.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="GreenFreddyTools\BinaryTools\Binary.cpp" />
     <ClCompile Include="GreenFreddyTools\BinaryTools\BinaryReader.cpp" />

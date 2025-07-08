@@ -3,7 +3,7 @@
 #define FWGLOBALS_H
 #pragma once
 
-#define IMAGEOGORDER
+//#define IMAGEOGORDER
 #define XLUAEXT
 #include "common.h"
 #include "CCNParser\CCNPackage.h"
@@ -12,7 +12,6 @@
 #include "Logger.h"
 #include <format>
 // common included headers
-
 #include "pch.h"
 
 #include <iostream>
@@ -31,7 +30,7 @@
 
 
 // globals variables
-extern Logger CoreLogger;
-extern EventManager<std::vector<Chunk*>&, BinaryReader&, __int64&> PluginsEventManager;
+extern DLLCALL Logger CoreLogger;
+extern DLLCALL EventManager<std::vector<Chunk*>&, BinaryReader&, __int64&> PluginsEventManager;
 
 #endif // !FWGLOBALS_H

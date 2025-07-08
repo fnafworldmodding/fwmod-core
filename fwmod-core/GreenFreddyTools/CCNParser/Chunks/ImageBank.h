@@ -6,6 +6,17 @@
 #include <unordered_map>
 #include "Utils/BitDict.h"
 
+enum class ImageFlags : uint8_t {
+    RLE,
+    RLEW,
+    RLET,
+    LZX,
+    Alpha,
+    ACE,
+    Mac,
+    RGBA
+};
+
 struct Image {
     uint32_t Handle = 0;  
     int32_t Checksum = -1; // can be -1 ig is some ignore value
@@ -15,16 +26,7 @@ struct Image {
     int16_t Width = 0;  
     int16_t Height = 0;  
     uint8_t GraphicMode = 0;  
-    BitDict<uint8_t> Flags = BitDict<uint8_t>(std::vector<std::string>{
-        "RLE",
-        "RLEW",
-        "RLET",
-        "LZX",
-        "Alpha",
-        "ACE",
-        "Mac",
-        "RGBA"
-    }, 0);
+    BitDict<ImageFlags, uint8_t> Flags;
     uint16_t padding = 0; // Skip 2 bytes
     int16_t HotspotX = 0;  
     int16_t HotspotY = 0;  

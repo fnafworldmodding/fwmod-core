@@ -8,8 +8,9 @@
 
 #include "../CCNParser/Chunks/Chunks.h"
 #include "../BinaryTools/BinaryReader.h"
+#include "../Globals.h"
 
-class Decompressor {
+class DLLCALL Decompressor {
 public:
     static std::vector<uint8_t> Decompress(BinaryReader& buffer, int& decompressed);
     static int                  DecompressChunk(Chunk& chunk, int& decompressed);

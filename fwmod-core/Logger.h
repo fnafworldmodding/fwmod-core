@@ -1,5 +1,6 @@
 #ifndef LOGGER_H  
 #define LOGGER_H  
+#include "common.h"      // DLLCALL macro
 
 #include <string>         // std::string
 #include <vector>         // std::vector  
@@ -9,9 +10,10 @@
 #include <mutex>          // std::mutex, std::lock_guard  
 #include <stdexcept>      // std::runtime_error  
 #include <sstream>        // std::ostringstream  
-#include <iomanip>
+#include <iomanip>        // std::put_time
 
-class Logger  
+// TODO: add DLL interface for Logger class
+class Logger
 {  
 public:  
    std::vector<std::function<void(const std::string&)>> handlers;  
@@ -70,10 +72,8 @@ public:
    void Trace(const std::string& text);  
    void Warning(const std::string& text);  
 
-private:  
-   std::string datetimeFormat;  
-   std::mutex fileLock;  
-
+   std::string datetimeFormat;
+private:
    inline std::string FormatLog(LogLevel level);  
    inline void WriteLog(LogLevel level, const std::string& text);  
 };  

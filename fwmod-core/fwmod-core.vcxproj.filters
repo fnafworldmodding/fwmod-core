@@ -117,6 +117,9 @@
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectStructures.h">
       <Filter>Header Files\CCNParser\Chunks</Filter>
     </ClInclude>
+    <ClInclude Include="fwmod.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -181,6 +184,12 @@
     </ClCompile>
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ImageOffsets.cpp">
       <Filter>Source Files\CCNParser\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="fwmod.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cpp.hint">
+      <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

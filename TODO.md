@@ -1,18 +1,18 @@
 ## NOTES
-may have to rework all chunks initializations, why do you init the value in
+- may have to rework all chunks initializations, why do you init the value in
 object constructor when it is done automatically by the compiler?? (talking about you chunk.id)
 
-instead of loading everything to memory, just ignore the unknown chunks completely
+- instead of loading everything to memory, just ignore the unknown chunks completely
 write them when it is time for the .dat to be modified
 
-duplicating memory is bad, having two copies of already existing data instead of
+- duplicating memory is bad, having two copies of already existing data instead of
 just using pointer like a normal dev (normal dev? I idk actually) or freeing old data
 
-try avoid copying/moving structs/objects when possible
+- try avoid copying/moving structs/objects when possible
 
 ## TODO
 - decompiling/compiling
-    - [x] reading chunks
+    - [x] reading/writing chunks
     - [x] AppHeader
     - #### Resources
         - [x] Image Offsets And Image Bank
@@ -26,7 +26,7 @@ try avoid copying/moving structs/objects when possible
         - [ ] Object shaders
 - API
     - [ ] ModStore (some kind of map that inform us what been loading and where it was loading from)
-    - None at the moment (Planned)
+    - [ ] None at the moment (Planned)
 - Asset Management
     - [ ] adding images/textures
     - [x] replacing images/textures
@@ -40,5 +40,8 @@ try avoid copying/moving structs/objects when possible
 - Optimizations
     - [ ] lazy load chunks?
     - [ ] clear old data upon init
-    - [ ] skip deserialization of resources/banks when not needed (times where nothing is modified to added)
-    - [ ] caching system, instead of serializating data every single time upon launch, create a cache of that data (e.g images, animations)
+    - [ ] skip deserialization of resources/banks when not needed (times where nothing is modified or added)
+    - [ ] caching system, instead of serializing data every single time upon launch, create a cache of that data (e.g images, animations)
+    - [ ] either lazy create bitdicts or don't use them at all. they get allocated to end up not being even used, just use basic math or macros (bitdict should only be wrappers over values) (especially for images)
+- Other
+    - [ ] remove pointless headers

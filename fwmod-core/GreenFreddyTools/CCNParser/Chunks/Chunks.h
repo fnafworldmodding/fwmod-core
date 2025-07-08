@@ -2,8 +2,8 @@
 #ifndef CHUNKS_H  
 #define CHUNKS_H  
 #include <vector>
-
-
+#include "../../Utils/IntEnum.h"
+//
 #include "../../BinaryTools/BinaryReader.h"
 #include "../../BinaryTools/BinaryWriter.h"
 
@@ -54,9 +54,9 @@ enum class ChunksIDs {
    Last = 0x7F7F  
 };
 
-enum class InitFlags {
-	DECOMPRESS = 0,
-	IGNOREUNKNOWN = 1 << 0,
+IntEnum(InitFlags, int) {
+	DECOMPRESS = 1 << 0, // Decompress chunks if compressed
+    IGNOREUNKNOWN = 1 << 1, // Ignore unknown chunks
 };
 
 class Chunk {
@@ -86,7 +86,7 @@ public:
         this->data.resize(0);
         this->data.shrink_to_fit();
     };
-	static Chunk* InitChunk(BinaryReader& buffer, int flags = 3); // InitFlags (DECOMPRESS | IGNOREUNKNOWN)
+    static Chunk* InitChunk(BinaryReader& buffer, int flags = static_cast<int>(InitFlags::DECOMPRESS | InitFlags::IGNOREUNKNOWN)); // InitFlags (DECOMPRESS | IGNOREUNKNOWN)
     virtual void Read(BinaryReader& buffer, bool decompress = true);
 	virtual void WriteHeader(BinaryWriter& buffer);
     virtual void Write(BinaryWriter& buffer, bool compress = false); // INFO: don't care about compressing at the moment

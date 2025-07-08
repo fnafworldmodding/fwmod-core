@@ -13,8 +13,6 @@
 // TODO: move functionality to another file to lower the mess and size of this file
 
 using namespace std;
-// ccn reader and writer should be implmented today, look at notes to know what todo
-
 static std::unordered_map<std::string, FARPROC> functionCache;
 HMODULE realDLL = nullptr;
 mutex dllMutex;

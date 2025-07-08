@@ -5,7 +5,6 @@
 #include <dbghelp.h>
 #include <exception>
 
-#pragma comment (lib,"dbghelp.lib")
 
 constexpr auto TARGET_OPENDAT_OFFSET = 0xB9EC;
 constexpr auto TARGET_LOADEXT_OFFSET = 0x4BF12;
@@ -37,7 +36,7 @@ static inline std::string CaptureStackTrace() {
 
 #pragma warning(push)
 #pragma warning(disable : 4297)
-
+// TODO: mark this as noexcept
 extern "C" static
 HANDLE WINAPI CreateFileWHook(
     LPCWSTR               lpFileName,
@@ -66,11 +65,15 @@ HANDLE WINAPI CreateFileWHook(
         CoreLogger.Error(errorMessage.str());
         // Display the error message in a message box
         MessageBoxA(nullptr, errorMessage.str().c_str(), "Error", MB_OK | MB_ICONERROR);
+#ifndef _DEBUG
         ExitProcess(1);
-
+#else
+        throw;
+#endif
     }
     Gdiplus::GdiplusShutdown(gdiplusToken);
     // forwards all the received parameters to the actual CreateFileW function
+	//ExitProcess(1); // NOTE: use only for profiling
     return ::CreateFileW(
         lpFileName,
         dwDesiredAccess,
@@ -83,7 +86,7 @@ HANDLE WINAPI CreateFileWHook(
 }
 #pragma warning(pop)
 
-bool InstallInlineHook(void* func2hook, void* payloadFunction)
+DLLCALL  bool InstallInlineHook(void* func2hook, void* payloadFunction)
 {
     // TODO: use InstallRawHook?
     constexpr size_t INSTRUCTION_LENGTH = 6;
@@ -137,7 +140,7 @@ bool InstallInlineHook(void* func2hook, void* payloadFunction)
 }
 
 
-bool InstallRawHook(void* func2hook, std::vector<uint8_t> payload, int NOPsCount) {
+DLLCALL  bool InstallRawHook(void* func2hook, std::vector<uint8_t> payload, int NOPsCount) {
     // TODO: make use of NOPsCount, it is supposed to be something of overwrite x nops than write payload
     if (!func2hook || payload.empty())
     {
@@ -187,7 +190,7 @@ HMODULE WINAPI LoadLibraryExWHook(LPCWSTR lpLibFileName, HANDLE hFile, DWORD dwF
 }
 
 
-bool InstallEdiHook(void* func2hook, void* payloadFunction) {
+DLLCALL  bool InstallEdiHook(void* func2hook, void* payloadFunction) {
     const uint8_t* offsetBytes = reinterpret_cast<const uint8_t*>(&payloadFunction);
     std::vector<uint8_t> vInstruction = {
         0xBF,                      // Opcode for MOV EDI, imm32

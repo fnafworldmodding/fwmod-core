@@ -83,11 +83,13 @@ static inline T PopChunkByID(std::vector<Chunk*>& chunks, short id) {
 void StartPreloadProcess() {
     PreloadStateReady = true;
     CoreLogger.AddHandler(Logger::CreateCoreFileHandle("FWMCoreLogs.log"));
+    //
     PluginsEventManager.AddListener("Chunks", [](std::vector<Chunk*>& chunks, BinaryReader& reader, __int64& flags) -> void {
         auto imagebankpos = std::distance(chunks.begin(), std::find_if(
             chunks.begin(), chunks.end(),
             [](Chunk* ch) { return ch->id == static_short(ChunksIDs::ImageBank); }
-        ));
+		)); // Find the position of the ImageBank chunk
+
         ImageBank* imagebank = PopChunkByID<ImageBank*>(chunks, static_short(ChunksIDs::ImageBank));
         ImageOffsets* imageoffsets = PopChunkByID<ImageOffsets*>(chunks, static_short(ChunksIDs::ImageOffsets));
         // raise an runtime error if one of them is nullptr
@@ -103,7 +105,7 @@ void StartPreloadProcess() {
         // Insert the ImageManager chunk at the position where ImageBank was removed
         chunks.insert(chunks.begin() + imagebankpos, imageManager);
     });
-     
+     //
     std::string datPath = addSuffix(getDatFilePath(), DAT_SUFFIX);
     const char* filePath = datPath.c_str();
     if (GetFileAttributesA(filePath) == INVALID_FILE_ATTRIBUTES) {

@@ -34,7 +34,7 @@ void Chunk::Read(BinaryReader& buffer, bool decompress) {
 	this->data.resize(this->size);
 	if (decompress == true && this->flag == 1) { // compressed flag
 		int size = static_cast<int>(this->size);
-		int status = Decompressor::DecompressChunk(*this, buffer, size); // TODO: varify if there is any errors that been raised
+		int status = Decompressor::DecompressChunk(*this, buffer, size); // TODO: verify if there is any errors that been raised
 		this->flag = 0;
 		this->size = size;
 	}
@@ -57,7 +57,7 @@ void Chunk::Write(BinaryWriter& buffer, bool _) {
 }
 
 Chunk* Chunk::InitChunk(BinaryReader& buffer, int flags) {
-	BitDict chflag(std::vector<std::string>{"Decompress", "DontDecompressUnknownChunks"}, flags);
+	BitDict<InitFlags, int, true> loadingflag(flags);
     short id = buffer.ReadInt16();
 	short flag = buffer.ReadInt16();
 	int size = buffer.ReadUint32();
@@ -82,13 +82,13 @@ Chunk* Chunk::InitChunk(BinaryReader& buffer, int flags) {
 		break;
 	default:
 		chunk = new Chunk(id, flag, size);
-		if (chflag.GetFlag("DontDecompressUnknownChunks")) {
+		if (loadingflag.GetFlag(InitFlags::IGNOREUNKNOWN)) {
 			chunk->Read(buffer, false); // no point in decompressing unknown chunks
 			return chunk;
 		}
 		break;
 	}
 
-	chunk->Read(buffer, chflag.GetFlag("Decompress"));
+	chunk->Read(buffer, loadingflag.GetFlag(InitFlags::DECOMPRESS));
 	return chunk;
 }

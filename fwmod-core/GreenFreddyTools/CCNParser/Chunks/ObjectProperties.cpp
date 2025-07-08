@@ -5,6 +5,7 @@
 #include <zlib.h>
 constexpr size_t objectCommonSize = sizeof(ObjectCommon);
 
+// TODO: expose this as an api?
 template <typename T>
 int loadComObject(const unsigned char* compressedData, size_t compressedSize,
 	T* objectCommon, std::vector<char>& properties) {
