@@ -93,7 +93,7 @@ public:
 
         // check size
         const std::uintmax_t count = end - begin;
-        const std::uintmax_t maxValue = static_cast<std::uintmax_t>(std::numeric_limits<std::streamsize>::max());
+        constexpr std::uintmax_t maxValue = static_cast<std::uintmax_t>(std::numeric_limits<std::streamsize>::max());
         if (count > maxValue)
         {
             throw std::invalid_argument("basic_memstreambuf too big");
@@ -129,24 +129,24 @@ protected:
         return traits_type::to_int_type(*ptr);
     }
 
-    virtual std::streamsize xsgetn(char_type* s, std::streamsize count) override
-    {
-        if (count == 0)
+    virtual std::streamsize xsgetn(char_type* s, std::streamsize count) override {
+		// TODO: make it handle huge buffer size, std::streamsize is 64 bits regardless of architecture while size_t is based on architecture
+        // for now it just ignores data (to_read <= 0, static_cast<std::size_t> to prevent C4244)
+        if (count == 0) {
             return 0;
+        }
 
         const char* ptr = gptr();
-        const std::streamsize to_read = std::min(
-            count,
-            static_cast<std::streamsize>(egptr() - ptr));
+        const std::streamsize available = static_cast<std::streamsize>(egptr() - ptr);
+        const std::streamsize to_read = std::min(count, available);
 
-        if (to_read == 0)
-        {
+        if (to_read <= 0) {
             return traits_type::eof();
         }
-        else
-        {
-            std::memcpy(s, ptr, to_read);
-            gbump((int)to_read);
+        else {
+            // fix C4244
+            std::memcpy(s, ptr, static_cast<std::size_t>(to_read)); // Safe conversion
+            gbump(static_cast<int>(to_read));
             return to_read;
         }
     }
@@ -220,7 +220,8 @@ protected:
 
         if (pos < egptr() - eback())
         {
-            setg(eback(), eback() + pos, egptr());
+            // fix C4244
+            setg(eback(), eback() + static_cast<size_t>(pos), egptr());
         }
         else
         {

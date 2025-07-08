@@ -1,21 +1,28 @@
 #include "BinaryReader.h"
 #include "MemoryBuffer.h"
 
-BinaryReader::BinaryReader(std::string_view inputPath)  
-{  
-   stream_ = std::make_unique<std::ifstream>(std::string(inputPath), std::ifstream::in | std::ifstream::binary);  
-}  
+BinaryReader::BinaryReader(std::string_view inputPath)
+{
+    stream_ = new std::ifstream(std::string(inputPath), std::ifstream::in | std::ifstream::binary);
+    buffer_ = nullptr;
+}
 
-BinaryReader::BinaryReader(char* buffer, uint32_t sizeInBytes)  
-{  
-   buffer_ = std::make_unique<basic_memstreambuf>(buffer, sizeInBytes);  
-   stream_ = std::make_unique<std::istream>(buffer_.get(), false);  
-}  
+BinaryReader::BinaryReader(char* buffer, uint32_t sizeInBytes)
+{
+    buffer_ = new basic_memstreambuf(buffer, sizeInBytes);
+    stream_ = new std::istream(buffer_);
+}
 
-BinaryReader::BinaryReader(std::span<uint8_t> buffer)  
-{  
-   buffer_ = std::make_unique<basic_memstreambuf>(reinterpret_cast<char*>(buffer.data()), buffer.size_bytes());  
-   stream_ = std::make_unique<std::istream>(buffer_.get(), false);  
+BinaryReader::BinaryReader(std::span<uint8_t> buffer)
+{
+    buffer_ = new basic_memstreambuf(reinterpret_cast<char*>(buffer.data()), buffer.size_bytes());
+    stream_ = new std::istream(buffer_);
+}
+
+BinaryReader::~BinaryReader()
+{
+    delete stream_;
+    delete buffer_;
 }
 
 uint8_t BinaryReader::ReadUint8()
@@ -106,7 +113,7 @@ std::string BinaryReader::ReadFixedLengthString(size_t length)
 {
     std::string output;
     output.reserve(length);
-    for (int i = 0; i < length; i++)
+    for (size_t i = 0; i < length; i++)
     {
         char charBuffer;
         stream_->read(&charBuffer, 1);
@@ -132,7 +139,7 @@ std::wstring BinaryReader::ReadFixedLengthStringWide(size_t length)
 {
     std::wstring output;
     output.reserve(length);
-    for (int i = 0; i < length; i++)
+    for (size_t i = 0; i < length; i++)
     {
         wchar_t charBuffer;
         stream_->read((char*)&charBuffer, 2);
@@ -236,7 +243,7 @@ void BinaryReader::Skip(size_t bytesToSkip)
 size_t BinaryReader::Align(size_t alignmentValue)
 {
     //Todo: Test that this math is working as expected. Had bug here in C# version
-    const size_t remainder = stream_->tellg() % alignmentValue;
+    const size_t remainder = this->Position() % alignmentValue;
     size_t paddingSize = remainder > 0 ? alignmentValue - remainder : 0;
     Skip(paddingSize);
     return paddingSize;

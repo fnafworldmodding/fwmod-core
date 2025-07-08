@@ -18,15 +18,23 @@ BinaryWriter::BinaryWriter(std::string_view inputPath, bool truncate)
         f.open(inputPath, std::fstream::out);
         f.close();
     }
-
+    // stupid "steam_ not a member error"
+    auto steam = new std::ofstream(std::string(inputPath), flags);
+	this->stream_ = steam;
+    /*
     stream_ = std::make_unique<std::ofstream>(std::string(inputPath), flags);
+    */
 }
 
 // Constructor for memory operations
 BinaryWriter::BinaryWriter(char* buffer, uint32_t sizeInBytes)
 {
+    this->buffer_ = new MemoryBuffer(buffer, sizeInBytes);
+    this->stream_ = new std::ostream(this->buffer_);
+    /*
     buffer_ = std::make_unique<MemoryBuffer>(buffer, sizeInBytes);
     stream_ = std::make_unique<std::ostream>(buffer_.get());
+    */
 }
 
 void BinaryWriter::Flush()
@@ -175,7 +183,7 @@ size_t BinaryWriter::CalcAlign(size_t position, size_t alignmentValue)
 
 size_t BinaryWriter::Align(size_t alignmentValue)
 {
-    const size_t paddingSize = CalcAlign(stream_->tellp(), alignmentValue);
+    const size_t paddingSize = CalcAlign(this->Position(), alignmentValue);
     Skip(paddingSize);
     return paddingSize;
 }

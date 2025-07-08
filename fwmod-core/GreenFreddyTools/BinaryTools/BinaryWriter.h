@@ -4,13 +4,13 @@
 #include <span>
 #include <memory>
 #include <functional>
-
-// TODO: use std::unique_ptr for buffer and stream
+#include "../../common.h"
 
 struct MemoryBuffer;
 
 //Class that can write binary data either from a file or from a fixed size buffer
 //depending on the constructor used.
+// TODO: create a dll interface for BinaryWriter class
 class BinaryWriter
 {
 public:
@@ -19,7 +19,11 @@ public:
     //BinaryWriter(const char* inputPath) : BinaryWriter(std::string_view(inputPath)) {}
     //Writes binary data from fixed size memory buffer
     BinaryWriter(char* buffer, uint32_t sizeInBytes);
-    ~BinaryWriter() = default;
+	//BinaryWriter(BinaryWriter&& other) = default;
+    ~BinaryWriter() {
+		delete this->buffer_;
+		delete this->stream_;
+    };
 
     void Flush();
 
@@ -77,7 +81,11 @@ public:
 	void clear() { return this->stream_->clear(); };
 
 private:
+    /*
     std::unique_ptr<std::ostream> stream_ = nullptr;
     std::unique_ptr<MemoryBuffer> buffer_ = nullptr;
+    */
+	std::ostream* stream_ = nullptr;
+	MemoryBuffer* buffer_ = nullptr;
 };
 

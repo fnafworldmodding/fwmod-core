@@ -4,12 +4,13 @@
 #include <string>
 #include <span>
 #include <vector>
-
+#include "../common.h"
 struct MemoryBuffer;
 
 
 //Class that can read binary data either from a file or from a fixed size buffer
 //depending on the constructor used.
+// TODO: create a dll interface for BinaryReader class
 class BinaryReader
 {
 public:
@@ -20,7 +21,7 @@ public:
     BinaryReader(char* buffer, uint32_t sizeInBytes);
     //Reads binary data from fixed size memory buffer
     BinaryReader(std::span<uint8_t> buffer);
-
+    ~BinaryReader();
 
     [[nodiscard]] uint8_t ReadUint8();
     [[nodiscard]] uint16_t ReadUint16();
@@ -54,16 +55,14 @@ public:
     void SeekReverse(size_t relativeOffset); //Move backwards from the current stream position
     void Skip(size_t bytesToSkip);
     size_t Align(size_t alignmentValue = 2048);
-    bool bad() { return this->stream_->bad(); };
-    bool fail() { return this->stream_->fail(); };
-    void clear() { return this->stream_->clear(); };
-
+    bool bad();
+    bool fail();
+    void clear();
 
     size_t Position() const;
     size_t Length();
 
-private:
-    std::unique_ptr<std::istream> stream_ = nullptr;  
-    std::unique_ptr<basic_memstreambuf> buffer_ = nullptr;
+    std::istream* stream_ = nullptr;
+    basic_memstreambuf* buffer_ = nullptr;
 };
 
