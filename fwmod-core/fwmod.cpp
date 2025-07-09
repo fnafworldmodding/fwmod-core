@@ -1,4 +1,4 @@
-#include "fwmod.h"
+#include "Fwmod.h"
 
 extern "C" {
 	DLLCALL Logger* _cdecl CreateLogger() {

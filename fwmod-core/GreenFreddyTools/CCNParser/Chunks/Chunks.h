@@ -3,6 +3,7 @@
 #define CHUNKS_H  
 #include <vector>
 #include "../../Utils/IntEnum.h"
+#include "../../../common.h"
 //
 #include "../../BinaryTools/BinaryReader.h"
 #include "../../BinaryTools/BinaryWriter.h"

@@ -178,7 +178,7 @@
     <ClInclude Include="common.h" />
     <ClInclude Include="EventManager.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="fwmod.h" />
+    <ClInclude Include="Fwmod.h" />
     <ClInclude Include="GreenFreddyTools\BinaryTools\Binary.h" />
     <ClInclude Include="GreenFreddyTools\BinaryTools\BinaryReader.h" />
     <ClInclude Include="GreenFreddyTools\BinaryTools\BinaryWriter.h" />
@@ -203,11 +203,12 @@
     <ClInclude Include="Logger.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Preload.h" />
+    <ClInclude Include="Shared.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cpp.hint" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="fwmod.cpp" />
+    <ClCompile Include="Fwmod.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="GreenFreddyTools\BinaryTools\Binary.cpp" />
     <ClCompile Include="GreenFreddyTools\BinaryTools\BinaryReader.cpp" />
@@ -233,6 +234,7 @@
     </ClCompile>
     <ClCompile Include="Preload.cpp" />
     <ClCompile Include="Hooks.cpp" />
+    <ClCompile Include="Shared.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GreenFreddyTools\BinaryTools\BinaryTools.vcxproj" />

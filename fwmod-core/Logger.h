@@ -13,7 +13,7 @@
 #include <iomanip>        // std::put_time
 
 // TODO: add DLL interface for Logger class
-class Logger
+class DLLCALL Logger
 {  
 public:  
    std::vector<std::function<void(const std::string&)>> handlers;  

@@ -1,5 +1,6 @@
 #include "preload.h"
 #include "loader.h"
+#include "Shared.h"
 
 #include "common.h"
 #include "Globals.h"
@@ -81,8 +82,8 @@ static inline T PopChunkByID(std::vector<Chunk*>& chunks, short id) {
 
 
 void StartPreloadProcess() {
-    PreloadStateReady = true;
     CoreLogger.AddHandler(Logger::CreateCoreFileHandle("FWMCoreLogs.log"));
+    loadPlugins();
     //
     PluginsEventManager.AddListener("Chunks", [](std::vector<Chunk*>& chunks, BinaryReader& reader, __int64& flags) -> void {
         auto imagebankpos = std::distance(chunks.begin(), std::find_if(
@@ -164,4 +165,5 @@ void StartPreloadProcess() {
         }
 	}
     CoreLogger.Info("[Core] Finished writing to: " + datWritePath);
+    unloadPlugins();
 }

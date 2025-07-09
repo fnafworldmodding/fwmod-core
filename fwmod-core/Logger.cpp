@@ -8,6 +8,7 @@ Logger::Logger() : datetimeFormat("%Y-%m-%d %H:%M:%S") {}
 void Logger::AddHandler(std::function<void(const std::string&)> handler) {
     handlers.push_back(handler);
 }
+
 void Logger::RemoveHandler(std::function<void(const std::string&)> handler) {  
     // TODO: make this readable and also test
     handlers.erase(std::remove_if(handlers.begin(), handlers.end(),  
@@ -16,7 +17,6 @@ void Logger::RemoveHandler(std::function<void(const std::string&)> handler) {
        }),  
        handlers.end());  
 }
-
 
 std::function<void(const std::string&)> Logger::CreateFileHandler(const std::string& path) {
     auto fileLock = std::make_shared<std::mutex>(); // Use shared_ptr for the mutex
@@ -29,12 +29,10 @@ std::function<void(const std::string&)> Logger::CreateFileHandler(const std::str
         };
 }
 
-
-
 std::function<void(const std::string&)> Logger::CreateConsoleHandler() {
     return [](const std::string& message) {
         std::cout << message << std::endl;
-        };
+    };
 }
 
 // Logging methods

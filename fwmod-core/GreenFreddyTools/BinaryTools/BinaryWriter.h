@@ -11,7 +11,7 @@ struct MemoryBuffer;
 //Class that can write binary data either from a file or from a fixed size buffer
 //depending on the constructor used.
 // TODO: create a dll interface for BinaryWriter class
-class BinaryWriter
+class DLLCALL BinaryWriter
 {
 public:
     //Writes binary data from file at path. If truncate == true any existing file contents will be cleared

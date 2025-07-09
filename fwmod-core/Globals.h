@@ -33,4 +33,15 @@
 extern DLLCALL Logger CoreLogger;
 extern DLLCALL EventManager<std::vector<Chunk*>&, BinaryReader&, __int64&> PluginsEventManager;
 
+struct Config {
+	// what to load/modify
+	bool loadPlugins = false;
+	/*
+	bool images = false;
+	bool objects = false;
+	*/
+};
+
+extern DLLCALL Config FwmodConfig;
+
 #endif // !FWGLOBALS_H

@@ -25,7 +25,10 @@ just using pointer like a normal dev (normal dev? I idk actually) or freeing old
         - [x] Object properties (kinda, needs some work)
         - [ ] Object shaders
 - API
-    - [ ] ModStore (some kind of map that inform us what been loading and where it was loading from)
+    - [ ] ModStore (some kind of map that inform us what assets were successfully loaded)
+    - [x] export global variables (CoreLogger, PluginsEventManager, etc)
+    - [x] export BinaryReader and BinaryWriter classes
+    - [x] export logger
     - [ ] None at the moment (Planned)
 - Asset Management
     - [ ] adding images/textures
@@ -44,4 +47,4 @@ just using pointer like a normal dev (normal dev? I idk actually) or freeing old
     - [ ] caching system, instead of serializing data every single time upon launch, create a cache of that data (e.g images, animations)
     - [ ] either lazy create bitdicts or don't use them at all. they get allocated to end up not being even used, just use basic math or macros (bitdict should only be wrappers over values) (especially for images)
 - Other
-    - [ ] remove pointless headers
+    - [ ] remove pointless headers/code

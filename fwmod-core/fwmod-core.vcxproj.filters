@@ -34,6 +34,12 @@
     <Filter Include="Source Files\CCNParser\Utils">
       <UniqueIdentifier>{a4fb9827-afdd-49ee-a390-d91e21f6e7fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\API">
+      <UniqueIdentifier>{2405226f-5fe9-4a36-a2d4-63bb832188eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\API">
+      <UniqueIdentifier>{b6712132-1dbf-4c04-a36a-24e7769d078d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -117,8 +123,11 @@
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectStructures.h">
       <Filter>Header Files\CCNParser\Chunks</Filter>
     </ClInclude>
-    <ClInclude Include="fwmod.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Shared.h">
+      <Filter>Header Files\API</Filter>
+    </ClInclude>
+    <ClInclude Include="Fwmod.h">
+      <Filter>Header Files\API</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -185,11 +194,14 @@
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ImageOffsets.cpp">
       <Filter>Source Files\CCNParser\Chunks</Filter>
     </ClCompile>
-    <ClCompile Include="fwmod.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="cpp.hint">
       <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Fwmod.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="Shared.cpp">
+      <Filter>Source Files\API</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

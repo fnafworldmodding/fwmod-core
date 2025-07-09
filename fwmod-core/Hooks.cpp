@@ -65,10 +65,10 @@ HANDLE WINAPI CreateFileWHook(
         CoreLogger.Error(errorMessage.str());
         // Display the error message in a message box
         MessageBoxA(nullptr, errorMessage.str().c_str(), "Error", MB_OK | MB_ICONERROR);
-#ifndef _DEBUG
-        ExitProcess(1);
-#else
+#ifdef _DEBUG
         throw;
+#else
+        ExitProcess(1);
 #endif
     }
     Gdiplus::GdiplusShutdown(gdiplusToken);
