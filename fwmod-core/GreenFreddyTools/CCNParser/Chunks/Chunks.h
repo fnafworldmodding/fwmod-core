@@ -82,8 +82,7 @@ public:
     short flag;
     unsigned int size;
 
-    // Pointer to hold chunk data
-    std::vector<char> data;
+	std::vector<char> data; // TODO: change type from char to unsigned char for better compatibility with decompression libraries
 
     Chunk();
     Chunk(short id, short flag, int size);
