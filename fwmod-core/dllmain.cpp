@@ -107,8 +107,6 @@ static FARPROC __stdcall DelayLoadHandler(const char* functionName) {
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
     if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
-        // TODO: instead of blocking the whole program, create a thread and pause all other threads?
-        // than do changes to .dat than resume
         LoadOriginalDLL("WINMM.dll");
 #ifdef _DEBUG
         MessageBoxA(nullptr, "Hi, you can debug now!", "Message", MB_OK | MB_ICONINFORMATION);

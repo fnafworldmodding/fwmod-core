@@ -12,11 +12,14 @@
 #include <sstream>        // std::ostringstream  
 #include <iomanip>        // std::put_time
 
-// TODO: add DLL interface for Logger class
 class DLLCALL Logger
 {  
-public:  
-   std::vector<std::function<void(const std::string&)>> handlers;  
+public:
+    #pragma warning(push)
+    #pragma warning(disable : 4251)
+    std::string datetimeFormat;
+    std::vector<std::function<void(const std::string&)>> handlers;
+    #pragma warning(pop)
 
    enum class LogLevel  
    {  
@@ -28,7 +31,8 @@ public:
        FATAL  
    };  
 
-   Logger();  
+   Logger();
+   Logger(std::string datetimeFormat) : datetimeFormat(datetimeFormat) {};
    void AddHandler(std::function<void(const std::string&)> handler);  
    void RemoveHandler(std::function<void(const std::string&)> handler);  
    // better to use some kind of an class/struct than a factory function, to allow clean up as file handlers never close
@@ -72,7 +76,6 @@ public:
    void Trace(const std::string& text);  
    void Warning(const std::string& text);  
 
-   std::string datetimeFormat;
 private:
    inline std::string FormatLog(LogLevel level);  
    inline void WriteLog(LogLevel level, const std::string& text);  

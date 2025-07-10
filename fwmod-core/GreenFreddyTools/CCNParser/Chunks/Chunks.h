@@ -2,6 +2,7 @@
 #ifndef CHUNKS_H  
 #define CHUNKS_H  
 #include <vector>
+
 #include "../../Utils/IntEnum.h"
 #include "../../../common.h"
 //
@@ -60,7 +61,22 @@ IntEnum(InitFlags, int) {
     IGNOREUNKNOWN = 1 << 1, // Ignore unknown chunks
 };
 
-class Chunk {
+//#pragma warning(push)
+//#pragma warning(disable : 4251)
+
+// Export all STL types in the warning chain for std::vector<char>
+template class DLLCALL std::allocator<char>;
+template struct DLLCALL std::_Simple_types<char>;
+struct DLLCALL std::_Container_base12; // <-- Add this line
+template class DLLCALL std::_Vector_val<std::_Simple_types<char>>;
+template class DLLCALL std::_Compressed_pair<
+    std::allocator<char>,
+    std::_Vector_val<std::_Simple_types<char>>,
+    true
+>;
+template class DLLCALL std::vector<char>;
+
+class DLLCALL Chunk {
 public:  
     short id;
     short flag;
@@ -75,14 +91,7 @@ public:
     virtual ~Chunk() = default;
     bool IsCompressed() const { return flag == 1; }; // compressed flag
     virtual bool Init() { return true; };
-    // TODO: implement read and write
-    // TODO: change type to int8
-    //virtual short Read (BinaryReader& buffer, long long flags);
-    //virtual short Write(BinaryWriter& buffer, long long flags);
 
-    // vector based buffers
-    //virtual short Read (std::vector<char>& buffer, long long flags);
-    //virtual short Write(std::vector<char>& buffer, long long flags);
     void FreeData() {
         this->data.resize(0);
         this->data.shrink_to_fit();
@@ -91,7 +100,8 @@ public:
     virtual void Read(BinaryReader& buffer, bool decompress = true);
 	virtual void WriteHeader(BinaryWriter& buffer);
     virtual void Write(BinaryWriter& buffer, bool compress = false); // INFO: don't care about compressing at the moment
-private:
 };
+
+//#pragma warning(pop)
 
 #endif CHUNKS_H

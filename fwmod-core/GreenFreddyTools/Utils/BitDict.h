@@ -3,6 +3,7 @@
 #define BITDICT_H
 
 #include <type_traits>
+#include "../../common.h"
 
 template<typename Enum, typename T = int, bool premasked = false>
 class BitDict {

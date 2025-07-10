@@ -10,7 +10,6 @@ struct MemoryBuffer;
 
 //Class that can read binary data either from a file or from a fixed size buffer
 //depending on the constructor used.
-// TODO: create a dll interface for BinaryReader class
 class DLLCALL BinaryReader
 {
 public:

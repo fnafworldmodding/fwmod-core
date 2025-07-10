@@ -2,6 +2,11 @@
 #include "../../Utils/Decompressor.h"
 class Decompressor;
 
+template class BitDict<Flags, short>;
+template class BitDict<NewFlags, short>;
+template class BitDict<OtherFlags, short>;
+
+
 bool AppHeader::Init() {
     BinaryReader reader(this->data.data(), this->data.size());
 

@@ -66,6 +66,7 @@ public:
 	virtual bool Init() override;
     virtual void Write(BinaryWriter& buffer, bool compress = false) override;
     virtual void Write(BinaryWriter& buffer, bool compress, OffsetsVector& offsets);
+	// TODO: implement adding images, replacing images, removing images, etc. should we?
 };
 
 #endif // !IMAGEBANKCHUNK_H

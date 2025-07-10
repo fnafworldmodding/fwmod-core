@@ -16,10 +16,10 @@ class DLLCALL IPlugin {
 public:
     HMODULE hModule = 0;
 public:
-    virtual ~IPlugin() = default; // Important for correct destruction
+    virtual ~IPlugin() = default;
     virtual void Initialize() = 0;
     virtual PluginFlags Shutdown() = 0;
-    virtual const char* GetName() const = 0; // Return C-style string
+    virtual const char* GetName() const = 0;
 };
 
 extern DLLCALL std::unordered_set<IPlugin*> Plugins;

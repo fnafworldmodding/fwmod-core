@@ -8,7 +8,7 @@ bool ObjectHeaders::Init() {
 	BinaryReader reader(this->data.data(), this->size);
 	int count = this->size / sizeof(ObjectHeader);
 	headers.reserve(count);
-	// TODO: you can already calculate the size, just either create a vector of pointers or instantly memcpy to vector data
+	// TODO: you can already calculate the size, just either create a vector of pointers (because their size is fixed) or instantly memcpy to vector data
 	for (int i = 0; i < count; ++i) {
 		ObjectHeader header;
 		reader.ReadToMemory(&header, sizeof(ObjectHeader));

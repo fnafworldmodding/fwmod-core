@@ -1,5 +1,2 @@
-#ifdef FWMODEXPORTS
 #define DLLCALL __declspec(dllexport)
-#else
 #define DLLCALL __declspec(dllimport)
-#endif

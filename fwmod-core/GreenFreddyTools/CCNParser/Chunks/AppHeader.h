@@ -56,7 +56,11 @@ enum class OtherFlags {
 };
 
 
-class AppHeader : public Chunk {
+template class DLLCALL BitDict<Flags, short>;
+template class DLLCALL BitDict<NewFlags, short>;
+template class DLLCALL BitDict<OtherFlags, short>;
+
+class DLLCALL AppHeader : public Chunk {
 public:
     int header = 0;
     BitDict<Flags, short> flags;

@@ -5,13 +5,8 @@
 #include "../Globals.h"
 #include <lz4.h>
 #include <algorithm>
-// TODO: remove whatever this is
-#ifdef IMAGEOGORDER
-#include <vector>
-static std::vector<uint32_t> originalImageHandlesOrder;
-#endif
 
-// TODO: use Image:WriteImage and Image::ReadImage static functions instead of ImageBank::WriteImage
+// TODO: use Image:WriteImage and Image::ReadImage methods instead of ImageBank::WriteImage
 
 bool ImageBank::Init() {
     BinaryReader buffer(this->data.data(), this->data.size());
@@ -22,9 +17,6 @@ bool ImageBank::Init() {
         // TODO: probably a better thing would be directly reading the data to the struct than having a static method (avoid copying/moving)
         Image img = Image::ReadImage(buffer);
         this->images[img.Handle] = img;
-#ifdef IMAGEOGORDER
-        originalImageHandlesOrder.push_back(img.Handle);
-#endif
     }
     this->FreeData();
     return true;
@@ -81,22 +73,12 @@ void ImageBank::Write(BinaryWriter& buffer, bool _, OffsetsVector& offsets) {
         int imagesCount = static_cast<int>(this->images.size());
         buffer.WriteInt32(imagesCount);
 
-#ifndef IMAGEOGORDER
         for (const auto& [handle, img] : this->images) {
             int offset = (buffer.Position() - ChunkPosition) + OFFSET_ADDTION;
             offsets[handle - 1] = offset;
             WriteImage(buffer, img);
         }
-#else
-        for (uint32_t handle : originalImageHandlesOrder) {
-            auto it = this->images.find(handle);
-            if (it != this->images.end()) {
-                int offset = (buffer.Position() - ChunkPosition) + OFFSET_ADDTION;
-                offsets[handle - 1] = offset;
-                WriteImage(buffer, it->second);
-            }
-        }
-#endif
+
     });
 }
 
@@ -121,7 +103,7 @@ void Image::DecompressImage(Image& img) {
     img.Flags.SetFlag(ImageFlags::LZX, false); // Clear the LZX flag after decompression
 }
 
-// TODO: create an ReadImageEx that takes a handle and read the rest of the fields, to save memory and avoid copying/moving data
+// TODO: create an ReadImageEx that takes a handle (aka image id) and read the rest of the fields, to save memory and avoid copying/moving data
 // and unstatic them they can be a method instead of a static method
 Image Image::ReadImage(BinaryReader& buffer, bool decompress) {
     Image img;

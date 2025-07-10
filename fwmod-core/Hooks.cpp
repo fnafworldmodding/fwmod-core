@@ -185,7 +185,7 @@ DLLCALL  bool InstallRawHook(void* func2hook, std::vector<uint8_t> payload, int 
 extern "C" static
 HMODULE WINAPI LoadLibraryExWHook(LPCWSTR lpLibFileName, HANDLE hFile, DWORD dwFlags)
 {
-	// TODO: implement xlua preinitialization here
+	// TODO: implement xlua pre-initialization here
     return LoadLibraryExW(lpLibFileName, hFile, dwFlags);
 }
 
@@ -198,7 +198,7 @@ DLLCALL  bool InstallEdiHook(void* func2hook, void* payloadFunction) {
         offsetBytes[1],
         offsetBytes[2],
         offsetBytes[3],
-        0x90
+        0x90 // NOP
     };
     return InstallRawHook(func2hook, vInstruction);
 }
