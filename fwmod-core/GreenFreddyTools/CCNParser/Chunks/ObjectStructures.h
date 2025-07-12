@@ -104,10 +104,11 @@ struct ObjectBackdrop {
 
 // CTF 2.5+ object common structure
 struct ObjectCommon {
-    int unknown = 0; // idk
+    int size = 0; // a guess
     ushort AnimationOffset = 0;
     ushort MovementsOffset = 0;
-    ushort padding[2]; // possible offsets? paddings? possibly version value?
+    ushort Version; // a guess
+    ushort CounterOffset; // a guess 
     ushort ExtensionOffset = 0;
     ushort ValueOffset = 0;
     int ObjectFlags = 0;

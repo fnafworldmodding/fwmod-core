@@ -54,6 +54,7 @@ HANDLE WINAPI CreateFileWHook(
     if (gdiplusStatus != Gdiplus::Ok) {
         throw std::runtime_error("Failed to initialize GDI+");
     }
+    AllocConsole();
     try {
         StartPreloadProcess();
     }
