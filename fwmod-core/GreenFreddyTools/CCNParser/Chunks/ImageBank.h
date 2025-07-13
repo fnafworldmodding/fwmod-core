@@ -34,15 +34,15 @@ struct Image {
     int16_t ActionPointY = 0;  
     uint32_t TransparentColor = 0; // TODO: create a structure, RGBA color
     int32_t decompSizePlus = 0;
-    std::vector<char> data;
+    std::vector<uint8_t> data;
     static void WriteImage(BinaryWriter& writer, const Image& image, bool compress);
     static Image ReadImage(BinaryReader& reader, bool decompress = false);
     static void DecompressImage(Image& img);
 };
 
-#define IMAGESIZE sizeof(Image) - sizeof(std::vector<char>)
+#define IMAGESIZE sizeof(Image) - sizeof(std::vector<uint8_t>)
 
-typedef std::vector<char> ImageData;
+typedef std::vector<uint8_t> ImageData;
 typedef std::unordered_map<uint32_t, Image> ImageMap;
 
 class ImageBank : public Chunk {

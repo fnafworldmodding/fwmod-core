@@ -86,7 +86,7 @@ void Image::DecompressImage(Image& img) {
     int compressedSize = img.dataSize - 4; // exclude the decompSizePlus field
 	int decompressSize = img.decompSizePlus; // THE size of the uncompressed data
 
-    std::vector<char> uncompressedData(decompressSize);
+    std::vector<uint8_t> uncompressedData(decompressSize);
 
     // Decompress the image data using LZ4
     int decompressedSize = LZ4_decompress_safe(

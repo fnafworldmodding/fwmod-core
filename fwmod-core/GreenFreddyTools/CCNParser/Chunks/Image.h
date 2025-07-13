@@ -18,7 +18,7 @@
 DLLCALL Gdiplus::Bitmap* ToBitmap(const Image& image) {
     int Width = image.Width;
     int Height = image.Height;
-    const std::vector<char>& data = image.data;
+    const std::vector<uint8_t>& data = image.data;
 
     if (Width <= 0 || Height <= 0 || data.empty()) {
         return new Gdiplus::Bitmap(1, 1); // fallback if invalid
@@ -85,7 +85,7 @@ DLLCALL Image createImage(uint32_t handle, const std::string& path, bool compres
         if (compress) {
             // Calculate compressed size
             int maxCompressedSize = LZ4_compressBound(img.data.size());
-            std::vector<char> compressedData(maxCompressedSize);
+            std::vector<uint8_t> compressedData(maxCompressedSize);
 
             // Perform compression
             int compressedSize = LZ4_compress_default(

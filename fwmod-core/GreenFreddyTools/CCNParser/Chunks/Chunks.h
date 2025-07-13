@@ -64,17 +64,17 @@ IntEnum(InitFlags, int) {
 //#pragma warning(push)
 //#pragma warning(disable : 4251)
 
-// Export all STL types in the warning chain for std::vector<char>
-template class DLLCALL std::allocator<char>;
-template struct DLLCALL std::_Simple_types<char>;
+// Export all STL types in the warning chain for std::vector<uint8_t>
+template class DLLCALL std::allocator<uint8_t>;
+template struct DLLCALL std::_Simple_types<uint8_t>;
 struct DLLCALL std::_Container_base12; // <-- Add this line
-template class DLLCALL std::_Vector_val<std::_Simple_types<char>>;
+template class DLLCALL std::_Vector_val<std::_Simple_types<uint8_t>>;
 template class DLLCALL std::_Compressed_pair<
-    std::allocator<char>,
-    std::_Vector_val<std::_Simple_types<char>>,
+    std::allocator<uint8_t>,
+    std::_Vector_val<std::_Simple_types<uint8_t>>,
     true
 >;
-template class DLLCALL std::vector<char>;
+template class DLLCALL std::vector<uint8_t>;
 
 class DLLCALL Chunk {
 public:  
@@ -82,7 +82,7 @@ public:
     short flag;
     unsigned int size;
 
-	std::vector<char> data; // TODO: change type from char to unsigned char for better compatibility with decompression libraries
+    std::vector<uint8_t> data; // TODO: change type from char to unsigned char for better compatibility with decompression libraries
 
     Chunk();
     Chunk(short id, short flag, int size);

@@ -51,11 +51,10 @@ HANDLE WINAPI CreateFileWHook(
     Gdiplus::GdiplusStartupInput gdiplusStartupInput;
     ULONG_PTR gdiplusToken;
     Gdiplus::Status gdiplusStatus = Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
-    if (gdiplusStatus != Gdiplus::Ok) {
-        throw std::runtime_error("Failed to initialize GDI+");
-    }
-    AllocConsole();
     try {
+        if (gdiplusStatus != Gdiplus::Ok) {
+            throw std::runtime_error("Failed to initialize GDI+");
+        }
         StartPreloadProcess();
     }
     catch (const std::exception& e) {
@@ -64,7 +63,6 @@ HANDLE WINAPI CreateFileWHook(
         errorMessage << CaptureStackTrace();
 
         CoreLogger.Error(errorMessage.str());
-        // Display the error message in a message box
         MessageBoxA(nullptr, errorMessage.str().c_str(), "Error", MB_OK | MB_ICONERROR);
 #ifdef _DEBUG
         throw;

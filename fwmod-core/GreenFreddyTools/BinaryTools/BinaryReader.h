@@ -18,6 +18,7 @@ public:
     //BinaryReader(const char* inputPath) : BinaryReader(std::string_view(inputPath)) {}
     //Reads binary data from fixed size memory buffer
     BinaryReader(char* buffer, uint32_t sizeInBytes);
+    BinaryReader(uint8_t* buffer, uint32_t sizeInBytes);
     //Reads binary data from fixed size memory buffer
     BinaryReader(std::span<uint8_t> buffer);
     ~BinaryReader();

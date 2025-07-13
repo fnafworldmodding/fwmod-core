@@ -12,14 +12,13 @@ Chunk::Chunk() {
 	id = 0;
 	flag = 0;
 	size = 0;
-	data = std::vector<char>();
 }
 
 Chunk::Chunk(short id, short flag, int size) {
 	this->id = id;
 	this->flag = flag;
 	this->size = size;
-	this->data = std::vector<char>(size);
+	this->data = std::vector<uint8_t>(size);
 }
 
 
@@ -27,7 +26,7 @@ Chunk::Chunk(short flag, int size) {
 	this->id = 0;
 	this->flag = flag;
 	this->size = size;
-	this->data = std::vector<char>(size);
+	this->data = std::vector<uint8_t>(size);
 }
 
 void Chunk::Read(BinaryReader& buffer, bool decompress) {
