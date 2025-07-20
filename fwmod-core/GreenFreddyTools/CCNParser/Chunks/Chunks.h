@@ -9,6 +9,14 @@
 #include "../../BinaryTools/BinaryReader.h"
 #include "../../BinaryTools/BinaryWriter.h"
 
+// for offset chunks
+
+// for some reason clickteam adds 260 to every offset
+#define OFFSET_ADDTION 260
+
+typedef std::vector<uint32_t> OffsetsVector;
+//
+
 #define CHUNK_HEADER_SIZE 8 // 2 shorts + 4 bytes for size
 
 enum class ChunksIDs {  
@@ -40,6 +48,7 @@ enum class ChunksIDs {
    ObjectNames = 0x2254,
    ObjectShaders = 0x2255,
    ObjectProperties = 0x2256,
+   ObjectPropertiesOffsets = 0x2257,
    ObjectInfoHeader = 0x4444,  
    ObjectInfoName = 0x4445,  
    ObjectCommon = 0x4446,  
@@ -77,7 +86,7 @@ template class DLLCALL std::_Compressed_pair<
 template class DLLCALL std::vector<uint8_t>;
 
 class DLLCALL Chunk {
-public:  
+public:
     short id;
     short flag;
     unsigned int size;

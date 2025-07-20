@@ -1,2 +1,0 @@
-#define DLLCALL __declspec(dllexport)
-#define DLLCALL __declspec(dllimport)

@@ -31,14 +31,14 @@
     <Filter Include="Source Files\BinaryTools">
       <UniqueIdentifier>{643d2597-74ad-498f-a4ba-09bd9c70ab55}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\CCNParser\Utils">
-      <UniqueIdentifier>{a4fb9827-afdd-49ee-a390-d91e21f6e7fd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\API">
       <UniqueIdentifier>{2405226f-5fe9-4a36-a2d4-63bb832188eb}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\API">
       <UniqueIdentifier>{b6712132-1dbf-4c04-a36a-24e7769d078d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{a4fb9827-afdd-49ee-a390-d91e21f6e7fd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -129,6 +129,12 @@
     <ClInclude Include="Fwmod.h">
       <Filter>Header Files\API</Filter>
     </ClInclude>
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectPropertiesOffsets.h">
+      <Filter>Header Files\CCNParser\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectsManager.h">
+      <Filter>Header Files\CCNParser\Chunks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -138,7 +144,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Logger.cpp">
-      <Filter>Source Files\CCNParser\Utils</Filter>
+      <Filter>Source Files\Utils</Filter>
     </ClCompile>
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\Chunks.cpp">
       <Filter>Source Files\CCNParser\Chunks</Filter>
@@ -159,7 +165,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GreenFreddyTools\Utils\Decompressor.cpp">
-      <Filter>Source Files\CCNParser\Utils</Filter>
+      <Filter>Source Files\Utils</Filter>
     </ClCompile>
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ObjectHeaders.cpp">
       <Filter>Source Files\CCNParser\Chunks</Filter>
@@ -202,6 +208,12 @@
     </ClCompile>
     <ClCompile Include="Shared.cpp">
       <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ObjectPropertiesOffsets.cpp">
+      <Filter>Source Files\CCNParser\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ObjectsManager.cpp">
+      <Filter>Source Files\CCNParser\Chunks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -46,6 +46,23 @@ struct ObjectShape {
         };
     };
     ushort Image = 0;
+
+    ObjectShape() {
+		memset(this, 0, sizeof(ObjectShape));
+    }
+
+    size_t CalcDynamicSize() const {
+        size_t size = sizeof(BorderSize) + sizeof(borderColor) + sizeof(ShapeType) + sizeof(FillType);
+        if (ShapeType == 1) {
+            size += sizeof(LineFlags);
+        } else if (FillType == 1) {
+            size += sizeof(Color1);
+        } else if (FillType == 2) {
+            size += sizeof(Color1) + sizeof(Color2) + sizeof(VerticalGradient);
+        }
+        return size + sizeof(Image);
+	};
+
     void Read(BinaryReader& reader) {
 		BorderSize = reader.ReadInt16();
         borderColor = reader.ReadInt32();
@@ -62,7 +79,8 @@ struct ObjectShape {
         }
 		Image = reader.ReadInt16();
     };
-    void Write(BinaryWriter& writer) {
+
+    void Write(BinaryWriter& writer) const {
         writer.WriteInt16(BorderSize);
         writer.WriteInt32(borderColor);
         writer.WriteInt16(ShapeType);
@@ -76,8 +94,14 @@ struct ObjectShape {
             writer.WriteInt32(Color2);
             writer.WriteInt16(VerticalGradient);
 		}
+        writer.WriteInt16(Image);
     };
-    void Read(char* data, size_t size) {
+    void Write(uint8_t* data, size_t size) const {
+        BinaryWriter writer(data, size);
+		this->Write(writer);
+    }
+
+    void Read(uint8_t* data, size_t size) {
 		BinaryReader reader(data, size);
 		Read(reader);
     }
@@ -122,6 +146,9 @@ struct ObjectCommon {
     int BackColor = 0; // RGBA Color
 };
 
+
+constexpr size_t OBJECT_COMMON_SIZE = sizeof(ObjectCommon);
+constexpr size_t QUICKBACKDROPSIZE = sizeof(ObjectQuickBackdrop) - sizeof(ObjectShape); // size of ObjectQuickBackdrop without Shape
 
 // Unused
 template <typename StringType>

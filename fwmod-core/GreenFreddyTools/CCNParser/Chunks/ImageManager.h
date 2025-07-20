@@ -9,6 +9,7 @@ class ImageOffsets;
 
 #define IMAGEMANAGER_CHUNK_ID static_cast<short>(0x9999)
 
+// rename to ImagesManager?
 class ImageManager : public Chunk {
 public:
     ImageBank* imageBank = nullptr;

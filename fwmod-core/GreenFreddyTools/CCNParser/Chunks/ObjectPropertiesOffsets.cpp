@@ -1,24 +1,20 @@
-#include "ImageOffsets.h"
+#include "ObjectPropertiesOffsets.h"
+
 #include <algorithm>
 #include <string>
 
-bool ImageOffsets::Init() {
+bool ObjectsPropOffsets::Init() {
 	BinaryReader reader(this->data.data(), this->data.size());
 	int count = this->size / 4; // size is alawys even
 	OffsetsVector& offsets = this->offsets;
 	offsets.resize(count);
 	memcpy(this->offsets.data(), this->data.data(), this->size);
-	/*
-	for (int index = 0; index++; index) {
-		offsets[index] = reader.ReadInt32();
-	}
-	*/
-	this->FreeData();
+
 	return true;
 }
 
 
-void ImageOffsets::Write(BinaryWriter& buffer, bool compress) {
+void ObjectsPropOffsets::Write(BinaryWriter& buffer, bool compress) {
 	this->size = this->offsets.size() * sizeof(int);
 	this->WriteHeader(buffer);
 	buffer.WriteFromMemory(this->offsets.data(), this->size);

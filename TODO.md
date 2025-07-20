@@ -24,6 +24,7 @@ just using pointer like a normal dev (normal dev? I idk actually) or freeing old
         - [ ] Object names
         - [x] Object properties (kinda, needs some work)
         - [ ] Object shaders
+        - [x] Object Offsets
 - API
     - [ ] ModStore (some kind of map that inform us what assets were successfully loaded)
     - [x] export global variables (CoreLogger, PluginsEventManager, etc)
@@ -48,3 +49,4 @@ just using pointer like a normal dev (normal dev? I idk actually) or freeing old
     - [ ] either lazy create bitdicts or don't use them at all. they get allocated to end up not being even used, just use basic math or macros (bitdict should only be wrappers over values) (especially for images)
 - Other
     - [ ] remove pointless headers/code
+    - [ ] clean up comments

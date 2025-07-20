@@ -5,86 +5,14 @@
 #include "common.h"
 #include "Globals.h"
 
-#include "CCNParser\CCNPackage.h"
-#include "CCNParser\Chunks\Chunks.h"
-#include "Utils\Decompressor.h"
-#include "CCNParser\Chunks\ImageManager.h" // for PluginsEventManager.AddListener("Chunks", ...)
-
-
-#define DAT_SUFFIX std::string("og")
-std::atomic<bool> PreloadStateReady = false;
-
-inline static std::string addSuffix(const std::string& path, const std::string& suffix) {
-    size_t lastSlash = path.find_last_of("\\/");
-    size_t lastDot = path.find_last_of('.', path.length());
-
-    std::string name = (lastDot == std::string::npos) ? path.substr(lastSlash + 1) : path.substr(lastSlash + 1, lastDot - lastSlash - 1);
-    std::string ext = (lastDot == std::string::npos) ? "" : path.substr(lastDot);
-
-    return path.substr(0, lastSlash + 1) + name + "-" + suffix + ext;
-}
-
-
-
-inline static  std::string getCurrentProcessName() {
-    char buffer[MAX_PATH];
-    DWORD bufferSize = MAX_PATH;
-
-    // Pass NULL to get the current process
-    DWORD result = GetModuleFileNameA(nullptr, buffer, bufferSize);
-
-    if (result == 0) {
-        // Handle error
-        return std::string("Error");
-    }
-
-    return std::string(buffer);
-}
-
-inline static std::string getDatFilePath() {
-    // Find the last dot in the path
-    std::string exePath = getCurrentProcessName();
-    size_t dotPos = exePath.find_last_of('.');
-
-    if (dotPos == std::string::npos) {
-        // Handle case where there's no extension
-        return exePath + ".dat";
-    }
-
-    // Replace .exe with .dat
-    return exePath.substr(0, dotPos) + ".dat";
-}
-template<typename T>
-static inline T FindChunkByID(std::vector<Chunk*>& chunks, short id) {
-    static_assert(std::is_pointer<T>::value, "T must be a pointer type");
-    static_assert(std::is_base_of<Chunk, std::remove_pointer_t<T>>::value,
-        "T must be a pointer to a type derived from Chunk");
-    auto it = std::find_if(chunks.begin(), chunks.end(), [id](Chunk* ch) { return ch->id == id; });
-    if (it != chunks.end()) {
-        return static_cast<T>(it);
-    }
-    return nullptr;
-}
-
-template<typename T>
-static inline T PopChunkByID(std::vector<Chunk*>& chunks, short id) {
-    static_assert(std::is_pointer<T>::value, "T must be a pointer type");
-    static_assert(std::is_base_of<Chunk, std::remove_pointer_t<T>>::value,
-        "T must be a pointer to a type derived from Chunk");
-    auto it = std::find_if(chunks.begin(), chunks.end(), [id](Chunk* ch) { return ch->id == id; });
-    if (it != chunks.end()) {
-        T result = static_cast<T>(*it);
-        chunks.erase(it);
-        return result;
-    }
-    return nullptr;
-}
+#include "CCNParser\Chunks\ImageManager.h"
+#include "CCNParser\Chunks\ObjectsManager.h"
 
 
 void StartPreloadProcess() {
     CoreLogger.AddHandler(Logger::CreateCoreFileHandle("FWMCoreLogs.log"));
     loadPlugins();
-    //
+    // move this function
     PluginsEventManager.AddListener("Chunks", [](std::vector<Chunk*>& chunks, BinaryReader& reader, __int64& flags) -> void {
         auto imagebankpos = std::distance(chunks.begin(), std::find_if(
             chunks.begin(), chunks.end(),
@@ -98,13 +26,30 @@ void StartPreloadProcess() {
             CoreLogger.Error("[Core] ImageBank or ImageOffsets chunk not found in the .dat file.");
             ExitProcess(1);
 		}
-        CoreLogger.Info("[Core] ImageBank and ImageOffsets chunks found in the .dat file.");
+        CoreLogger.Info("[Core] ImageBank and ImageOffsets chunks found in the .dat file!");
 		loadImagesFromFolderToMap(imagebank->images); // Load images from the preload folder
         ImageManager* imageManager = new ImageManager();
         imageManager->imageBank = imagebank;
         imageManager->imageOffsets = imageoffsets;
         // Insert the ImageManager chunk at the position where ImageBank was removed
         chunks.insert(chunks.begin() + imagebankpos, imageManager);
+		// Create Objects Manager and pop chunks
+        auto objectsPropertiesPos = std::distance(chunks.begin(), std::find_if(
+            chunks.begin(), chunks.end(),
+            [](Chunk* ch) { return ch->id == static_short(ChunksIDs::ObjectProperties); }
+        ));
+        ObjectProperties* objectProperties = PopChunkByID<ObjectProperties*>(chunks, static_short(ChunksIDs::ObjectProperties));
+        ObjectsPropOffsets* objectsOffsets = PopChunkByID<ObjectsPropOffsets*>(chunks, static_short(ChunksIDs::ObjectPropertiesOffsets));
+        if (!objectProperties) {
+            CoreLogger.Error("[Core] ObjectsManager chunk not found in the .dat file.");
+            ExitProcess(1);
+        }
+		CoreLogger.Info("[Core] ObjectProperties and ObjectsPropOffsets chunk found in .dat file!");
+		ObjectsManager* objectsManager = new ObjectsManager();
+		objectsManager->objectsProperties = objectProperties;
+        objectsManager->objectsOffsets = objectsOffsets;
+		// Insert the ObjectsManager chunk at the position where ObjectsProperties was removed
+		chunks.insert(chunks.begin() + objectsPropertiesPos, objectsManager);
     });
      //
     std::string datPath = addSuffix(getDatFilePath(), DAT_SUFFIX);

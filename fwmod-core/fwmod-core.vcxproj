@@ -194,6 +194,8 @@
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectHeaders.h" />
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectNames.h" />
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectProperties.h" />
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectPropertiesOffsets.h" />
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectsManager.h" />
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectStructures.h" />
     <ClInclude Include="GreenFreddyTools\Utils\BitDict.h" />
     <ClInclude Include="GreenFreddyTools\Utils\Decompressor.h" />
@@ -223,6 +225,8 @@
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ObjectHeaders.cpp" />
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ObjectNames.cpp" />
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ObjectProperties.cpp" />
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ObjectPropertiesOffsets.cpp" />
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ObjectsManager.cpp" />
     <ClCompile Include="GreenFreddyTools\Utils\Decompressor.cpp" />
     <ClCompile Include="Loader.cpp" />
     <ClCompile Include="Logger.cpp" />
