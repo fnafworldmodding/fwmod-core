@@ -10,7 +10,7 @@ struct MemoryBuffer;
 
 //Class that can write binary data either from a file or from a fixed size buffer
 //depending on the constructor used.
-class DLLCALL BinaryWriter
+class BinaryWriter
 {
 public:
     //Writes binary data from file at path. If truncate == true any existing file contents will be cleared
@@ -18,9 +18,10 @@ public:
     //BinaryWriter(const char* inputPath) : BinaryWriter(std::string_view(inputPath)) {}
     //Writes binary data from fixed size memory buffer
     BinaryWriter(char* buffer, uint32_t sizeInBytes);
+    BinaryWriter(uint8_t* buffer, uint32_t sizeInBytes);
 	//BinaryWriter(BinaryWriter&& other) = default;
     ~BinaryWriter() {
-		delete this->buffer_;
+		//delete this->buffer_; // not needed
 		delete this->stream_;
     };
 

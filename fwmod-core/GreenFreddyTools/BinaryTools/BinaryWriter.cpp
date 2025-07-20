@@ -31,10 +31,13 @@ BinaryWriter::BinaryWriter(char* buffer, uint32_t sizeInBytes)
 {
     this->buffer_ = new MemoryBuffer(buffer, sizeInBytes);
     this->stream_ = new std::ostream(this->buffer_);
-    /*
-    buffer_ = std::make_unique<MemoryBuffer>(buffer, sizeInBytes);
-    stream_ = std::make_unique<std::ostream>(buffer_.get());
-    */
+}
+
+
+BinaryWriter::BinaryWriter(uint8_t* buffer, uint32_t sizeInBytes)
+{
+    this->buffer_ = new MemoryBuffer(reinterpret_cast<char*>(buffer), sizeInBytes);
+    this->stream_ = new std::ostream(this->buffer_);
 }
 
 void BinaryWriter::Flush()
