@@ -61,7 +61,7 @@ static inline T FindChunkByID(std::vector<Chunk*>& chunks, short id) {
         "T must be a pointer to a type derived from Chunk");
     auto it = std::find_if(chunks.begin(), chunks.end(), [id](Chunk* ch) { return ch->id == id; });
     if (it != chunks.end()) {
-        return static_cast<T>(it);
+        return static_cast<T>(*it);
     }
     return nullptr;
 }
