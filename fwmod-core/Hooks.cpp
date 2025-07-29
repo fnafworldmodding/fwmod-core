@@ -4,10 +4,13 @@
 //
 #include <dbghelp.h>
 #include <exception>
+#include <windows.h>
+#include <iostream>
 
 
 constexpr auto TARGET_OPENDAT_OFFSET = 0xB9EC;
 constexpr auto TARGET_LOADEXT_OFFSET = 0x4BF12;
+constexpr auto TARGET_TEMPARVALUE_OFFSET = 0x2438;
 
 // TODO: should move to a header
 static inline std::string CaptureStackTrace() {
@@ -64,7 +67,7 @@ HANDLE WINAPI CreateFileWHook(
 
         CoreLogger.Error(errorMessage.str());
         MessageBoxA(nullptr, errorMessage.str().c_str(), "Error", MB_OK | MB_ICONERROR);
-#ifdef _DEBUG
+#ifdef _DEBUG 
         throw;
 #else
         ExitProcess(1);
@@ -85,10 +88,10 @@ HANDLE WINAPI CreateFileWHook(
 }
 #pragma warning(pop)
 
-DLLCALL  bool InstallInlineHook(void* func2hook, void* payloadFunction)
+DLLCALL  bool InstallInlineHook(void* func2hook, void* payloadFunction, int NOPCOUNT)
 {
     // TODO: use InstallRawHook?
-    constexpr size_t INSTRUCTION_LENGTH = 6;
+    size_t INSTRUCTION_LENGTH = 5 + NOPCOUNT;
     if (!func2hook || !payloadFunction)
     {
         CoreLogger.Error("InstallHook: Invalid parameters.");
@@ -118,7 +121,10 @@ DLLCALL  bool InstallInlineHook(void* func2hook, void* payloadFunction)
     // NOP out the 6th byte.
     // The original instruction is 6 bytes. Our CALL is 5 bytes.
     // We fill the remaining byte with a NOP (No Operation) to avoid partial instructions.
-    pInstruction[5] = 0x90; // NOP opcode
+    //pInstruction[5] = 0x90; // NOP opcode
+    for (int i = 5; i < INSTRUCTION_LENGTH; ++i) {
+        pInstruction[i] = 0x90; // Fill with NOPs
+	}
 
     // Restore original memory protection
     if (!VirtualProtect(
@@ -211,7 +217,7 @@ void InitializeHooks() {
     PVOID pTargetLoadExtCallAddres2 = pModuleBase + TARGET_LOADEXT_OFFSET + 0x9a; // 0x9a offset to the other `mov edi,dword ptr ds:[<LoadLibraryExW>]`
 
 
-    if (!InstallInlineHook(pTargetOpenDatCallAddress, (PVOID)CreateFileWHook)) {
+    if (!InstallInlineHook(pTargetOpenDatCallAddress, (PVOID)CreateFileWHook, 1)) {
         CoreLogger.Error("failed installing hook CreateFileWHook");
         return;
     }
