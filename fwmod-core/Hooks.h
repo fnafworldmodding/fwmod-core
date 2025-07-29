@@ -19,7 +19,7 @@ HANDLE WINAPI CreateFileWHook(
     HANDLE                hTemplateFile
 );
 
-DLLCALL bool InstallInlineHook(void* func2hook, void* payloadFunction);
+DLLCALL bool InstallInlineHook(void* func2hook, void* payloadFunction, int NOPCOUNT);
 DLLCALL bool InstallRawHook(void* func2hook, std::vector<uint8_t> payload, int NOPsCount = 0);
 DLLCALL bool InstallEdiHook(void* func2hook, void* payloadFunction);
 DLLCALL void InitializeHooks();

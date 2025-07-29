@@ -56,6 +56,19 @@ void Chunk::Write(BinaryWriter& buffer, bool _) {
 	buffer.WriteFromMemory(this->data.data(), this->size);
 }
 
+int Chunk::Decompress() {
+	if (this->flag != 1) {
+		return 0; // not compressed
+	}
+	int decompressedSize = 0;
+	int result = Decompressor::DecompressChunk(*this, decompressedSize);
+	if (result != 0) {
+		throw std::runtime_error("Failed to decompress chunk with ID: " + std::to_string(this->id) + ", Error: " + Decompressor::getErrorMessage(result));
+	}
+	this->flag = 0;
+	return result;
+}
+
 Chunk* Chunk::InitChunk(BinaryReader& buffer, int flags) {
 	BitDict<InitFlags, int, true> loadingflag(flags);
     short id = buffer.ReadInt16();

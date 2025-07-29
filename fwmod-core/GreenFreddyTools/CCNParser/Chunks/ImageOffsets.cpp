@@ -4,7 +4,7 @@
 
 bool ImageOffsets::Init() {
 	BinaryReader reader(this->data.data(), this->data.size());
-	int count = this->size / 4; // size is alawys even
+	int count = this->size / sizeof(int); // size is alawys even
 	OffsetsVector& offsets = this->offsets;
 	offsets.resize(count);
 	memcpy(this->offsets.data(), this->data.data(), this->size);

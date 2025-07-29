@@ -27,6 +27,7 @@ enum class ChunksIDs {
    Author = 0x2225,  
    MenuBar = 0x2226,  
    ExtensionsPath = 0x2227,
+   Protection = 0x2242,
    Frame = 0x3333,  
    FrameHeader = 0x3334,  
    FrameName = 0x3335,  
@@ -104,6 +105,7 @@ public:
         this->data.resize(0);
         this->data.shrink_to_fit();
     };
+    int Decompress();
     static Chunk* InitChunk(BinaryReader& buffer, int flags = static_cast<int>(InitFlags::DECOMPRESS | InitFlags::IGNOREUNKNOWN)); // InitFlags (DECOMPRESS | IGNOREUNKNOWN)
     virtual void Read(BinaryReader& buffer, bool decompress = true);
 	virtual void WriteHeader(BinaryWriter& buffer);
