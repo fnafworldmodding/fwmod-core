@@ -10,7 +10,7 @@
 
 constexpr auto TARGET_OPENDAT_OFFSET = 0xB9EC;
 constexpr auto TARGET_LOADEXT_OFFSET = 0x4BF12;
-constexpr auto TARGET_TEMPARVALUE_OFFSET = 0x2438;
+constexpr auto TARGET_TAMPERARVALUE_OFFSET = 0x2752; //0x2432;
 
 // TODO: should move to a header
 static inline std::string CaptureStackTrace() {
@@ -122,7 +122,7 @@ DLLCALL  bool InstallInlineHook(void* func2hook, void* payloadFunction, int NOPC
     // The original instruction is 6 bytes. Our CALL is 5 bytes.
     // We fill the remaining byte with a NOP (No Operation) to avoid partial instructions.
     //pInstruction[5] = 0x90; // NOP opcode
-    for (int i = 5; i < INSTRUCTION_LENGTH; ++i) {
+    for (size_t i = 5; i < INSTRUCTION_LENGTH; ++i) {
         pInstruction[i] = 0x90; // Fill with NOPs
 	}
 
@@ -147,7 +147,8 @@ DLLCALL  bool InstallInlineHook(void* func2hook, void* payloadFunction, int NOPC
 
 DLLCALL  bool InstallRawHook(void* func2hook, std::vector<uint8_t> payload, int NOPsCount) {
     // TODO: make use of NOPsCount, it is supposed to be something of overwrite x nops than write payload
-    if (!func2hook || payload.empty())
+    size_t INSTRUCTION_LENGTH = payload.size() + NOPsCount;
+    if (!func2hook || INSTRUCTION_LENGTH == 0)
     {
         CoreLogger.Error("InstallHook: Invalid parameters.");
         return 0;
@@ -156,7 +157,7 @@ DLLCALL  bool InstallRawHook(void* func2hook, std::vector<uint8_t> payload, int 
     DWORD oldProtect;
     if (!VirtualProtect(
         func2hook,
-        payload.size(), // Change protection for exactly 6 bytes
+        INSTRUCTION_LENGTH, // Change protection for exactly 6 bytes
         PAGE_EXECUTE_READWRITE,
         &oldProtect
     ))
@@ -168,11 +169,14 @@ DLLCALL  bool InstallRawHook(void* func2hook, std::vector<uint8_t> payload, int 
 
     // Install hook
     memcpy(func2hook, payload.data(), payload.size());
+    for (size_t i = payload.size(); i < INSTRUCTION_LENGTH; i++) {
+        ((PBYTE)func2hook)[i] = 0x90;
+    }
 
     // Restore original memory protection
     if (!VirtualProtect(
         func2hook,
-        payload.size(),
+        INSTRUCTION_LENGTH,
         oldProtect,
         &oldProtect
     ))
@@ -181,7 +185,7 @@ DLLCALL  bool InstallRawHook(void* func2hook, std::vector<uint8_t> payload, int 
     }
 
     // Flush instruction cache to ensure the CPU sees the new instructions
-    FlushInstructionCache(GetCurrentProcess(), func2hook, payload.size());
+    FlushInstructionCache(GetCurrentProcess(), func2hook, INSTRUCTION_LENGTH);
 
     CoreLogger.Error("Minimal inline hook installed successfully at " + std::format("0x{:X}", (ULONG_PTR)func2hook));
     return 1;
@@ -195,7 +199,7 @@ HMODULE WINAPI LoadLibraryExWHook(LPCWSTR lpLibFileName, HANDLE hFile, DWORD dwF
 }
 
 
-DLLCALL  bool InstallEdiHook(void* func2hook, void* payloadFunction) {
+DLLCALL bool InstallEdiHook(void* func2hook, void* payloadFunction) {
     const uint8_t* offsetBytes = reinterpret_cast<const uint8_t*>(&payloadFunction);
     std::vector<uint8_t> vInstruction = {
         0xBF,                      // Opcode for MOV EDI, imm32
@@ -208,6 +212,10 @@ DLLCALL  bool InstallEdiHook(void* func2hook, void* payloadFunction) {
     return InstallRawHook(func2hook, vInstruction);
 }
 
+static bool RemoveTempHook(void* func2hook) {
+    std::vector<uint8_t> vInst{0x00};
+    return InstallRawHook(func2hook, vInst);
+}
 
 
 void InitializeHooks() {
@@ -223,6 +231,10 @@ void InitializeHooks() {
     }
     if (!InstallEdiHook(pTargetLoadExtCallAddress, (PVOID)LoadLibraryExWHook) || !InstallEdiHook(pTargetLoadExtCallAddres2, (PVOID)LoadLibraryExWHook)) {
         CoreLogger.Error("failed installing hook LoadLibraryExWHook");
+        return;
+    }
+    if (!RemoveTempHook(pModuleBase + TARGET_TAMPERARVALUE_OFFSET + 6)) { // +6 for the value 1 
+        CoreLogger.Fatal("failed to remove anti-tamper functionality"); // I should probably exit after this
         return;
     }
 }
