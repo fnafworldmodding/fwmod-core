@@ -22,7 +22,7 @@ just using pointer like a normal dev (normal dev? I idk actually) or freeing old
     - #### Objects
         - [x] Object headers
         - [ ] Object names
-        - [x] Object properties (kinda, needs some work)
+        - [x] Object properties
         - [ ] Object shaders
         - [x] Object Offsets
 - API
@@ -30,6 +30,7 @@ just using pointer like a normal dev (normal dev? I idk actually) or freeing old
     - [x] export global variables (CoreLogger, PluginsEventManager, etc)
     - [x] export BinaryReader and BinaryWriter classes
     - [x] export logger
+    - [x] basic hooking functions
     - [ ] None at the moment (Planned)
 - Asset Management
     - [ ] adding images/textures
@@ -46,7 +47,7 @@ just using pointer like a normal dev (normal dev? I idk actually) or freeing old
     - [ ] clear old data upon init
     - [ ] skip deserialization of resources/banks when not needed (times where nothing is modified or added)
     - [ ] caching system, instead of serializing data every single time upon launch, create a cache of that data (e.g images, animations)
-    - [ ] either lazy create bitdicts or don't use them at all. they get allocated to end up not being even used, just use basic math or macros (bitdict should only be wrappers over values) (especially for images)
+    - [x] either lazy create bitdicts or don't use them at all. they get allocated to end up not being even used, just use basic math or macros (~~bitdict should only be wrappers over values~~ done they are now just wrappers)
 - Other
     - [ ] remove pointless headers/code
     - [ ] clean up comments
