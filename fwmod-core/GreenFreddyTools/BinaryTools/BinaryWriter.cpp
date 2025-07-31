@@ -193,7 +193,7 @@ size_t BinaryWriter::Align(size_t alignmentValue)
 
 size_t BinaryWriter::Position() const
 {
-    return stream_->tellp();
+    return static_cast<size_t>(stream_->tellp());
 }
 
 size_t BinaryWriter::Length()

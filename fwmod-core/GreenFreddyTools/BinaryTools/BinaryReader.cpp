@@ -257,7 +257,7 @@ size_t BinaryReader::Align(size_t alignmentValue)
 
 size_t BinaryReader::Position() const
 {
-    return stream_->tellg();
+    return static_cast<size_t>(stream_->tellg());
 }
 
 size_t BinaryReader::Length()

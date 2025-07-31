@@ -39,30 +39,11 @@ void ImageBank::Write(BinaryWriter& buffer, bool _) {
     }
     this->WriteHeader(buffer);
     buffer.WriteInt32(imagesCount);
-#ifdef IMAGEOGORDER
-    // Write images in the order of originalImageHandlesOrder
-    for (uint32_t handle : originalImageHandlesOrder) {
-        auto it = this->images.find(handle);
-        if (it != this->images.end()) {
-            WriteImage(buffer, it->second);
-        }
-    }
-#else
     // Write each image in any order
     for (const auto& [_, img] : this->images) {
         WriteImage(buffer, img);
     }
-#endif
 }
-
-    /*
-    sizeof(int32_t); // Size of count integer
-    for (const auto& [_, img] : this->images) {
-        offsets.push_back(this->size + OFFSET_ADDTION);
-        this->size += IMAGESIZE; // Struct size without vector
-        this->size += img.dataSize - 4;
-    }
-    */
 
 
 void ImageBank::Write(BinaryWriter& buffer, bool _, OffsetsVector& offsets) {

@@ -5,6 +5,8 @@
 #include "ObjectHeaders.h"
 #include "ObjectProperties.h"
 #include "ObjectPropertiesOffsets.h"
+#include "FontBank.h"
+#include "FontOffsets.h"
 #include "../../Utils/Decompressor.h"
 #include "../../Utils/BitDict.h"
 
@@ -95,6 +97,12 @@ Chunk* Chunk::InitChunk(BinaryReader& buffer, int flags) {
 		break;
 	case static_cast<short>(ChunksIDs::ObjectPropertiesOffsets):
 		chunk = new ObjectsPropOffsets(flag, size);
+		break;
+	case static_cast<short>(ChunksIDs::FontBank):
+		chunk = new FontBank(flag, size);
+		break;
+	case static_cast<short>(ChunksIDs::FontOffsets):
+		chunk = new FontOffsets(flag, size);
 		break;
 	default:
 		chunk = new Chunk(id, flag, size);

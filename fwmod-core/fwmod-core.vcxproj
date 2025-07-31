@@ -113,6 +113,8 @@
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\AppHeader.h" />
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\Chunks.h" />
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\FontBank.h" />
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\FontManager.h" />
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\FontOffsets.h" />
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\Image.h" />
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ImageBank.h" />
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ImageManager.h" />
@@ -146,6 +148,8 @@
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\AppHeader.cpp" />
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\Chunks.cpp" />
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\FontBank.cpp" />
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\FontManager.cpp" />
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\FontOffsets.cpp" />
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ImageBank.cpp" />
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ImageManager.cpp" />
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ImageOffsets.cpp" />
