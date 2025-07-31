@@ -21,6 +21,10 @@ struct ObjectCommonItem {
 		ObjectQuickBackdrop* OCIObjectQuickBackdrop;
 		ObjectBackdrop* OCIObjectBackdrop;
 	};
+	ObjectCommonItem() = default;
+	~ObjectCommonItem() {
+		delete[] raw;
+	}
 };
 
 typedef std::vector<ObjectCommonItem> ObjectCommons;
@@ -28,7 +32,9 @@ typedef std::vector<ObjectCommonItem> ObjectCommons;
 class ObjectProperties : public Chunk {
 public:
 	ObjectCommons Objects{};
-	// TODO: create a deconstructor to free memory of Objects
+    virtual ~ObjectProperties() override {  
+		Objects.clear();
+    }
 
 	ObjectProperties() : Chunk() {
 		id = static_cast<short>(ChunksIDs::ObjectProperties);

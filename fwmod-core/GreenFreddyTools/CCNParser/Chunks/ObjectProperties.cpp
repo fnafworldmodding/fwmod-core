@@ -77,7 +77,7 @@ bool ObjectProperties::Init() {
 		ObjectCom.Size = reader.ReadInt32();
 		ObjectCom.Type = header;
 		ObjectCom.Flags = 2;
-		if (!DECOMPRESS_COMOBJECTS || header->Type == 0 || header->Type == 1) { // do not pre-decompress objects
+		if (!DECOMPRESS_COMOBJECTS) { // do not pre-decompress objects
 			ObjectCom.Flags = 1;
 			ObjectCom.raw = new uint8_t[ObjectCom.Size]; // allocate memory for raw data
 			reader.ReadToMemory(ObjectCom.raw, ObjectCom.Size);
@@ -118,76 +118,6 @@ bool ObjectProperties::Init() {
 	this->FreeData();
 	return true;
 }
-
-//
-//void ObjectProperties::Write(BinaryWriter& buffer, bool compress) {
-//	this->size = 0;
-//	this->WriteHeader(buffer);
-//	buffer.WriteDataWithDynamicSize([&](BinaryWriter& buffer, size_t _) {
-//		for (auto& object : this->Objects) {
-//			uint8_t* rawData = nullptr;
-//			//buffer.WriteInt32(object.DecompSize);
-//			//buffer.WriteInt32(object.Size); // Write the size of the object
-//			if (object.Flags == 2) { // we should never reach this point, may as well throw an error
-//				continue; // skip the uninitialized object
-//			}
-//			else if (object.Flags == 1) { // the object is already compressed
-//				buffer.WriteInt32(object.DecompSize);
-//				buffer.WriteInt32(object.Size); // Write the size of the object
-//				buffer.WriteFromMemory(object.raw, object.Size);
-//				continue;
-//			}
-//			ObjectHeader* header = object.Type;
-//			// The object is decompressed, we need to compress it than write to the buffer (flag 0)
-//			// TODO: write decomp size and comp size to the buffer
-//
-//			size_t compressSize = 0;
-//			int _r = 0; // result of compression, currently being ignored as it throws an error if compression fails anyways
-//			if (header->Type == 0) { // QuickBackdrop 
-//				ObjectQuickBackdrop* quickBackdrop = object.OCIObjectQuickBackdrop;
-//				size_t sizeToCompress = QUICKBACKDROPSIZE + quickBackdrop->Shape.CalcDynamicSize(); // their size
-//				uint8_t* dataToCompress = new uint8_t[sizeToCompress];
-//				memcpy(dataToCompress, quickBackdrop, QUICKBACKDROPSIZE);
-//				quickBackdrop->Shape.Write(
-//					dataToCompress + QUICKBACKDROPSIZE,
-//					quickBackdrop->Shape.CalcDynamicSize() // calculate the size of the shape data
-//				);
-//				rawData = Decompressor::CompressZlibRaw(dataToCompress, sizeToCompress, compressSize, _r); // compress the data
-//				buffer.WriteInt32(sizeToCompress); // Write the decompressed size
-//				delete[] dataToCompress;
-//			}
-//			else {
-//				rawData = Decompressor::CompressZlibRaw(object.raw, object.Size, compressSize, _r);
-//				buffer.WriteInt32(object.DecompSize);
-//			}
-//
-//			buffer.WriteInt32(compressSize); // Write the compressed size
-//			buffer.WriteFromMemory(rawData, compressSize);
-//			delete[] rawData;
-//			/*
-//			* TODO: remove this code, it is not needed anymore
-//			switch (header->Type) {
-//				case 0: // QuickBackdrop
-//					buffer.WriteFromMemory(&object.OCIObjectQuickBackdrop, QUICKBACKDROPSIZE); // Write ObjectQuickBackdrop
-//					object.OCIObjectQuickBackdrop.Shape.Write(buffer); // Write the shape data
-//					break;
-//				case 1: // Backdrop
-//					buffer.WriteFromMemory(&object.OCIObjectBackdrop, sizeof(ObjectBackdrop)); // Write ObjectBackdrop
-//					break;
-//				default: // Common
-//					buffer.WriteFromMemory(&object.OCIObjectCommon, sizeof(ObjectCommon)); // Write ObjectCommon
-//					if (object.data.size() > 0) {
-//						buffer.WriteFromMemory(object.data.data(), object.data.size()); // Write Object properties data
-//					}
-//					break;
-//			}
-//			//object.Size = sizeof(ObjectCommon) + object.data.size();
-//			//buffer.WriteFromMemory(&object, sizeof(ObjectCommon)); // Write ObjectCommon
-//			//buffer.WriteFromMemory(object.data.data(), object.data.size()); // Write Object properties data
-//			*/
-//		}
-//	});
-//}
 
 
 void ObjectProperties::Write(BinaryWriter& buffer, bool compress) {

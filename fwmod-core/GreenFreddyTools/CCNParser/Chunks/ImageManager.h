@@ -27,6 +27,11 @@ public:
         id = IMAGEMANAGER_CHUNK_ID;
     }
 
+    virtual ~ImageManager() override {
+        delete imageBank;
+        delete imageOffsets;
+	}
+
     virtual void Write(BinaryWriter& buffer, bool compress = false) override;
 };
 

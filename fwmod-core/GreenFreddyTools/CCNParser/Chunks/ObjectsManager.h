@@ -27,6 +27,11 @@ public:
         id = OBJECTSMANAGER_CHUNK_ID;
     }
 
+    virtual ~ObjectsManager() override {
+        delete objectsProperties;
+        delete objectsOffsets;
+	}
+
     virtual void Write(BinaryWriter& buffer, bool compress = false) override;
 };
 

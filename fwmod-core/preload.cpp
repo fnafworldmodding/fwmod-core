@@ -110,5 +110,9 @@ void StartPreloadProcess() {
         }
 	}
     CoreLogger.Info("[Core] Finished writing to: " + datWritePath);
+	// Free all chunks
+    for (Chunk* c : chunks) {
+        delete c;
+    }
     unloadPlugins();
 }

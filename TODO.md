@@ -31,7 +31,6 @@ just using pointer like a normal dev (normal dev? I idk actually) or freeing old
     - [x] export BinaryReader and BinaryWriter classes
     - [x] export logger
     - [x] basic hooking functions
-    - [ ] None at the moment (Planned)
 - Asset Management
     - [ ] adding images/textures
     - [x] replacing images/textures

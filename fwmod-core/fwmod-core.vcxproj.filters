@@ -135,6 +135,9 @@
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\ObjectsManager.h">
       <Filter>Header Files\CCNParser\Chunks</Filter>
     </ClInclude>
+    <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\FontBank.h">
+      <Filter>Header Files\CCNParser\Chunks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -213,6 +216,9 @@
       <Filter>Source Files\CCNParser\Chunks</Filter>
     </ClCompile>
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\ObjectsManager.cpp">
+      <Filter>Source Files\CCNParser\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\FontBank.cpp">
       <Filter>Source Files\CCNParser\Chunks</Filter>
     </ClCompile>
   </ItemGroup>
