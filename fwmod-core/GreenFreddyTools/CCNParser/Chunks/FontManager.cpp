@@ -2,7 +2,7 @@
 #include "../../Utils/Decompressor.h"
 
 void FontManager::Write(BinaryWriter& buffer, bool compress) {
-	if (this->fontBank == nullptr || this->fontOffsets) {
+	if (this->fontBank == nullptr || this->fontOffsets == nullptr) {
 		throw std::runtime_error("FontBank is null. this should never happen");
 	}
 	CoreLogger.Debug("Writing FontBank to buffer!");

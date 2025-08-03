@@ -9,9 +9,8 @@ bool FontBank::Init() {
         FontItem& font = this->fonts[i];
         font.Handle = buffer.ReadInt32();
 		font.Flags = 1; // 1 == compressed
-
-        font.Size = buffer.ReadInt32();
         font.DecompSize = buffer.ReadInt32();
+        font.Size = buffer.ReadInt32();
         font.raw = new uint8_t[font.Size];
         buffer.ReadToMemory(font.raw, font.Size);
     }
@@ -48,7 +47,7 @@ void FontBank::Write(BinaryWriter& buffer, bool compress) {
             uint8_t* rawData = Decompressor::CompressZlibRaw(font.raw, font.DecompSize, outCompSize, result);
             buffer.WriteInt32(font.DecompSize); // write the decompressed size
             buffer.WriteInt32(outCompSize); // write the compressed size
-            buffer.WriteFromMemory(rawData, font.Size);
+            buffer.WriteFromMemory(rawData, outCompSize);
             delete[] rawData;
         }
     });
@@ -86,7 +85,7 @@ void FontBank::Write(BinaryWriter& buffer, bool compress, OffsetsVector offsets)
             uint8_t* rawData = Decompressor::CompressZlibRaw(font.raw, font.DecompSize, outCompSize, result);
             buffer.WriteInt32(font.DecompSize); // write the decompressed size
             buffer.WriteInt32(outCompSize); // write the compressed size
-            buffer.WriteFromMemory(rawData, font.Size);
+            buffer.WriteFromMemory(rawData, outCompSize);
             delete[] rawData;
         }
     });
