@@ -22,28 +22,23 @@ struct FontInfo {
 	uint8_t ClipPrecision = 0;
 	uint8_t Quality = 0;
 	uint8_t PitchAndFamily = 0;
-};
-
-struct Font : FontInfo {
 #ifndef _UNICODE
-	char* Name = nullptr
+	char Name[32];
 #else
-	wchar_t* Name = nullptr;
+	wchar_t Name[32];
 #endif // !_UNICODE
 };
+
 struct FontItem {
 	unsigned int DecompSize = 0;
 	int Size = 0;
 	int Handle = 0;
 	int Flags = 2;
 	union {
-		uint8_t* raw = nullptr;
-		Font* font;
+		uint8_t raw[sizeof(FontInfo)]{};
+		FontInfo font;
 	};
 	FontItem() = default;
-	~FontItem() {
-		delete[] raw;
-	}
 };
 
 

@@ -6,13 +6,13 @@ bool FontBank::Init() {
     int count = buffer.ReadInt32();
 	this->fonts.reserve(count);
     for (int i = 0; i < count; i++) {
-        FontItem& font = this->fonts[i];
+        FontItem font{};
         font.Handle = buffer.ReadInt32();
 		font.Flags = 1; // 1 == compressed
         font.DecompSize = buffer.ReadInt32();
         font.Size = buffer.ReadInt32();
-        font.raw = new uint8_t[font.Size];
-        buffer.ReadToMemory(font.raw, font.Size);
+        buffer.ReadToMemory(&font.raw, font.Size);
+        this->fonts[font.Handle] = font;
     }
     return true;
 }
@@ -44,7 +44,7 @@ void FontBank::Write(BinaryWriter& buffer, bool compress) {
             // fixme: the decompress size and compressed size aka Size is so confusing, maybe depend on flags rework the size determination
             int result = 0; // Result of compression, currently ignored because we throw the error in the function
             size_t outCompSize = 0;
-            uint8_t* rawData = Decompressor::CompressZlibRaw(font.raw, font.DecompSize, outCompSize, result);
+            uint8_t* rawData = Decompressor::CompressZlibRaw((uint8_t *)&font.raw, font.DecompSize, outCompSize, result);
             buffer.WriteInt32(font.DecompSize); // write the decompressed size
             buffer.WriteInt32(outCompSize); // write the compressed size
             buffer.WriteFromMemory(rawData, outCompSize);
@@ -64,7 +64,8 @@ void FontBank::Write(BinaryWriter& buffer, bool compress, OffsetsVector offsets)
                 // Skip the uninitialized font
                 continue;
             }
-            else if (font.Flags == 1) {
+            offsets[font.Handle - 1] = (buffer.Position() - ChunkPosition) + OFFSET_ADDTION;
+            if (font.Flags == 1) {
                 // The font is already compressed
                 buffer.WriteInt32(font.Handle);
                 buffer.WriteInt32(font.DecompSize);
@@ -74,7 +75,6 @@ void FontBank::Write(BinaryWriter& buffer, bool compress, OffsetsVector offsets)
             }
             // Add the offset for the font location in the fontbank chunk
             // int to skip the count of fonts
-            offsets.push_back((buffer.Position() - ChunkPosition) + sizeof(int));
             buffer.WriteInt32(font.Handle);
             // TODO: include the name in the compressing process. 
             // it currently expects the name to be beside the fontinfo struct directly at the memory location
@@ -82,7 +82,7 @@ void FontBank::Write(BinaryWriter& buffer, bool compress, OffsetsVector offsets)
             // fixme: the decompress size and compressed size aka Size is so confusing, maybe depend on flags rework the size determination
             int result = 0; // Result of compression, currently ignored because we throw the error in the function
             size_t outCompSize = 0;
-            uint8_t* rawData = Decompressor::CompressZlibRaw(font.raw, font.DecompSize, outCompSize, result);
+            uint8_t* rawData = Decompressor::CompressZlibRaw((uint8_t*)&font.raw, font.DecompSize, outCompSize, result);
             buffer.WriteInt32(font.DecompSize); // write the decompressed size
             buffer.WriteInt32(outCompSize); // write the compressed size
             buffer.WriteFromMemory(rawData, outCompSize);
