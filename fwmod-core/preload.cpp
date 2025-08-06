@@ -7,6 +7,7 @@
 
 #include "CCNParser\Chunks\ImageManager.h"
 #include "CCNParser\Chunks\ObjectsManager.h"
+#include "CCNParser\Chunks\FontManager.h"
 
 
 void StartPreloadProcess() {
@@ -50,6 +51,26 @@ void StartPreloadProcess() {
         objectsManager->objectsOffsets = objectsOffsets;
 		// Insert the ObjectsManager chunk at the position where ObjectsProperties was removed
 		chunks.insert(chunks.begin() + objectsPropertiesPos, objectsManager);
+		// Create FontManager and pop chunks
+        auto FontBankPos = std::distance(chunks.begin(), std::find_if(
+            chunks.begin(), chunks.end(),
+            [](Chunk* ch) { return ch->id == static_short(ChunksIDs::FontBank); }
+		));
+        FontBank* fontBank = PopChunkByID<FontBank*>(chunks, static_short(ChunksIDs::FontBank));
+        FontOffsets* fontOffsets = PopChunkByID<FontOffsets*>(chunks, static_short(ChunksIDs::FontOffsets));
+        if (!fontBank || !fontOffsets) {
+            CoreLogger.Error("[Core] FontBank or FontOffsets chunk not found in the .dat file.");
+            ExitProcess(1);
+		}
+        CoreLogger.Info("[Core] FontBank and FontOffsets chunk found in .dat file!");
+        FontManager* fontManager = new FontManager();
+        fontManager->fontBank = fontBank;
+        fontManager->fontOffsets = fontOffsets;
+        
+        LoadFontsFromFolderToMap(fontBank->fonts);
+
+        // Insert the FontManager chunk at the position where FontBank was removed
+		chunks.insert(chunks.begin() + FontBankPos, fontManager);
     });
      //
     std::string datPath = addSuffix(getDatFilePath(), DAT_SUFFIX);

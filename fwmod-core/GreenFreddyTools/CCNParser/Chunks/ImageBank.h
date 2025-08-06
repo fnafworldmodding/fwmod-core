@@ -43,24 +43,24 @@ struct Image {
 #define IMAGESIZE sizeof(Image) - sizeof(std::vector<uint8_t>)
 
 typedef std::vector<uint8_t> ImageData;
-typedef std::unordered_map<uint32_t, Image> ImageMap;
+typedef std::unordered_map<uint32_t, Image> ImagesMap;
 
 class ImageBank : public Chunk {
 public:
-	ImageMap images;
+	ImagesMap images;
 
 	ImageBank() : Chunk() {
 		id = static_cast<short>(ChunksIDs::ImageBank);
-		images = ImageMap();
+		images = ImagesMap();
 	}
     ImageBank(short id, short flag, int size) : Chunk(id, flag, size) {
         this->id = static_cast<short>(ChunksIDs::ImageBank);
-        images = ImageMap();
+        images = ImagesMap();
 	}
 
     ImageBank(short flag, int size) : Chunk(flag, size) {
         id = static_cast<short>(ChunksIDs::ImageBank);
-        images = ImageMap();
+        images = ImagesMap();
 	}
 
 	virtual bool Init() override;

@@ -60,7 +60,7 @@ public:
 
 	virtual bool Init() override;
 	virtual void Write(BinaryWriter& buffer, bool compress = false) override;
-	virtual void Write(BinaryWriter& buffer, bool compress, OffsetsVector offsets);
+	virtual void Write(BinaryWriter& buffer, bool compress, OffsetsVector& offsets);
 };
 
 #endif // !FONTBANK_H

@@ -1,5 +1,6 @@
 #include "FontBank.h"
 #include "../../Utils/Decompressor.h"
+// TODO: make font read method such as images
 
 bool FontBank::Init() {
     BinaryReader buffer(this->data.data(), this->data.size());
@@ -53,7 +54,7 @@ void FontBank::Write(BinaryWriter& buffer, bool compress) {
     });
 }
 
-void FontBank::Write(BinaryWriter& buffer, bool compress, OffsetsVector offsets) {
+void FontBank::Write(BinaryWriter& buffer, bool compress, OffsetsVector& offsets) {
     this->size = 0;
     this->WriteHeader(buffer); // id short, flag short, size int
     buffer.WriteDataWithDynamicSize([&](BinaryWriter& buffer, size_t ChunkPosition) {
@@ -64,6 +65,7 @@ void FontBank::Write(BinaryWriter& buffer, bool compress, OffsetsVector offsets)
                 // Skip the uninitialized font
                 continue;
             }
+            // Add the offset for the font location in the fontbank chunk
             offsets[font.Handle - 1] = (buffer.Position() - ChunkPosition) + OFFSET_ADDTION;
             if (font.Flags == 1) {
                 // The font is already compressed
@@ -73,8 +75,6 @@ void FontBank::Write(BinaryWriter& buffer, bool compress, OffsetsVector offsets)
                 buffer.WriteFromMemory(font.raw, font.Size);
                 continue;
             }
-            // Add the offset for the font location in the fontbank chunk
-            // int to skip the count of fonts
             buffer.WriteInt32(font.Handle);
             // TODO: include the name in the compressing process. 
             // it currently expects the name to be beside the fontinfo struct directly at the memory location
