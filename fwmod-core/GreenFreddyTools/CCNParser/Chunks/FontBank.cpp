@@ -1,6 +1,6 @@
 #include "FontBank.h"
 #include "../../Utils/Decompressor.h"
-// TODO: make font read method such as images
+// TODO: make font read/write methods such as images struct
 
 bool FontBank::Init() {
     BinaryReader buffer(this->data.data(), this->data.size());
@@ -39,9 +39,6 @@ void FontBank::Write(BinaryWriter& buffer, bool compress) {
                 continue;
             }
             buffer.WriteInt32(font.Handle);
-            // TODO: include the name in the compressing process. 
-            // it currently expects the name to be beside the fontinfo struct directly at the memory location
-
             // fixme: the decompress size and compressed size aka Size is so confusing, maybe depend on flags rework the size determination
             int result = 0; // Result of compression, currently ignored because we throw the error in the function
             size_t outCompSize = 0;
@@ -76,9 +73,6 @@ void FontBank::Write(BinaryWriter& buffer, bool compress, OffsetsVector& offsets
                 continue;
             }
             buffer.WriteInt32(font.Handle);
-            // TODO: include the name in the compressing process. 
-            // it currently expects the name to be beside the fontinfo struct directly at the memory location
-            
             // fixme: the decompress size and compressed size aka Size is so confusing, maybe depend on flags rework the size determination
             int result = 0; // Result of compression, currently ignored because we throw the error in the function
             size_t outCompSize = 0;

@@ -92,7 +92,7 @@ public:
     short flag;
     unsigned int size;
 
-    std::vector<uint8_t> data; // TODO: change type from char to unsigned char for better compatibility with decompression libraries
+    std::vector<uint8_t> data;
 
     Chunk();
     Chunk(short id, short flag, int size);

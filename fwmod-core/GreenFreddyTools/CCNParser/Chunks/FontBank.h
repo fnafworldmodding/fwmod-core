@@ -4,6 +4,8 @@
 #include "Chunks.h"
 #include <unordered_map>
 
+// TODO: create ReadFontEx function same as the ReadImageEx usag
+
 struct FontInfo {
 	int Checksum = 0;
 	int References = 0;

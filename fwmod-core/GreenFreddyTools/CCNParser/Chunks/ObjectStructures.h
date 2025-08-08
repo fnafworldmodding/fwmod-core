@@ -25,7 +25,7 @@ struct ObjectHeader {
     ushort padding = 0;
     short InkEffect = 0;
     ushort InkEffectFlags = 0;
-    union { // TODO: find a better name for both the member and the struct
+    union { // TODO: find a better name for both the member and the struct member
         InkEffectParam Effect;
         int RawEffect = 0;
     };

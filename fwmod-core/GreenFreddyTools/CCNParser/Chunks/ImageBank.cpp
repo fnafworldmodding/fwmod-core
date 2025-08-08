@@ -66,7 +66,7 @@ void ImageBank::Write(BinaryWriter& buffer, bool _, OffsetsVector& offsets) {
 void Image::DecompressImage(Image& img) {
     int compressedSize = img.dataSize - 4; // exclude the decompSizePlus field
 	int decompressSize = img.decompSizePlus; // THE size of the uncompressed data
-
+	// TODO: use a Decompressor class instead of using LZ4 directly
     std::vector<uint8_t> uncompressedData(decompressSize);
 
     // Decompress the image data using LZ4
@@ -82,6 +82,36 @@ void Image::DecompressImage(Image& img) {
     uncompressedData.resize(decompressedSize);
     img.data = std::move(uncompressedData);
     img.Flags.SetFlag(ImageFlags::LZX, false); // Clear the LZX flag after decompression
+}
+
+
+uint32_t ImageBank::AddImage(Image& image, OffsetsVector* offsets = nullptr) {
+    auto it = images.find(image.Handle);
+    if (image.Handle == -1) { // image add request
+        // find a free offset by checking if it's 0
+        auto it = std::find_if(offsets->begin(), offsets->end(), [](int offset) {
+            return offset == 0;
+        });
+
+        if (it != offsets->end()) {
+            image.Handle = static_cast<uint32_t>(std::distance(offsets->begin(), it));
+        }
+        else {
+            // no free offset found, append to the end
+            image.Handle = static_cast<uint32_t>(offsets->size());
+            offsets->push_back(0);
+        }
+    }
+	else if (it == images.end()) { // image not found, add it
+        if (!offsets) return -1;
+        // check if id is in offsets, if not append till offset is provided
+        if (image.Handle >= offsets->size()) {
+            offsets->resize(image.Handle + 1, 0); // resize offsets to accommodate the new ID
+        }
+        // TODO: should I set the offset to 0?
+    }
+    images[image.Handle] = image;
+	return image.Handle;
 }
 
 // TODO: create an ReadImageEx that takes a handle (aka image id) and read the rest of the fields, to save memory and avoid copying/moving data
@@ -147,4 +177,3 @@ void Image::WriteImage(BinaryWriter& buffer, const Image& img, bool compress) {
     // Write image data
     buffer.WriteFromMemory(img.data.data(), ldataSize);
 }
-

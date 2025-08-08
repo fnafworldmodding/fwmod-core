@@ -146,8 +146,6 @@ void ObjectProperties::Write(BinaryWriter& buffer, bool compress) {
 			}
 
 			// The object is decompressed; we need to compress it (flag 0)
-			// TODO: correctly serialize the QuickBackdrop
-			// TODO: serialize Backdrop
 			if (header->Type == 0) { // QuickBackdrop
 				ObjectQuickBackdrop* quickBackdrop = object.OCIObjectQuickBackdrop;
 				size_t sizeToCompress = QUICKBACKDROPSIZE + quickBackdrop->Shape.CalcDynamicSize() + 10;
@@ -207,8 +205,6 @@ void ObjectProperties::Write(BinaryWriter& buffer, bool compress, OffsetsVector&
 			}
 
 			// The object is decompressed; we need to compress it (flag 0)
-			// TODO: correctly serialize the QuickBackdrop
-			// TODO: serialize Backdrop
 			if (header->Type == 0) { // QuickBackdrop
 				ObjectQuickBackdrop* quickBackdrop = object.OCIObjectQuickBackdrop;
 				size_t sizeToCompress = QUICKBACKDROPSIZE + quickBackdrop->Shape.CalcDynamicSize() + 10;

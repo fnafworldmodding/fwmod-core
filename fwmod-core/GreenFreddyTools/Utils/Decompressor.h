@@ -13,7 +13,6 @@
 class DLLCALL Decompressor {
 public:
 	// is there a reason to have a result parameter when I throw an error? lol?
-    // TODO: make types consistent
     static uint8_t*             CompressZlibRaw(uint8_t* data, size_t size, size_t& compressed, int& result);
 	static uint8_t*             CompressZlibRaw2(uint8_t* data, size_t size, size_t& compressed, int& result);
     static uint8_t*             CompressRaw(uint8_t* data, size_t size, size_t& compressed, int& result);

@@ -32,7 +32,7 @@ just using pointer like a normal dev (normal dev? I idk actually) or freeing old
     - [x] export logger
     - [x] basic hooking functions
 - Asset Management
-    - [ ] adding images/textures
+    - [ ] adding images/textures (currently being worked on)
     - [x] replacing images/textures
     - [ ] adding animations
     - [ ] replacing animations

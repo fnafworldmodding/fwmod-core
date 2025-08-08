@@ -67,6 +67,11 @@ public:
     virtual void Write(BinaryWriter& buffer, bool compress = false) override;
     virtual void Write(BinaryWriter& buffer, bool compress, OffsetsVector& offsets);
 	// TODO: implement adding images, replacing images, removing images, etc. should we?
+    virtual size_t Count() const { return images.size(); };
+    virtual uint32_t AddImage(Image& image, OffsetsVector* offsets = nullptr);
+    Image& operator[](uint32_t handle) {
+        return images[handle];
+    }
 };
 
 #endif // !IMAGEBANKCHUNK_H
