@@ -85,6 +85,8 @@ void AdjustOffsets(ObjectCommon* objcom, ushort* member, int delta) {
 }
 
 
+
+
 bool ObjectProperties::Init() {
 	BinaryReader reader(this->data.data(), this->data.size());
 	if (globalObjectHeaders == nullptr) {
@@ -92,6 +94,9 @@ bool ObjectProperties::Init() {
 	}
 	int curHandle = 0;
 	this->Objects.resize(globalObjectHeaders->size()); // init objects up front
+
+	// TODO: you know the size of the object properties chunk, to minsize memory fragmentation:
+	// allocate space for the object commons, and instantly put them there with this->Objects pointing to each one
 	while (this->size > reader.Position()) {
 		ObjectHeader* header = &globalObjectHeaders->at(curHandle);
 		ObjectCommonItem& ObjectCom = this->Objects[curHandle++];
@@ -99,7 +104,7 @@ bool ObjectProperties::Init() {
 		//reader.Skip(4); // Skip unknown value (4 bytes)
 		ObjectCom.DecompSize = reader.ReadInt32();
 		ObjectCom.Size = reader.ReadInt32();
-		ObjectCom.Type = header;
+		ObjectCom.Type = header; // fixme: .Type is misleading name
 		ObjectCom.Flags = 2;
 		if (!DECOMPRESS_COMOBJECTS) { // do not pre-decompress objects
 			ObjectCom.Flags = 1;
