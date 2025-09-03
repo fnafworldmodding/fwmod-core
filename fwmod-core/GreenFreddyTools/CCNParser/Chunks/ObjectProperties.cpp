@@ -61,6 +61,30 @@ cleanup:
 }
 
 
+void AdjustOffsets(ObjectCommon* objcom, ushort* member, int delta) {
+	ushort* members[8] = {
+		&objcom->AnimationOffset,
+		&objcom->MovementsOffset,
+		&objcom->CounterOffset,
+		&objcom->ExtensionOffset,
+		&objcom->ValueOffset,
+		&objcom->DataOffset,
+		&objcom->AlterableValuesOffset,
+		&objcom->AlterableStringsOffset,
+	};
+	uint8_t* objectCommon = reinterpret_cast<uint8_t*>(objcom);
+	ushort member_value = *member;
+	for (auto& offset : members) {
+		if (offset == member) continue;
+		ushort* valueptr = offset;
+		if (*valueptr < member_value) continue;
+		*valueptr += delta;
+	}
+	// add delta to size!
+	objcom->size += delta;
+}
+
+
 bool ObjectProperties::Init() {
 	BinaryReader reader(this->data.data(), this->data.size());
 	if (globalObjectHeaders == nullptr) {
@@ -98,20 +122,6 @@ bool ObjectProperties::Init() {
 		else {
 			ObjectCom.raw = Decompressor::DecompressBlockRaw(cdata, ObjectCom.Size, ObjectCom.DecompSize);
 		}
-		/*
-		* TODO: remove this code, it is not needed anymore
-		switch (header->Type) {
-			case 0: // QuickBackdrop
-				loadComObject<ObjectQuickBackdrop>(cdata, ObjectCom.Size, &ObjectCom.OCIObjectQuickBackdrop, ObjectCom.data);
-				break;
-			case 1: // Backdrop
-				loadComObject<ObjectBackdrop>(cdata, ObjectCom.Size, &ObjectCom.OCIObjectBackdrop, ObjectCom.data);
-				break;
-			default: // Common
-				loadComObject<ObjectCommon>(cdata, ObjectCom.Size, &ObjectCom.OCIObjectCommon, ObjectCom.data);
-				break;
-		}
-		*/
 		ObjectCom.Flags = 0;
 		delete[] cdata;
 	}

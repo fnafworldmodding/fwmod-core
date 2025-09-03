@@ -2,6 +2,8 @@
 #include "ObjectStructures.h"
 #include "../../Utils/IntEnum.h"
 
+void AdjustOffsets(ObjectCommon* objcom, int member, int delta);
+
 IntEnum(PropertiesFlags, int) { // currently unused
 		Compressed = 0, // Compressed object
 		Decompressed = 2, // Decompressed object
