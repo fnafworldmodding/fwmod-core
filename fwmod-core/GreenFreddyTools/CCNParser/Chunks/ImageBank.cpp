@@ -85,7 +85,7 @@ void Image::DecompressImage(Image& img) {
 }
 
 
-uint32_t ImageBank::AddImage(Image& image, OffsetsVector* offsets = nullptr) {
+uint32_t ImageBank::AddImage(Image& image, OffsetsVector* offsets) {
     auto it = images.find(image.Handle);
     if (image.Handle == -1) { // image add request
         // find a free offset by checking if it's 0

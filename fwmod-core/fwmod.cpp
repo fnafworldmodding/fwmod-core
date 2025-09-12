@@ -12,4 +12,7 @@ extern "C" {
 	DLLCALL std::vector<ObjectHeader>*& _cdecl GetGlobalObjectHeaders() {
 		return globalObjectHeaders;
 	}
+	DLLCALL const char* _cdecl GetVersionString() {
+		return FWMOD_CORE_VERSION_STRING;
+	}
 }

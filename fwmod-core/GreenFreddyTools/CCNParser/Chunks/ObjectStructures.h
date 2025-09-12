@@ -128,7 +128,7 @@ struct ObjectBackdrop {
 
 // CTF 2.5+ object common structure
 struct ObjectCommon {
-    int size = 0; // a guess
+    int size = 0;
     ushort AnimationOffset = 0;
     ushort MovementsOffset = 0;
     ushort Version; // a guess

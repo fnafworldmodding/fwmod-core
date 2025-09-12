@@ -28,7 +28,7 @@ void StartPreloadProcess() {
             ExitProcess(1);
 		}
         CoreLogger.Info("[Core] ImageBank and ImageOffsets chunks found in the .dat file!");
-		loadImagesFromFolderToMap(imagebank->images); // Load images from the preload folder
+		loadImagesFromFolderToMap(imagebank); // Load images from the preload folder
         ImageManager* imageManager = new ImageManager();
         imageManager->imageBank = imagebank;
         imageManager->imageOffsets = imageoffsets;

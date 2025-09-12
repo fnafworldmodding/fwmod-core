@@ -1,8 +1,10 @@
+#ifndef ObjectProperties_CHUNK_H
+#define ObjectProperties_CHUNK_H
 #include "Chunks.h"
 #include "ObjectStructures.h"
 #include "../../Utils/IntEnum.h"
 
-void AdjustOffsets(ObjectCommon* objcom, int member, int delta);
+void AdjustOffsets(ObjectCommon* objcom, int member, int delta); // TODO: export
 
 IntEnum(PropertiesFlags, int) { // currently unused
 		Compressed = 0, // Compressed object
@@ -54,3 +56,4 @@ public:
 	virtual void Write(BinaryWriter& buffer, bool compress = false) override;
 	virtual void Write(BinaryWriter& buffer, bool compress, OffsetsVector& offsets);
 };
+#endif // !ObjectProperties_CHUNK_H

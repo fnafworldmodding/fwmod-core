@@ -1,6 +1,7 @@
 #include "loader.h"
 #include "CCNParser\Chunks\ImageBank.h"
 #include "CCNParser\Chunks\Image.h"
+#include "CCNParser\Chunks\ObjectProperties.h"
 #include "Globals.h"
 #include "Utils/Decompressor.h"
 
@@ -9,7 +10,27 @@
 #include <unordered_map>
 #include <json.hpp>
 
-void loadImagesFromFolderToMap(ImageBank& imageBank, OffsetsVector* offsets) {
+// TODO: handle exceptions properly
+void LoadImageToImageBank(ImageBank* imageBank, const std::string& path, int id, OffsetsVector* offsets) {
+    if (!imageBank) throw std::runtime_error("ImageBank pointer is null");
+    // TODO: providing the image path in the json file aka mate file is better than whateve this is
+    Image img = createImage(id, path, true);
+    // TODO: read mate file for hotspot and action point values/other
+    Image* oldImage = &imageBank->images[id];
+    img.HotspotX = oldImage->HotspotX;
+    img.HotspotY = oldImage->HotspotY;
+    img.ActionPointX = oldImage->ActionPointX;
+    img.ActionPointY = oldImage->ActionPointY;
+    img.References = oldImage->References;
+    img.TransparentColor = oldImage->TransparentColor;
+    //imageBank[id] = img;
+    imageBank->AddImage(img, offsets);
+}
+
+void loadImagesFromFolderToMap(ImageBank* imageBank, OffsetsVector* offsets) {
+    if (!imageBank) {
+        throw std::runtime_error("ImageBank pointer is null");
+	}
     // Get absolute path to preload folder
     namespace fs = std::filesystem;
 
@@ -28,21 +49,8 @@ void loadImagesFromFolderToMap(ImageBank& imageBank, OffsetsVector* offsets) {
 
             // Convert filename to integer ID
             int id = static_cast<uint32_t>(std::stoi(filename));
-
-            // TODO: providing the image path in the json file aka mate file is better than whateve this is
-            Image img = createImage(id, entry.path().string(), true);
-            // TODO: read mate file for hotspot and action point values/other
-            img.HotspotX = imageBank[id].HotspotX;
-            img.HotspotY = imageBank[id].HotspotY;
-            img.ActionPointX = imageBank[id].ActionPointX;
-            img.ActionPointY = imageBank[id].ActionPointY;
-            img.References = imageBank[id].References;
-            img.TransparentColor = imageBank[id].TransparentColor;
-            // Store in map with filename as key
-            //imageBank[id] = img;
-            imageBank.AddImage(img, offsets);
+            LoadImageToImageBank(imageBank, entry.path().string(), id, offsets);
         }
-
     }
 }
 
@@ -53,9 +61,9 @@ static void DecompressFontItem(FontItem& fontItem) {
         if (result != 0) {
             throw std::runtime_error("Failed to decompress font item with ID: " + std::to_string(fontItem.Handle));
         }
-        //uint32_t newcheck = ClickteamChecksumGenerator(rawData, fontItem.DecompSize);
         memcpy(&fontItem.raw, rawData, fontItem.DecompSize);
         fontItem.Flags = 0;
+        delete[] rawData;
     }
 }
 
@@ -127,5 +135,45 @@ void LoadFontsFromFolderToMap(FontsMap& fontBank) {
     }
     catch (const std::exception&) {
         throw;
+    }
+}
+
+
+
+static void DecompressObjectCommon(ObjectCommonItem& objectItem) {
+    if (objectItem.Flags == 1) { // Compressed
+        int result = 0;
+        uint8_t* rawData = Decompressor::DecompressBlockRaw(objectItem.raw, objectItem.Size, objectItem.DecompSize);
+        if (result != 0) {
+            throw std::runtime_error("Failed to decompress object item with ID: " + std::to_string(objectItem.Type->Handle));
+        }
+        delete objectItem.raw; // delete old data
+        objectItem.raw = rawData;
+        objectItem.Flags = 0;
+    }
+}
+
+void LoadObjectsFromFolderToMap(ObjectProperties& objectProperties) {
+    namespace fs = std::filesystem;
+    using json = nlohmann::json;
+    auto preloadPath = fs::current_path() / "preload";
+    if (!fs::exists(preloadPath) || !fs::is_directory(preloadPath)) {
+        throw std::runtime_error("preload directory not found or it's not a directory");
+    }
+    for (const auto& entry : fs::directory_iterator(preloadPath)) {
+        std::string pathStr = entry.path().string();
+        // filename must be bigger than 12 (".object.json") and ends with .object.json
+        if (entry.is_regular_file() && pathStr.size() >= 13 && pathStr.substr(pathStr.size() - 12) == ".object.json") {
+            // get the filename without extension
+            std::string filename = entry.path().stem().stem().string();
+            // convert filename to integer ID
+            int id = static_cast<uint32_t>(std::stoi(filename));
+            ObjectCommonItem& objectItem = objectProperties.Objects[id];
+            DecompressObjectCommon(objectItem);
+            // load json
+            std::ifstream f(entry.path().string());
+            json data = json::parse(f);
+            // to do something?
+        }
     }
 }

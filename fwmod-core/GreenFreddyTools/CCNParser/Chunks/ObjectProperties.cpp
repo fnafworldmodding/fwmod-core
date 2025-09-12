@@ -61,6 +61,9 @@ cleanup:
 }
 
 
+// AdjustOffsets() is meant to fix all offsets after one of ObjectCommon members data been resized
+// e.g if you make animations bigger, all the members that live in memory after animations (like Movements, Values, etc) must have their offsets be forwarded by delta (the amount of new data added)
+//
 void AdjustOffsets(ObjectCommon* objcom, ushort* member, int delta) {
 	ushort* members[8] = {
 		&objcom->AnimationOffset,
@@ -83,8 +86,6 @@ void AdjustOffsets(ObjectCommon* objcom, ushort* member, int delta) {
 	// add delta to size!
 	objcom->size += delta;
 }
-
-
 
 
 bool ObjectProperties::Init() {
