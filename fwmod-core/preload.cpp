@@ -8,6 +8,7 @@
 #include "CCNParser\Chunks\ImageManager.h"
 #include "CCNParser\Chunks\ObjectsManager.h"
 #include "CCNParser\Chunks\FontManager.h"
+#include <direct.h> // For _getcwd on Windows
 
 
 void StartPreloadProcess() {

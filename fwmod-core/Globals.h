@@ -3,7 +3,6 @@
 #define FWGLOBALS_H
 #pragma once
 
-//#define IMAGEOGORDER
 #define XLUAEXT
 #include "common.h"
 #include "CCNParser\CCNPackage.h"
@@ -11,22 +10,21 @@
 #include "EventManager.h"
 #include "Logger.h"
 #include <format>
-// common included headers
-#include "pch.h"
 
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <Windows.h>
-#include <vector>
-#include <unordered_map>
-#include <mutex>
-#include <thread>
-#include <direct.h> // For _getcwd on Windows
-#include <tlhelp32.h>
-#include <fstream>
-#include <ctime>
-#include <functional>
+// common included headers
+//#include <iostream>
+//#include <string>
+//#include <sstream>
+//#include <Windows.h>
+//#include <vector>
+//#include <unordered_map>
+//#include <mutex>
+//#include <thread>
+//#include <direct.h> // For _getcwd on Windows
+//#include <tlhelp32.h>
+//#include <fstream>
+//#include <ctime>
+//#include <functional>
 
 
 // globals variables

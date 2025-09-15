@@ -5,6 +5,19 @@
 
 #include "../../Utils/IntEnum.h"
 #include "../../../common.h"
+// export before BinaryTools to avoid warnings
+// Export all STL types in the warning chain for std::vector<uint8_t>
+template class DLLCALL std::allocator<uint8_t>;
+template struct DLLCALL std::_Simple_types<uint8_t>;
+struct DLLCALL std::_Container_base12;
+template class DLLCALL std::_Vector_val<std::_Simple_types<uint8_t>>;
+template class DLLCALL std::_Compressed_pair<
+    std::allocator<uint8_t>,
+    std::_Vector_val<std::_Simple_types<uint8_t>>,
+    true
+>;
+template class DLLCALL std::vector<uint8_t>;
+
 //
 #include "../../BinaryTools/BinaryReader.h"
 #include "../../BinaryTools/BinaryWriter.h"
@@ -74,17 +87,7 @@ IntEnum(InitFlags, int) {
 //#pragma warning(push)
 //#pragma warning(disable : 4251)
 
-// Export all STL types in the warning chain for std::vector<uint8_t>
-template class DLLCALL std::allocator<uint8_t>;
-template struct DLLCALL std::_Simple_types<uint8_t>;
-struct DLLCALL std::_Container_base12; // <-- Add this line
-template class DLLCALL std::_Vector_val<std::_Simple_types<uint8_t>>;
-template class DLLCALL std::_Compressed_pair<
-    std::allocator<uint8_t>,
-    std::_Vector_val<std::_Simple_types<uint8_t>>,
-    true
->;
-template class DLLCALL std::vector<uint8_t>;
+
 
 class DLLCALL Chunk {
 public:
