@@ -144,6 +144,9 @@
     <ClInclude Include="GreenFreddyTools\CCNParser\Chunks\FontManager.h">
       <Filter>Header Files\CCNParser\Chunks</Filter>
     </ClInclude>
+    <ClInclude Include="GreenFreddyTools\BinaryTools\BinaryIO.h">
+      <Filter>Source Files\BinaryTools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -232,6 +235,9 @@
     </ClCompile>
     <ClCompile Include="GreenFreddyTools\CCNParser\Chunks\FontManager.cpp">
       <Filter>Source Files\CCNParser\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="GreenFreddyTools\BinaryTools\BinaryIO.cpp">
+      <Filter>Source Files\BinaryTools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

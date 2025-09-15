@@ -143,15 +143,10 @@ std::wstring BinaryReader::ReadNullTerminatedStringWide()
 
 std::wstring BinaryReader::ReadFixedLengthStringWide(size_t length)
 {
-    std::wstring output;
-    output.reserve(length);
-    for (size_t i = 0; i < length; i++)
-    {
-        wchar_t charBuffer;
-        stream_->read((char*)&charBuffer, 2);
-        output.push_back(charBuffer);
-    }
-    return output;
+    std::wstring result;
+    result.resize(length);
+    ReadToMemory(result.data(), length * sizeof(wchar_t));
+    return result;
 }
 
 std::vector<std::string> BinaryReader::ReadSizedStringList(size_t listSize)

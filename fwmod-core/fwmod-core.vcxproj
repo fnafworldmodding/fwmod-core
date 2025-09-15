@@ -105,6 +105,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="Fwmod.h" />
     <ClInclude Include="GreenFreddyTools\BinaryTools\Binary.h" />
+    <ClInclude Include="GreenFreddyTools\BinaryTools\BinaryIO.h" />
     <ClInclude Include="GreenFreddyTools\BinaryTools\BinaryReader.h" />
     <ClInclude Include="GreenFreddyTools\BinaryTools\BinaryWriter.h" />
     <ClInclude Include="GreenFreddyTools\BinaryTools\MemoryBuffer.h" />
@@ -141,6 +142,7 @@
     <ClCompile Include="Fwmod.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="GreenFreddyTools\BinaryTools\Binary.cpp" />
+    <ClCompile Include="GreenFreddyTools\BinaryTools\BinaryIO.cpp" />
     <ClCompile Include="GreenFreddyTools\BinaryTools\BinaryReader.cpp" />
     <ClCompile Include="GreenFreddyTools\BinaryTools\BinaryTools.cpp" />
     <ClCompile Include="GreenFreddyTools\BinaryTools\BinaryWriter.cpp" />
