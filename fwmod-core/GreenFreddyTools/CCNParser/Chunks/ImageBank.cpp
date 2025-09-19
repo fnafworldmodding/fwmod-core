@@ -14,9 +14,9 @@ bool ImageBank::Init() {
 
     this->images.reserve(count); 
     for (int i = 0; i < count; ++i) {
-        // TODO: probably a better thing would be directly reading the data to the struct than having a static method (avoid copying/moving)
-        Image img = Image::ReadImage(buffer);
-        this->images[img.Handle] = img;
+        int handle = buffer.ReadUint32();
+        // accessing a non-existent key would construct one by default, unordered_map creates it
+        this->images[handle].ReadImageEx(buffer, handle);
     }
     this->FreeData();
     return true;
@@ -63,15 +63,15 @@ void ImageBank::Write(BinaryWriter& buffer, bool _, OffsetsVector& offsets) {
     });
 }
 
-void Image::DecompressImage(Image& img) {
-    int compressedSize = img.dataSize - 4; // exclude the decompSizePlus field
-	int decompressSize = img.decompSizePlus; // THE size of the uncompressed data
+void Image::DecompressImage() {
+    int compressedSize = this->dataSize - 4; // exclude the decompSizePlus field
+	int decompressSize = this->decompSizePlus; // THE size of the uncompressed data
 	// TODO: use a Decompressor class instead of using LZ4 directly
     std::vector<uint8_t> uncompressedData(decompressSize);
 
     // Decompress the image data using LZ4
     int decompressedSize = LZ4_decompress_safe(
-        reinterpret_cast<const char*>(img.data.data()),
+        reinterpret_cast<const char*>(this->data.data()),
         reinterpret_cast<char*>(uncompressedData.data()),
         compressedSize, decompressSize
     );
@@ -80,8 +80,8 @@ void Image::DecompressImage(Image& img) {
         throw std::runtime_error("Decompression failed");
     }
     uncompressedData.resize(decompressedSize);
-    img.data = std::move(uncompressedData);
-    img.Flags.SetFlag(ImageFlags::LZX, false); // Clear the LZX flag after decompression
+    this->data = std::move(uncompressedData);
+    this->Flags.SetFlag(ImageFlags::LZX, false); // Clear the LZX flag after decompression
 }
 
 
@@ -116,35 +116,37 @@ uint32_t ImageBank::AddImage(Image& image, OffsetsVector* offsets) {
 
 // TODO: create an ReadImageEx that takes a handle (aka image id) and read the rest of the fields, to save memory and avoid copying/moving data
 // and unstatic them they can be a method instead of a static method
-Image Image::ReadImage(BinaryReader& buffer, bool decompress) {
-    Image img;
-    img.Handle = buffer.ReadUint32();
-    img.Checksum = buffer.ReadInt32();
-    img.References = buffer.ReadInt32();
-    img.unknown = buffer.ReadInt32();
-    img.dataSize = buffer.ReadInt32();
-    img.Width = buffer.ReadInt16();
-    img.Height = buffer.ReadInt16();
-    img.GraphicMode = buffer.ReadUint8();
-    img.Flags.SetValue(buffer.ReadUint8());
-    img.padding = buffer.ReadUint16();
-    img.HotspotX = buffer.ReadInt16();
-    img.HotspotY = buffer.ReadInt16();
-    img.ActionPointX = buffer.ReadInt16();
-    img.ActionPointY = buffer.ReadInt16();
-    img.TransparentColor = buffer.ReadUint32();
-	bool islzCompressed = img.Flags.GetFlag(ImageFlags::LZX);
+void Image::ReadImage(BinaryReader& buffer, bool decompress) {
+    this->Handle = buffer.ReadUint32();
+    this->ReadImageEx(buffer, this->Handle, decompress);
+}
 
-    int ldataSize = img.dataSize - (islzCompressed ? 4 : 0);
-    img.data.resize(ldataSize);
-    img.decompSizePlus = islzCompressed ? buffer.ReadInt32() : 0;
-    buffer.ReadToMemory(img.data.data(), ldataSize);
+void Image::ReadImageEx(BinaryReader& buffer, int handle, bool decompress) 
+{
+    this->Checksum = buffer.ReadInt32();
+    this->References = buffer.ReadInt32();
+    this->unknown = buffer.ReadInt32();
+    this->dataSize = buffer.ReadInt32();
+    this->Width = buffer.ReadInt16();
+    this->Height = buffer.ReadInt16();
+    this->GraphicMode = buffer.ReadUint8();
+    this->Flags.SetValue(buffer.ReadUint8());
+    this->padding = buffer.ReadUint16();
+    this->HotspotX = buffer.ReadInt16();
+    this->HotspotY = buffer.ReadInt16();
+    this->ActionPointX = buffer.ReadInt16();
+    this->ActionPointY = buffer.ReadInt16();
+    this->TransparentColor = buffer.ReadUint32();
+	bool islzCompressed = this->Flags.GetFlag(ImageFlags::LZX);
+
+    int ldataSize = this->dataSize - (islzCompressed ? 4 : 0);
+    this->data.resize(ldataSize);
+    this->decompSizePlus = islzCompressed ? buffer.ReadInt32() : 0;
+    buffer.ReadToMemory(this->data.data(), ldataSize);
     // Decompress the image data if necessary
     if (decompress && islzCompressed) {
-		Image::DecompressImage(img);
+		this->DecompressImage();
     }
-
-    return img;
 }
 
 

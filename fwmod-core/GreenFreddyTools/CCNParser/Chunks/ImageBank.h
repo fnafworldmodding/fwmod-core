@@ -36,8 +36,9 @@ struct Image {
     int32_t decompSizePlus = 0;
     std::vector<uint8_t> data;
     static void WriteImage(BinaryWriter& writer, const Image& image, bool compress);
-    static Image ReadImage(BinaryReader& reader, bool decompress = false);
-    static void DecompressImage(Image& img);
+    void ReadImage(BinaryReader& reader, bool decompress = false);
+    void ReadImageEx(BinaryReader& reader, int handle, bool decompress = false);
+    void DecompressImage();
 };
 
 #define IMAGESIZE sizeof(Image) - sizeof(std::vector<uint8_t>)
