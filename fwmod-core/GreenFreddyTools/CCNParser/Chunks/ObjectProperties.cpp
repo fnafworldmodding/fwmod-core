@@ -87,6 +87,8 @@ void AdjustOffsets(ObjectCommon* objcom, ushort* member, int delta) {
 	objcom->size += delta;
 }
 
+//void AdjustAnimationHeaderOffsets(Anim)
+
 
 bool ObjectProperties::Init() {
 	BinaryReader reader(this->data.data(), this->data.size());
@@ -146,53 +148,12 @@ void ObjectProperties::Write(BinaryWriter& buffer, bool compress) {
 				// Skip the uninitialized object
 				continue;
 			}
-
-			uint8_t* rawData = nullptr;
-			size_t compressSize = 0;
-			int compressionResult = 0; // Result of compression, currently ignored
-
-			ObjectHeader* header = object.Type;
-
-			if (object.Flags == 1) { // The object is already compressed
-				// Write the size of the object
-				buffer.WriteInt32(object.DecompSize);
-				buffer.WriteInt32(object.Size);
-				buffer.WriteFromMemory(object.raw, object.Size);
-				continue;
-			}
-
-			// The object is decompressed; we need to compress it (flag 0)
-			if (header->Type == 0) { // QuickBackdrop
-				ObjectQuickBackdrop* quickBackdrop = object.OCIObjectQuickBackdrop;
-				size_t sizeToCompress = QUICKBACKDROPSIZE + quickBackdrop->Shape.CalcDynamicSize() + 10;
-				uint8_t* dataToCompress = new uint8_t[sizeToCompress];
-
-				// Copy quickBackdrop data and write shape data
-				memcpy(dataToCompress, quickBackdrop, QUICKBACKDROPSIZE);
-				quickBackdrop->Shape.Write(dataToCompress + QUICKBACKDROPSIZE, quickBackdrop->Shape.CalcDynamicSize());
-				// Fill the rest of the data with zeros because for some reason the game expects 10 more bytes ?
-				memset(dataToCompress + QUICKBACKDROPSIZE + quickBackdrop->Shape.CalcDynamicSize(), 0, 10);
-
-				// Compress the data
-				rawData = Decompressor::CompressZlibRaw(dataToCompress, sizeToCompress, compressSize, compressionResult);
-				buffer.WriteInt32(sizeToCompress); // Write the decompressed size
-				delete[] dataToCompress;
-			}
-			else {
-				// Compress the raw object data
-				rawData = Decompressor::CompressZlibRaw(object.raw, object.OCIObjectCommon->size, compressSize, compressionResult);
-				buffer.WriteInt32(object.OCIObjectCommon->size); // Write the decompressed size
-			}
-
-			// Write the compressed size and data
-			buffer.WriteInt32(compressSize);
-			buffer.WriteFromMemory(rawData, compressSize);
-			delete[] rawData;
+			object.Write(buffer);
 		}
 		});
 }
 
-void ObjectProperties::Write(BinaryWriter& buffer, bool compress, OffsetsVector& offset) {
+void ObjectProperties::Write(BinaryWriter& buffer, bool compress, OffsetsVector& offsets) {
 	this->size = 0;
 	this->WriteHeader(buffer);
 
@@ -201,52 +162,11 @@ void ObjectProperties::Write(BinaryWriter& buffer, bool compress, OffsetsVector&
 			ObjectHeader* header = object.Type;
 			if (object.Flags == 2) { // we should never reach this point, may as well throw an error
 				// Skip the uninitialized object
-				offset[header->Handle] = 0; // is adding the additional OFFSET_ADDTION needed?
+				offsets[header->Handle] = 0;
 				continue;
 			}
-
-			offset[header->Handle] = buffer.Position() - ChunkPosition; // is adding the additional OFFSET_ADDTION needed?
-
-			uint8_t* rawData = nullptr;
-			size_t compressSize = 0;
-			int compressionResult = 0; // Result of compression, currently ignored
-
-
-			if (object.Flags == 1) { // The object is already compressed
-				// Write the size of the object
-				buffer.WriteInt32(object.DecompSize);
-				buffer.WriteInt32(object.Size);
-				buffer.WriteFromMemory(object.raw, object.Size);
-				continue;
-			}
-
-			// The object is decompressed; we need to compress it (flag 0)
-			if (header->Type == 0) { // QuickBackdrop
-				ObjectQuickBackdrop* quickBackdrop = object.OCIObjectQuickBackdrop;
-				size_t sizeToCompress = QUICKBACKDROPSIZE + quickBackdrop->Shape.CalcDynamicSize() + 10;
-				uint8_t* dataToCompress = new uint8_t[sizeToCompress];
-
-				// Copy quickBackdrop data and write shape data
-				memcpy(dataToCompress, quickBackdrop, QUICKBACKDROPSIZE);
-				quickBackdrop->Shape.Write(dataToCompress + QUICKBACKDROPSIZE, quickBackdrop->Shape.CalcDynamicSize());
-				// Fill the rest of the data with zeros because for some reason the game expects 10 more bytes ?
-				memset(dataToCompress + QUICKBACKDROPSIZE + quickBackdrop->Shape.CalcDynamicSize(), 0, 10);
-
-				// Compress the data
-				rawData = Decompressor::CompressZlibRaw(dataToCompress, sizeToCompress, compressSize, compressionResult);
-				buffer.WriteInt32(sizeToCompress); // Write the decompressed size
-				delete[] dataToCompress;
-			}
-			else {
-				// Compress the raw object data
-				rawData = Decompressor::CompressZlibRaw(object.raw, object.OCIObjectCommon->size, compressSize, compressionResult);
-				buffer.WriteInt32(object.OCIObjectCommon->size); // Write the decompressed size
-			}
-
-			// Write the compressed size and data
-			buffer.WriteInt32(compressSize);
-			buffer.WriteFromMemory(rawData, compressSize);
-			delete[] rawData;
+			offsets[header->Handle] = buffer.Position() - ChunkPosition;
+			object.Write(buffer);
 		}
 	});
 }

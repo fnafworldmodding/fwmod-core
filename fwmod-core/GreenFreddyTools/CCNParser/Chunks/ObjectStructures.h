@@ -169,4 +169,35 @@ std::vector<StringType> ReadObjectNames(BinaryReader& reader, size_t size) {
 }
 
 
+#define	ANIMID_MIN	16
+
+// Anim header
+class AnimHeader {
+public:
+    WORD		ahSize;
+    WORD		ahAnimMax;					// New V2, number of entries in offset table
+    short		ahOffsetToAnim[ANIMID_MIN];	// Minimum 16 animations, can be larger!
+};
+
+#ifndef DIRID_MAX
+#define DIRID_MAX	32
+#endif
+
+// Anim structure
+typedef	struct	Anim {
+    short	 		anOffsetToDir[DIRID_MAX];	// Offset to animations with a direction
+} Anim;
+
+// AnimDirection structure
+typedef	struct	AnimDirection {
+    BYTE		adMinSpeed;					// Minimum speed
+    BYTE		adMaxSpeed;					// Maximum speed
+    short		adRepeat;					// Number of loops
+    short		adRepeatFrame;				// Where to loop
+    short		adNumberOfFrame;			// Number of frames
+    short		adFrame[1];					// Frames
+} AnimDirection;
+#define sizeof_AnimDirection	(sizeof(AnimDirection)-sizeof(short))
+
+
 #endif // !OBJECTSTUCTURES_H_

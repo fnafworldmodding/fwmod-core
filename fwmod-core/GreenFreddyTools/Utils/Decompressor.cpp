@@ -1,5 +1,3 @@
-#include <zlib.h>
-
 #include "Decompressor.h"
 
 #include "../BinaryTools/BinaryReader.h"

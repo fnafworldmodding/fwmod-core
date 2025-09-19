@@ -5,6 +5,7 @@
 #include <cstdint>  
 #include <stdexcept>  
 #include <memory>  
+#include <zlib.h>
 
 #include "../CCNParser/Chunks/Chunks.h"
 #include "../BinaryTools/BinaryReader.h"
