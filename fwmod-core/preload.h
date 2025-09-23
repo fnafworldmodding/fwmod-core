@@ -55,11 +55,11 @@ inline static std::string getDatFilePath() {
     return exePath.substr(0, dotPos) + ".dat";
 }
 template<typename T>
-static inline T FindChunkByID(std::vector<Chunk*>& chunks, short id) {
+static inline T FindChunkByID(std::vector<Chunk*>& chunks, ChunksIDs id) {
     static_assert(std::is_pointer<T>::value, "T must be a pointer type");
     static_assert(std::is_base_of<Chunk, std::remove_pointer_t<T>>::value,
         "T must be a pointer to a type derived from Chunk");
-    auto it = std::find_if(chunks.begin(), chunks.end(), [id](Chunk* ch) { return ch->id == id; });
+    auto it = std::find_if(chunks.begin(), chunks.end(), [id](Chunk* ch) { return ch->id == static_cast<short>(id); });
     if (it != chunks.end()) {
         return static_cast<T>(*it);
     }
@@ -67,11 +67,11 @@ static inline T FindChunkByID(std::vector<Chunk*>& chunks, short id) {
 }
 
 template<typename T>
-static inline T PopChunkByID(std::vector<Chunk*>& chunks, short id) {
+static inline T PopChunkByID(std::vector<Chunk*>& chunks, ChunksIDs id) {
     static_assert(std::is_pointer<T>::value, "T must be a pointer type");
     static_assert(std::is_base_of<Chunk, std::remove_pointer_t<T>>::value,
         "T must be a pointer to a type derived from Chunk");
-    auto it = std::find_if(chunks.begin(), chunks.end(), [id](Chunk* ch) { return ch->id == id; });
+    auto it = std::find_if(chunks.begin(), chunks.end(), [id](Chunk* ch) { return ch->id == static_cast<short>(id); });
     if (it != chunks.end()) {
         T result = static_cast<T>(*it);
         chunks.erase(it);
@@ -79,7 +79,12 @@ static inline T PopChunkByID(std::vector<Chunk*>& chunks, short id) {
     }
     return nullptr;
 }
-
+static inline ptrdiff_t GetChunkPosition(std::vector<Chunk*>& chunks, ChunksIDs id) {
+    return std::distance(chunks.begin(), std::find_if(
+        chunks.begin(), chunks.end(),
+        [&](Chunk* ch) { return ch->id == static_cast<short>(id); }
+    ));
+}
 
 
 #endif // PRELOAD_H

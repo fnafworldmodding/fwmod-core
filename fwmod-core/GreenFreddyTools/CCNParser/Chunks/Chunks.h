@@ -31,8 +31,7 @@ typedef std::vector<uint32_t> OffsetsVector;
 //
 
 #define CHUNK_HEADER_SIZE 8 // 2 shorts + 4 bytes for size
-
-enum class ChunksIDs {  
+IntEnum(ChunksIDs, int16_t) {
    Preview = 0x1122,  
    MiniHeader = 0x2222,  
    AppHeader = 0x2223,  

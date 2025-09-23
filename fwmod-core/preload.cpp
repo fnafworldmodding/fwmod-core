@@ -16,13 +16,10 @@ void StartPreloadProcess() {
     loadPlugins();
     // move this function
     PluginsEventManager.AddListener("Chunks", [](std::vector<Chunk*>& chunks, BinaryReader& reader, __int64& flags) -> void {
-        auto imagebankpos = std::distance(chunks.begin(), std::find_if(
-            chunks.begin(), chunks.end(),
-            [](Chunk* ch) { return ch->id == static_short(ChunksIDs::ImageBank); }
-		)); // Find the position of the ImageBank chunk
+        auto imagebankpos = GetChunkPosition(chunks, ChunksIDs::ImageBank); // Find the position of the ImageBank chunk
 
-        ImageBank* imagebank = PopChunkByID<ImageBank*>(chunks, static_short(ChunksIDs::ImageBank));
-        ImageOffsets* imageoffsets = PopChunkByID<ImageOffsets*>(chunks, static_short(ChunksIDs::ImageOffsets));
+        ImageBank* imagebank = PopChunkByID<ImageBank*>(chunks, ChunksIDs::ImageBank);
+        ImageOffsets* imageoffsets = PopChunkByID<ImageOffsets*>(chunks, ChunksIDs::ImageOffsets);
         // raise an runtime error if one of them is nullptr
         if (!imagebank || !imageoffsets) {
             CoreLogger.Error("[Core] ImageBank or ImageOffsets chunk not found in the .dat file.");
@@ -36,12 +33,10 @@ void StartPreloadProcess() {
         // Insert the ImageManager chunk at the position where ImageBank was removed
         chunks.insert(chunks.begin() + imagebankpos, imageManager);
 		// Create Objects Manager and pop chunks
-        auto objectsPropertiesPos = std::distance(chunks.begin(), std::find_if(
-            chunks.begin(), chunks.end(),
-            [](Chunk* ch) { return ch->id == static_short(ChunksIDs::ObjectProperties); }
-        ));
-        ObjectProperties* objectProperties = PopChunkByID<ObjectProperties*>(chunks, static_short(ChunksIDs::ObjectProperties));
-        ObjectsPropOffsets* objectsOffsets = PopChunkByID<ObjectsPropOffsets*>(chunks, static_short(ChunksIDs::ObjectPropertiesOffsets));
+        auto objectsPropertiesPos = GetChunkPosition(chunks, ChunksIDs::ObjectProperties);
+
+        ObjectProperties* objectProperties = PopChunkByID<ObjectProperties*>(chunks, ChunksIDs::ObjectProperties);
+        ObjectsPropOffsets* objectsOffsets = PopChunkByID<ObjectsPropOffsets*>(chunks, ChunksIDs::ObjectPropertiesOffsets);
         if (!objectProperties) {
             CoreLogger.Error("[Core] ObjectsManager chunk not found in the .dat file.");
             ExitProcess(1);
@@ -53,12 +48,9 @@ void StartPreloadProcess() {
 		// Insert the ObjectsManager chunk at the position where ObjectsProperties was removed
 		chunks.insert(chunks.begin() + objectsPropertiesPos, objectsManager);
 		// Create FontManager and pop chunks
-        auto FontBankPos = std::distance(chunks.begin(), std::find_if(
-            chunks.begin(), chunks.end(),
-            [](Chunk* ch) { return ch->id == static_short(ChunksIDs::FontBank); }
-		));
-        FontBank* fontBank = PopChunkByID<FontBank*>(chunks, static_short(ChunksIDs::FontBank));
-        FontOffsets* fontOffsets = PopChunkByID<FontOffsets*>(chunks, static_short(ChunksIDs::FontOffsets));
+        auto FontBankPos = GetChunkPosition(chunks, ChunksIDs::FontBank);
+        FontBank* fontBank = PopChunkByID<FontBank*>(chunks, ChunksIDs::FontBank);
+        FontOffsets* fontOffsets = PopChunkByID<FontOffsets*>(chunks, ChunksIDs::FontOffsets);
         if (!fontBank || !fontOffsets) {
             CoreLogger.Error("[Core] FontBank or FontOffsets chunk not found in the .dat file.");
             ExitProcess(1);
@@ -122,14 +114,6 @@ void StartPreloadProcess() {
 
     for (Chunk* c : chunks) {
 		c->Write(BW);
-        if (BW.bad()) {
-			CoreLogger.Error("[Core] Failed to write chunk with ID: 0x" + std::format("{:x}", c->id) + " to .dat file. stream seems to gone bad");
-			ExitProcess(1);
-        }
-        if (BW.fail()) {
-            CoreLogger.Error("[Core] Failed to write chunk with ID: 0x" + std::format("{:x}", c->id) + " to .dat file. stream failed");
-            ExitProcess(1);
-        }
 	}
     CoreLogger.Info("[Core] Finished writing to: " + datWritePath);
 	// Free all chunks
