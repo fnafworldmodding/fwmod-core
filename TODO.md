@@ -10,6 +10,9 @@ just using pointer like a normal dev (normal dev? I idk actually) or freeing old
 
 - try avoid copying/moving structs/objects when possible
 
+- make a store for each change such as objects, fonts, images 
+- to know which changes going to happen and process them at once
+
 ## TODO
 - decompiling/compiling
     - [x] reading/writing chunks
@@ -54,3 +57,5 @@ just using pointer like a normal dev (normal dev? I idk actually) or freeing old
     - [ ] remove pointless headers/code
     - [ ] clean up comments
     - [ ] better error handling
+    - [ ] better logging and create logger factory for ease instead of making the CoreLogger exported
+    - [ ] a readme and instruactions to how to build the project
