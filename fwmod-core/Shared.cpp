@@ -23,20 +23,20 @@ void loadPlugins() {
             std::string dllPath = entry.path().string();
             HMODULE hModule = LoadLibraryA(dllPath.c_str());
             if (!hModule) {
-                CoreLogger.Info("Failed to load " + dllPath + ": " + std::to_string(GetLastError()));
-                return;
+                CoreLogger.Error("Failed to load " + dllPath + ": " + std::to_string(GetLastError()));
+                continue;
             }
 
             CreatePluginFunc createPlugin = (CreatePluginFunc)GetProcAddress(hModule, "CreatePlugin");
             if (!createPlugin) {
-                CoreLogger.Info("Failed to find CreatePlugin function in: " + dllPath);
-                return;
+                CoreLogger.Error("Failed to find CreatePlugin function in: " + dllPath);
+                continue;
             }
 
             IPlugin* plugin = createPlugin();
             if (!plugin) {
-                CoreLogger.Info("Failed to create plugin from: " + dllPath);
-                return;
+                CoreLogger.Error("Failed to create plugin from: " + dllPath);
+                continue;
             }
             plugin->Initialize();
             Plugins.insert(plugin);

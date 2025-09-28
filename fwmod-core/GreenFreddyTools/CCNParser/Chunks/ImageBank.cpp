@@ -87,6 +87,7 @@ void Image::DecompressImage() {
 
 uint32_t ImageBank::AddImage(Image& image, OffsetsVector* offsets) {
     auto it = images.find(image.Handle);
+    // fixme: comparing uint32_t with -1... bad
     if (image.Handle == -1) { // image add request
         // find a free offset by checking if it's 0
         auto it = std::find_if(offsets->begin(), offsets->end(), [](int offset) {

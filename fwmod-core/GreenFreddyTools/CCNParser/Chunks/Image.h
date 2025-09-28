@@ -15,6 +15,7 @@
 #include <lz4.h>
 
  // Converts Image struct to GDI+ Bitmap
+ // caller must delete the bitmap when no longer needed
 DLLCALL Gdiplus::Bitmap* ToBitmap(const Image& image) {
     int Width = image.Width;
     int Height = image.Height;

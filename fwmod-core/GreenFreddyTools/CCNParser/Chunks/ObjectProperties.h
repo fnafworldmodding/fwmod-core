@@ -5,8 +5,7 @@
 #include "../../Utils/Decompressor.h"
 #include "../../Utils/IntEnum.h"
 
-void AdjustOffsets(ObjectCommon* objcom, int member, int delta); // TODO: export
-//void AppendAnimations()
+void AdjustOffsets(ObjectCommon* objcom, ushort* member, int delta); // TODO: export
 
 IntEnum(PropertiesFlags, int) { // currently unused
 		Compressed = 0, // Compressed object
@@ -32,7 +31,7 @@ struct ObjectCommonItem {
 		delete[] raw;
 	}
 
-	int Write(BinaryWriter& buffer) {
+	int Write(BinaryWriter& buffer) const {
 		// givev the option to write in the uncompress form
 		ObjectHeader* header = this->Type;
 		uint8_t* rawData = nullptr;
