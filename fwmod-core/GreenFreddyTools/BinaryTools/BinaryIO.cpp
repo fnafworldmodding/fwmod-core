@@ -24,6 +24,11 @@ BinaryIO::BinaryIO(const uint8_t* data, size_t size)
 {
 }
 
+BinaryIO::BinaryIO(uint8_t* data, size_t size)
+    : data_(data, data + size), position_(0)
+{
+}
+
 BinaryIO::BinaryIO(size_t size, bool reserve) : data_(), position_(0)
 {
     if (reserve) {
@@ -410,6 +415,14 @@ std::vector<uint8_t>& BinaryIO::GetVector()
     return data_;
 }
 
+std::vector<uint8_t> BinaryIO::Release()
+{
+    // reset the position as the buffer is being taken away
+    position_ = 0;
+    // move the vector out, leaving the internal data_ in a valid but empty state.
+    return std::move(data_);
+}
+
 void BinaryIO::Resize(size_t newSize)
 {
     data_.resize(newSize);
@@ -457,4 +470,12 @@ void BinaryIO::WriteBytes(const void* source, size_t size)
     EnsureCapacity(position_ + size);
     std::memcpy(&data_[position_], source, size);
     position_ += size;
+}
+
+void BinaryIO::SetMode(bool mode) {
+    insertMode = mode;
+}
+
+bool BinaryIO::GetMode() const {
+    return insertMode;
 }

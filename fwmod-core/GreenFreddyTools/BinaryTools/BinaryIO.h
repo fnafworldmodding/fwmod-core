@@ -19,6 +19,8 @@ public:
     BinaryIO(std::span<const uint8_t> initialData);
     // Create BinaryIO with initial data from raw pointer
     BinaryIO(const uint8_t* data, size_t size);
+    // Create BinaryIO with initial data from raw pointer
+    BinaryIO(uint8_t* data, size_t size);
     // either reserve or resize buffer
     BinaryIO(size_t size, bool reserve);
     // Destructor
@@ -107,12 +109,16 @@ public:
     std::span<const uint8_t> GetSpan() const;
     std::span<uint8_t> GetSpan();
     std::vector<uint8_t>& GetVector();
+    [[nodiscard]] std::vector<uint8_t> Release();
 
     // === UTILITY ===
     void Resize(size_t newSize);
     void Reserve(size_t capacity);
     void Clear();
     bool Empty() const;
+    //
+    void SetMode(bool insert);
+    bool GetMode() const;
 
 private:
     std::vector<uint8_t> data_;
