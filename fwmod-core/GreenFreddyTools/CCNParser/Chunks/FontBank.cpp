@@ -30,23 +30,7 @@ void FontBank::Write(BinaryWriter& buffer, bool compress) {
                 // Skip the uninitialized font
                 continue;
             }
-            else if (font.Flags == 1) {
-                // The font is already compressed
-                buffer.WriteInt32(font.Handle);
-                buffer.WriteInt32(font.DecompSize);
-                buffer.WriteInt32(font.Size);
-                buffer.WriteFromMemory(font.raw, font.Size);
-                continue;
-            }
-            buffer.WriteInt32(font.Handle);
-            // fixme: the decompress size and compressed size aka Size is so confusing, maybe depend on flags rework the size determination
-            int result = 0; // Result of compression, currently ignored because we throw the error in the function
-            size_t outCompSize = 0;
-            uint8_t* rawData = Decompressor::CompressZlibRaw((uint8_t *)&font.raw, font.DecompSize, outCompSize, result);
-            buffer.WriteInt32(font.DecompSize); // write the decompressed size
-            buffer.WriteInt32(outCompSize); // write the compressed size
-            buffer.WriteFromMemory(rawData, outCompSize);
-            delete[] rawData;
+            font.Write(buffer);
         }
     });
 }
@@ -64,23 +48,7 @@ void FontBank::Write(BinaryWriter& buffer, bool compress, OffsetsVector& offsets
             }
             // Add the offset for the font location in the fontbank chunk
             offsets[font.Handle - 1] = (buffer.Position() - ChunkPosition) + OFFSET_ADDTION;
-            if (font.Flags == 1) {
-                // The font is already compressed
-                buffer.WriteInt32(font.Handle);
-                buffer.WriteInt32(font.DecompSize);
-                buffer.WriteInt32(font.Size);
-                buffer.WriteFromMemory(font.raw, font.Size);
-                continue;
-            }
-            buffer.WriteInt32(font.Handle);
-            // fixme: the decompress size and compressed size aka Size is so confusing, maybe depend on flags rework the size determination
-            int result = 0; // Result of compression, currently ignored because we throw the error in the function
-            size_t outCompSize = 0;
-            uint8_t* rawData = Decompressor::CompressZlibRaw((uint8_t*)&font.raw, font.DecompSize, outCompSize, result);
-            buffer.WriteInt32(font.DecompSize); // write the decompressed size
-            buffer.WriteInt32(outCompSize); // write the compressed size
-            buffer.WriteFromMemory(rawData, outCompSize);
-            delete[] rawData;
+            font.Write(buffer);
         }
     });
 }

@@ -3,6 +3,7 @@
 #include "../BinaryTools/BinaryReader.h"
 
 class Chunk;
+// fixme: fix any memory leaks!
 
 std::vector<uint8_t> Decompressor::Decompress(BinaryReader& buffer, int& decompressed) {
     int decomp_size = buffer.ReadInt32();
