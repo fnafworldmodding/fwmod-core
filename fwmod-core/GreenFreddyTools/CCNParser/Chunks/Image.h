@@ -50,7 +50,7 @@ DLLCALL Gdiplus::Bitmap* ToBitmap(const Image& image) {
 }
 
 DLLCALL Image createImage(uint32_t handle, const std::string& path, bool compress) {
-    // Implement a cache system for speed, maybe a folder called "__plcache__" or similar
+    // TODO: Implement a cache system for speed, maybe a folder called "__plcache__" or similar
     // instead of using std::string, we can use std::filesystem::path especially when implementing the cache system\
     // get the hotspots and action points from a .data file or something of that kind
     Image img;

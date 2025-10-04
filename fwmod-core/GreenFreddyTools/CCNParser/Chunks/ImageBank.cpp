@@ -16,14 +16,10 @@ bool ImageBank::Init() {
     for (int i = 0; i < count; ++i) {
         int handle = buffer.ReadUint32();
         // accessing a non-existent key would construct one by default, unordered_map creates it
-        this->images[handle].ReadImageEx(buffer, handle);
+        this->images[handle].ReadEx(buffer, handle);
     }
     this->FreeData();
     return true;
-}
-
-static void WriteImage(BinaryWriter& writer, const Image& img) {
-	Image::WriteImage(writer, img, false); // Write without decompression
 }
 
 void ImageBank::Write(BinaryWriter& buffer, bool _) {
@@ -41,7 +37,7 @@ void ImageBank::Write(BinaryWriter& buffer, bool _) {
     buffer.WriteInt32(imagesCount);
     // Write each image in any order
     for (const auto& [_, img] : this->images) {
-        WriteImage(buffer, img);
+        img.Write(buffer);
     }
 }
 
@@ -57,7 +53,7 @@ void ImageBank::Write(BinaryWriter& buffer, bool _, OffsetsVector& offsets) {
         for (const auto& [handle, img] : this->images) {
             int offset = (buffer.Position() - ChunkPosition) + OFFSET_ADDTION;
             offsets[handle - 1] = offset;
-            WriteImage(buffer, img);
+            img.Write(buffer);
         }
 
     });
@@ -89,6 +85,7 @@ uint32_t ImageBank::AddImage(Image& image, OffsetsVector* offsets) {
     auto it = images.find(image.Handle);
     // fixme: comparing uint32_t with -1... bad
     if (image.Handle == -1) { // image add request
+        // do nullptr offsets check
         // find a free offset by checking if it's 0
         auto it = std::find_if(offsets->begin(), offsets->end(), [](int offset) {
             return offset == 0;
@@ -117,12 +114,8 @@ uint32_t ImageBank::AddImage(Image& image, OffsetsVector* offsets) {
 
 // TODO: create an ReadImageEx that takes a handle (aka image id) and read the rest of the fields, to save memory and avoid copying/moving data
 // and unstatic them they can be a method instead of a static method
-void Image::ReadImage(BinaryReader& buffer, bool decompress) {
-    this->Handle = buffer.ReadUint32();
-    this->ReadImageEx(buffer, this->Handle, decompress);
-}
 
-void Image::ReadImageEx(BinaryReader& buffer, int handle, bool decompress) 
+void Image::ReadEx(BinaryReader& buffer, int handle, bool decompress) 
 {
     this->Checksum = buffer.ReadInt32();
     this->References = buffer.ReadInt32();
@@ -147,36 +140,36 @@ void Image::ReadImageEx(BinaryReader& buffer, int handle, bool decompress)
     // Decompress the image data if necessary
     if (decompress && islzCompressed) {
 		this->DecompressImage();
+        this->Flags.SetFlag(ImageFlags::LZX, false);
     }
 }
 
+void Image::Write(BinaryWriter& buffer, bool compress) const {
+    buffer.WriteUint32(this->Handle);
+    buffer.WriteInt32(this->Checksum);
+    buffer.WriteInt32(this->References);
+    buffer.WriteInt32(this->unknown);
+    buffer.WriteInt32(this->dataSize);
+    buffer.WriteInt16(this->Width);
+    buffer.WriteInt16(this->Height);
+    buffer.WriteUint8(this->GraphicMode);
+    buffer.WriteUint8(this->Flags.Value());
+    buffer.WriteUint16(this->padding);
+    buffer.WriteInt16(this->HotspotX);
+    buffer.WriteInt16(this->HotspotY);
+    buffer.WriteInt16(this->ActionPointX);
+    buffer.WriteInt16(this->ActionPointY);
+    buffer.WriteUint32(this->TransparentColor);
 
-void Image::WriteImage(BinaryWriter& buffer, const Image& img, bool compress) {
-    buffer.WriteUint32(img.Handle);
-    buffer.WriteInt32(img.Checksum);
-    buffer.WriteInt32(img.References);
-    buffer.WriteInt32(img.unknown);
-    buffer.WriteInt32(img.dataSize);
-    buffer.WriteInt16(img.Width);
-    buffer.WriteInt16(img.Height);
-    buffer.WriteUint8(img.GraphicMode);
-    buffer.WriteUint8(img.Flags.Value());
-    buffer.WriteUint16(img.padding);
-    buffer.WriteInt16(img.HotspotX);
-    buffer.WriteInt16(img.HotspotY);
-    buffer.WriteInt16(img.ActionPointX);
-    buffer.WriteInt16(img.ActionPointY);
-    buffer.WriteUint32(img.TransparentColor);
-
-    bool islzCompressed = img.Flags.GetFlag(ImageFlags::LZX);
-    int ldataSize = img.dataSize - (islzCompressed ? 4 : 0);
+    bool islzCompressed = this->Flags.GetFlag(ImageFlags::LZX);
+    int ldataSize = this->dataSize - (islzCompressed ? 4 : 0);
 	// TODO: compress the image data if compress is true
 
     // For writing decompSizePlus
     if (islzCompressed) {
-        buffer.WriteInt32(img.decompSizePlus);
+        buffer.WriteInt32(this->decompSizePlus);
     }
 
     // Write image data
-    buffer.WriteFromMemory(img.data.data(), ldataSize);
+    buffer.WriteFromMemory(this->data.data(), ldataSize);
 }

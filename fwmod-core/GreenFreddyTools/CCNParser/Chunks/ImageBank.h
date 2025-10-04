@@ -18,7 +18,7 @@ enum class ImageFlags : uint8_t {
 };
 
 struct Image {
-    uint32_t Handle = 0;  
+    uint32_t Handle = 0;
     int32_t Checksum = -1; // can be -1 ig is some ignore value
     int32_t References = 0;  
     int32_t unknown = 1; // Unknown field. always 1 for some reason
@@ -35,9 +35,10 @@ struct Image {
     uint32_t TransparentColor = 0; // TODO: create a structure, RGBA color
     int32_t decompSizePlus = 0;
     std::vector<uint8_t> data;
-    static void WriteImage(BinaryWriter& writer, const Image& image, bool compress);
-    void ReadImage(BinaryReader& reader, bool decompress = false);
-    void ReadImageEx(BinaryReader& reader, int handle, bool decompress = false);
+    //static void WriteImage(BinaryWriter& writer, const Image& image, bool compress);
+    void Write(BinaryWriter& buffer, bool compress = false) const;
+    //void Read(BinaryReader& reader, bool decompress = false);
+    void ReadEx(BinaryReader& reader, int handle, bool decompress = false);
     void DecompressImage();
 };
 
