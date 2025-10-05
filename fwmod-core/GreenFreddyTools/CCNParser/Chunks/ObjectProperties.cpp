@@ -88,6 +88,7 @@ void AdjustOffsets(ObjectCommon* objcom, ushort* member, int delta) {
 }
 
 //void AdjustAnimationHeaderOffsets(Anim)
+// TODO: implement the reading and writing part of an object in ObjectCommonItem (maybe have each struct their own writer?)
 
 
 bool ObjectProperties::Init() {
@@ -107,7 +108,7 @@ bool ObjectProperties::Init() {
 		//reader.Skip(4); // Skip unknown value (4 bytes)
 		ObjectCom.DecompSize = reader.ReadInt32();
 		ObjectCom.Size = reader.ReadInt32();
-		ObjectCom.Type = header; // fixme: .Type is misleading name
+		ObjectCom.Header = header;
 		ObjectCom.Flags = 2;
 		if (!DECOMPRESS_COMOBJECTS) { // do not pre-decompress objects
 			ObjectCom.Flags = 1;
@@ -159,7 +160,7 @@ void ObjectProperties::Write(BinaryWriter& buffer, bool compress, OffsetsVector&
 
 	buffer.WriteDataWithDynamicSize([&](BinaryWriter& buffer, size_t ChunkPosition) {
 		for (auto& object : this->Objects) {
-			ObjectHeader* header = object.Type;
+			ObjectHeader* header = object.Header;
 			if (object.Flags == 2) { // we should never reach this point, may as well throw an error
 				// Skip the uninitialized object
 				offsets[header->Handle] = 0;

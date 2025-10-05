@@ -3,7 +3,7 @@
 #include <cstring>
 #include <stdexcept>
 
-// TODO: all to reserve space, eh remove std errors
+// NOTE: should we eh remove std errors?
 
 BinaryIO::BinaryIO() : position_(0)
 {

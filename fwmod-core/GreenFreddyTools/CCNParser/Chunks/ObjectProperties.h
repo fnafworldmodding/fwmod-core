@@ -19,7 +19,7 @@ struct ObjectCommonItem {
 	int Size = 0;
 	int Flags = 2;
 	// TODO: change the name, it's misleading 
-	ObjectHeader* Type = nullptr;
+	ObjectHeader* Header = nullptr;
 	union {
 		uint8_t* raw = nullptr;
 		ObjectCommon* OCIObjectCommon;
@@ -33,7 +33,7 @@ struct ObjectCommonItem {
 
 	int Write(BinaryWriter& buffer) const {
 		// givev the option to write in the uncompress form
-		ObjectHeader* header = this->Type;
+		ObjectHeader* header = this->Header;
 		uint8_t* rawData = nullptr;
 		size_t compressSize = 0;
 		int compressionResult = Z_OK; // Result of compression, currently ignored

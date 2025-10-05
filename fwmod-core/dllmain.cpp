@@ -17,14 +17,6 @@ static std::unordered_map<std::string, FARPROC> functionCache;
 HMODULE realDLL = nullptr;
 mutex dllMutex;
 
-inline static void SetThreadPriority(std::thread& thread, DWORD priority) {
-    HANDLE handle = OpenThread(THREAD_SET_INFORMATION, FALSE, GetThreadId(thread.native_handle()));
-    if (handle != NULL) {
-        SetThreadPriority(handle, priority);
-        CloseHandle(handle);
-    }
-}
-
 
 static void ShowLastError(const std::string& context) {
     DWORD errorCode = GetLastError();
