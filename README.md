@@ -30,7 +30,7 @@ FWMod-Core is comprehensive modding framework in development, designed specifica
 ### 🎯 Key Capabilities
 
 - **Asset Management**: Replace and modify game images, fonts, sounds, and objects
-- **CCN File Support**: sami support for native CCN format
+- **CCN File Support**: sami support for the CCN format
 - **Plugin System**: Extensible architecture for custom plugins
 - **Binary I/O**: Advanced binary reading/writing for game data manipulation
 - **Runtime Hooking**: Windows API hooking for advanced game modifications

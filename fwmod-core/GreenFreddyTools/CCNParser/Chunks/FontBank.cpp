@@ -7,13 +7,8 @@ bool FontBank::Init() {
     int count = buffer.ReadInt32();
 	this->fonts.reserve(count);
     for (int i = 0; i < count; i++) {
-        FontItem font{};
-        font.Handle = buffer.ReadInt32();
-		font.Flags = 1; // 1 == compressed
-        font.DecompSize = buffer.ReadInt32();
-        font.Size = buffer.ReadInt32();
-        buffer.ReadToMemory(&font.raw, font.Size);
-        this->fonts[font.Handle] = font;
+        uint32_t handle = buffer.ReadInt32();
+        this->fonts[handle].ReadEx(buffer, handle, false);
     }
     return true;
 }

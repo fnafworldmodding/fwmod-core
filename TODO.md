@@ -13,6 +13,8 @@ just using pointer like a normal dev (normal dev? I idk actually) or freeing old
 - make a store for each change such as objects, fonts, images 
 - to know which changes going to happen and process them at once
 
+- eliminate all c-style type casts usage
+
 ## TODO
 - decompiling/compiling
     - [x] reading/writing chunks
@@ -47,8 +49,8 @@ just using pointer like a normal dev (normal dev? I idk actually) or freeing old
 - Optimizations
     - [ ] lazy load chunks?
     - [ ] clear old data upon init
-    - [ ] skip deserialization of resources/banks when not needed (times where nothing is modified or added)
-    - [ ] caching system, instead of serializing data every single time upon launch, create a cache of that data (e.g images, animations)
+    - [ ] skip deserialization of resources/objects when not needed (times where nothing is modified or added)
+    - [ ] caching system, instead of serializing data every single time upon launch, create a cache of that data (e.g images, animations), checksums might be the best choice
     - [x] either lazy create bitdicts or don't use them at all. they get allocated to end up not being even used, just use basic math or macros (~~bitdict should only be wrappers over values~~ done they are now just wrappers over a value)
 - Other
     - [ ] offsets chunks are almost the same, how about creating a base class for them? instead of writing the same code over and over again
